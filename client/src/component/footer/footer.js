@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link, BrowserRouter as Router } from 'react-router-dom'
+import ScrollUpButton from "react-scroll-up-button"; //Add this line Here
 import logo from '../../assets/img/logo1.png';
 class Footer extends Component{
    constructor(props){
@@ -14,7 +15,8 @@ class Footer extends Component{
         return(
         <div className="footer-section">  
 
-            
+<ScrollUpButton />
+
     <section id="get-started-main">
         <div className="container">
             <div className="row">
@@ -27,7 +29,7 @@ class Footer extends Component{
 
                     <div className="col-md-4 col-sm-4">
                         <div className="get-started-heading">
-                            <a href="#">Signup</a>
+                            <Link to={"/front/register"}>SIGN IN</Link>
                         </div>
                     </div>
                 </div>
@@ -40,7 +42,7 @@ class Footer extends Component{
                 <div className="row">
                     <div className="col-md-4 col-sm-4">
                         <div className="footer-logo">
-                            <img src={logo}/>
+                            <Link to={'/front/home'}><img src={logo}/></Link>
                         </div>
                     </div>
                     
@@ -51,7 +53,7 @@ class Footer extends Component{
                             
                             <p><i className="fa fa-envelope" aria-hidden="true"></i> <a href="mailto: info@SetItandLeaveIt.com">info@SetItandLeaveIt.com</a></p>
                             
-                            <p><i className="fa fa-globe" aria-hidden="true"></i> <a href="www.SetItandLeaveIt.com">www.SetItandLeaveIt.com</a></p>
+                            <p><i className="fa fa-globe" aria-hidden="true"></i> <a href={'http://www.SetItandLeaveIt.com'}>www.SetItandLeaveIt.com</a></p>
                     
                         </div>
 
@@ -61,10 +63,10 @@ class Footer extends Component{
                         <h4>Links</h4>
                         <div className="useful-links">
                             <ul>
-                                <li><a href="#">SITEMAP</a></li>
-                                <li><a href="#">PRIVACY</a></li>
-                                <li><a href="#">TERMS OF SERVICE</a></li>
-                                <li><a href="#">DISCLAIMER</a></li>
+                                {/* <li><a href="#">SITEMAP</a></li> */}                                
+                                <li><Link to={'/front/tnc'}>TERMS & CONDITIONS</Link></li>
+                                <li><a href='/front/tnc#disclaimer'>DISCLAIMER</a></li>
+                                <li><a href='/front/tnc#privacy'>PRIVACY</a></li>
                             </ul>
                         </div>
                     </div>

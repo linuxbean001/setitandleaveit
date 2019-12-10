@@ -1,17 +1,102 @@
 import React, { Component } from 'react';
-import setleave_banner from '../../assets/img/graph.png';
-import graph1 from '../../assets/img/graph-1.png';
-
+import AnchorLink from 'react-anchor-link-smooth-scroll';
+import { Link, BrowserRouter as Router } from 'react-router-dom'
+import setleave_banner from '../../assets/img/graph.jpg';
+import serviceFlow_bg1 from '../../assets/img/SET-IT-AND-LEAVE-IT-bg.png';
+import AdminService from '../../admin/Aservice/adminservice';
+const AdminAPI = new AdminService();
 class SetItAndLeaveIt extends Component{
     constructor(props){
         super(props);
+        this.props.onHeaderHover(true);
         this.state ={
-            isHide:false
+            isHide:false,
+            activeClass:'',
+            position:false,
+            top:false,
+            SelandLeaveData:[],
+            BackgroundData:[],
+            MachineData:[],
+            proConData:[],
+            ExampleData:[],
+            IndexedData:[]
         }
+        this.getSIALIOverview = this.getSIALIOverview.bind(this);
+    }
+
+
+    componentDidMount(){
+        window.scrollTo(0, 0);
+        this.getSIALIOverview();
+        window.addEventListener('scroll', () => {
+            let activeClass = 'normal';
+            let position = false;
+            let top = false;
+            let li1 = '';
+            let li2 = '';
+            let li3 = '';
+            let li4 = '';
+console.log('xxxxxx', window.scrollY);
+            if(window.scrollY >= 1300 ){
+                activeClass = 'is-sticky';
+                position = true;
+                top = true;
+                li1 = 'active';
+                li2 = '';
+                li3 = '';
+                li4 = '';
+            }
+            if(window.scrollY >= 2000 ){  
+                li1 = '';              
+                li2 = 'active';
+                li3 = '';
+                li4 = '';
+            }
+            if(window.scrollY >= 4100 ){                
+                li1 = '';              
+                li2 = '';
+                li3 = 'active';
+                li4 = '';
+            }
+            if(window.scrollY >= 6100 ){                
+                li1 = '';              
+                li2 = '';
+                li3 = '';
+                li4 = 'active';
+            }
+            this.setState({ 
+                activeClass:activeClass,
+                position:position,
+                top:top,
+                li1:li1,
+                li2:li2,
+                li3:li3,
+                li4:li4
+             });
+         });
     }
 
  
+    getSIALIOverview() {
+        AdminAPI.GetSIALI()
+                .then(res => {
+                    this.setState({ 
+                      SelandLeaveData:res.data.data[0],
+                      BackgroundData:res.data.data[1],
+                      MachineData:res.data.data[2],
+                      proConData:res.data.data[3],
+                      ExampleData:res.data.data[4],
+                      IndexedData:res.data.data[5]
+                    });
+                  
+                }).catch(err => {
+                    console.log('xxxxxxx xxxx ', err);
+                });
+    }
+
 render(){
+
+    console.log('SelandLeaveData',this.state.SelandLeaveData);
             return(
                 <div className="set-and-leave-it-section">
                     
@@ -19,86 +104,164 @@ render(){
                         <div className="container-fluid">
                             <div className="row">
                                 <div className="inner-page-banner-heading hdng">
-                                    <h2> Set It and Leave It Retirement Income Strategy </h2>
+                                    <h2 className="selandleaveTitle" dangerouslySetInnerHTML={{ __html:this.state.SelandLeaveData.title }}></h2>
                                 </div>
 
                                 <div className="inner-page-banner-image">
                                     <img src={setleave_banner}/>
                                 </div>
 
-                            </div>
+                            </div> 
                         </div>
                     </section>
 
                    
                     <div className="container">
                         <div className="not-sect nst">
-                            <p> <span> !</span> <b> NOTE: </b> We have also created short <a href="#"> videos </a> summarizing much of the material below. </p>
+                       <p><span>!</span><p><div className="notediv"><b>NOTE:</b> <p>You may also watch our short <Link to={"/front/videos"}>videos</Link> summarizing much of the material below or read our <Link to={"/front/set-it-and-leave-it"} className="c22"> Set It and Leave It </Link> <Link to={"/front/research"}>research paper</Link> for more details and in-depth discussion.</p></div></p></p>
                         </div>
                     </div>
 
                     <section id="blouq-content">
                         <div className="container">
                             <div className="blouq-content-inner">
-                                <h3> OVERVIEW </h3>
-                                <h5>The <span className="c22"> Set It and Leave It </span> approach specifically addresses many of the risks associated with standard safe withdrawal rate (SWR) strategies. In particular, it can remove take market risk out of retirement income and manage inflation risks more precisely. <span className="c22"> Set It and Leave It </span> also reduces the need for ongoing rebalancing. This can help retirees keep or spend more of their savings by eliminating advisor fees and tax friction. </h5><br/>
-                                <h5> Transparency and understanding, seeing a more direct link between one’s asset and retirement spending. </h5> <br/>
-                                <h5> Critical elements </h5>
-                                <ul className="over-text">
-                                    <li> - Pre-chiseling </li>
-                                    <li> - Better understanding and use of dividends. </li>
-                                </ul> <br/>
-                                <h5> Other benefits <br/> More precisely calibrates to the market environment </h5>
-                                <ul className="over-text">
-                                    <li> - Requires little if any management <i className="fa fa-arrow-right" aria-hidden="true"></i> Lower fees </li>
-                                    <li> - Systematically manage chiseling at the outset </li>
-                                    <li> - Performance </li>
-                                </ul> <br/>
-                                <h5> There are just two primary changes when setting up one’s portfolio. </h5> <br/>
-                                <h5> Less risk ?</h5>
-                                <ul className="over-text">
-                                    <li> - Effectively exchanging market risk for business risk for income and isolating market risk
-                                        with heirs. </li>
-                                    <li> - Better inflation hedge </li>
-                                </ul>
+                            <p dangerouslySetInnerHTML={{ __html: this.state.SelandLeaveData.content }}  />
                             </div>
+
                         </div>
                     </section>
 
-
-                    <section class="income-chalange-box">
-                        <div class="container">
-                            <div class="row">
-                                <div class="chalnge-inner">
-                                    <h3> BACKGROUND: RETIREMENT INCOME CHALLENGES <br/> <em> ASDF </em></h3>
-                                    <h4> “ASDF.” </h4>
-
-                                    <p> Much research<sup>+</sup> [+ William Bengen, Trinity study, Wade Pfau, etc.] has been done on what level of spending is reasonable relative to one’s savings. </p>
-
-                                    <h5> ADVANTAGES </h5>
-                                    <ul>
-                                        <li> More intuitive and transparent – less guesswork </li>
-                                        <li> Lower fees </li>
-                                        <li> Less risk </li>
-                                    </ul>
-
-                                    <h5> DISADVANTAGES </h5>
-                                    <ul>
-                                        <li> Still involves an annuity (though this part can be minimized by using deferred annuities) </li>
-                                    </ul>
-                                    <img class="cimg" src={graph1} alt=""/>
-                                    <div class="inner-22">
-                                        <h4> “asdf.” </h4>
-                                        <p> While we did not discuss them above, there are also fixed (not variable) annuities and they typically involve significantly lower fees. Recent research<sup>+</sup> <span class="acd">[+ Pfau, Tomlinson, Edessess, Swedroe, etc.]</span> shows how fixed annuities can be integrated with balanced portfolios to improve outcomes for SWR strategies – thereby reducing their market dependence. Our <em> Set It and Leave It </em> program further reduces retirement income dependence on market performance while sporting other benefits such as lower required maintenance, lower costs, increased taxefficiency, and improved legacy outcomes. Learn more about <em> Set It and Leave It </em> and how it uses innovative financial engineering and risk management to achieve these benefits. </p>
+                    <div id="getFixed-sticky-wrapper" className={`sticky-wrapper ${this.state.activeClass}`}>
+                        <section className="tradnitional-section" id="getFixed" style={{ position: this.state.position ? 'fixed' : '', top: this.state.top ? '0' : '' }}>
+                            <div className="container">
+                                <div className="row">
+                                    <div className="trad-box-inner">       
+                                        <nav className="navbar" style={{marginBottom: '0'}}>
+                                            <div className="container-fluid">
+                                                <ul className="nav">
+                                                    <li className={`${this.state.li1}`}> <AnchorLink href="#background" className="scrolly"> BACKGROUND </AnchorLink> </li>
+                                                    <li className={`${this.state.li2}`}> <AnchorLink href="#withdrawal" className="scrolly"> MECHANICS </AnchorLink> </li>
+                                                    <li className={`${this.state.li3}`}> <AnchorLink href="#varible" className="scrolly"> PROS & CONS </AnchorLink> </li>
+                                                    <li className={`${this.state.li4}`}> <AnchorLink href="#executivesummary" className="scrolly"> EXAMPLE </AnchorLink> </li>
+                                                </ul>
+                                            </div>
+                                        </nav>
                                     </div>
-
                                 </div>
                             </div>
+                        </section>
+                    </div>
+
+
+
+
+
+
+                    <div id="background">
+        <section id="parallax-main" className="overlay-white" style={ { backgroundImage: "url("+serviceFlow_bg1+")" } }>
+            <div className="container haddng">
+                <h2> {this.state.BackgroundData.title}</h2>
+            </div>
+        </section>
+
+        <section className="b1">
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-12">
+                        <div className="inner-content-bg">
+                         <p dangerouslySetInnerHTML={{ __html: this.state.BackgroundData.content }}  />
                         </div>
-                    </section>
-
-
+                    </div>
                 </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="withdrawal">
+        <section id="parallax-main" className="overlay-white" style={ { backgroundImage: "url("+serviceFlow_bg1+")" } }>
+            <div className="container haddng">
+                <h2> {this.state.MachineData.title} </h2>
+            </div>
+        </section>
+
+        <section className="b1">
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-12">
+                        <div className="inner-content-bg">
+                        <p dangerouslySetInnerHTML={{ __html: this.state.MachineData.content }}  />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+
+
+    <div id="varible">
+        <section id="parallax-main" className="overlay-white" style={ { backgroundImage: "url("+serviceFlow_bg1+")" } }>
+            <div className="container haddng">
+                <h2>  {this.state.proConData.title} </h2>
+            </div>
+        </section>
+
+        <section className="b1">
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-12">
+                        <div className="inner-content-bg">
+                        <p dangerouslySetInnerHTML={{ __html: this.state.proConData.content }}  />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+
+   </div> 
+
+    <div id="executivesummary">
+        <section id="parallax-main" className="overlay-white" style={ { backgroundImage: "url("+serviceFlow_bg1+")" } }>
+            <div className="container haddng">
+                <h2> {this.state.ExampleData.title} </h2>
+            </div>
+        </section>
+
+        <section className="b1">
+            <div className="container">
+            <div className="not-sect nst">
+                            <p><b>NOTE:</b> The figures below are hypothetical and for illustration purposes only.</p>                            
+                        </div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <div className="inner-content-bg">
+
+                        
+
+
+                        <p dangerouslySetInnerHTML={{ __html: this.state.ExampleData.content }}  />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div> 
+
+    <div id="1" className="container">
+
+        <div className="row new-text">
+        <hr className="footline"/>
+        <h5 className="footernotesHead">FOOTNOTES</h5>
+        <div >
+             <p dangerouslySetInnerHTML={{ __html: this.state.IndexedData.content }}  />
+             </div>
+        </div>
+    </div>
+ </div>
             );
         }
     }

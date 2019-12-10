@@ -91,32 +91,43 @@ body > section, section {
 	margin-top: 99px;
 } */
 
-.left_panel {
-	background: #7030A0;
+/* .left_panel {
+	background: #222;
 	padding: 0;
 	position: fixed;
 	width: 16%;
 	height: 100%;
-	overflow: auto;
+	overflow: hidden;
+} */
+
+.left_panel { 
+    background: #222;
+    padding: 0;
+    position: fixed;
+    width: 16%;
+    height: 550px;
+    overflow-x: overlay;
 }
+
 .left_panel ul {
 	padding: 0!important;
 	list-style: none!important
 }
 .left_panel ul li a {
-	padding: 14px 20px 14px 40px;
-	display: block;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+	/* padding: 10px 20px 10px 40px; */
+    display: block;
+    padding:0;
+	border-bottom: 0px solid rgba(255, 255, 255, 0.13);
 	color: #fff;
 	letter-spacing: .5px;
-	font-size: 15px;
+	font-size: 13px;
 	position: relative;
 	/* background: linear-gradient(#333, #222); */
 }
 
 .left_panel li {
-	background: -webkit-linear-gradient(#7030A0, #58158a);
-	background: linear-gradient(#7030A0, #58158a);
+	background: -webkit-linear-gradient(#333, #222);
+    background: linear-gradient(#333, #222);
 }
 
 .left_panel li:hover {
@@ -146,14 +157,19 @@ body > section, section {
 .aj_fa {
 	position: absolute;
 	left: 10px;
-	top: 17px;
+	top: 10px;
 	color: #ea2525;
 	font-size: 16px;
 }
 
+a.metismenu-link {
+    font-size: 13px;
+}
 
-
-
+.inner-content-bg ul,.inner-content-bg ul li {
+    list-style:disc !important ;
+    padding-left: 15px;
+}
 
 
 
@@ -1019,4 +1035,19 @@ a.table-view {
      -ms-transform: translate(0, -50%);
      -o-transform: translate(0, -50%);
      transform: translate(0, -50%);
+}
+
+.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr {
+    height: fit-content;
+}
+
+
+.adminpart.nextbtn.classnext1{
+    display: block;
+}
+.adminpart.nextbtn.classnext9{
+    display: none;
+}
+.questionAdminBorad .form-control{
+    color:red;
 }

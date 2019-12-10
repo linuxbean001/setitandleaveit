@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Adminsidebar from './adminsidebar';
 import { MDBDataTable  } from 'mdbreact';
 import moment from 'moment';
-import { Button,Modal,Alert } from 'react-bootstrap';
+import { Button,Modal,Alert,OverlayTrigger,Tooltip } from 'react-bootstrap';
 import AdminService from '../Aservice/adminservice';
 const AdminAPI = new AdminService();
 let RowArray=[];
@@ -18,12 +18,33 @@ class Userlist extends Component{
         id: '',
         name: '',
         email: '',
-        showAlert:false
+        showAlert:false,
+        showModalDialog:false, 
        } 
        this.getAllUser = this.getAllUser.bind(this);
        this.handleUpdateSubmit = this.handleUpdateSubmit.bind(this);
        this.handleHide = this.handleHide.bind(this);
+       this.closeDialog = this.closeDialog.bind(this);
+       this.confirmBtn = this.confirmBtn.bind(this);
+       this.restPasswordEmail = this.restPasswordEmail.bind(this);
+       this.toolsStatus = this.toolsStatus.bind(this);
    }
+
+closeDialog() {
+    this.setState({ showModalDialog: false, eventIdForDel: '' });
+}
+
+openDialogEvent(id) {
+    this.setState({ eventIdForDel: id })
+    this.openDialog();
+}
+
+openDialog() {
+    this.setState({ showModalDialog: true });
+}
+confirmBtn() {
+    this.delUser(this.state.eventIdForDel);
+}
 
 componentDidMount(){
   this.getAllUser();
@@ -49,8 +70,24 @@ getAllUser() {
               var professor_d = d_professor?d_professor+' / ':'';
               var tell_us_more_d = d_tell_us_more?d_tell_us_more:'';
 
+                 
               if(res.data.data[i].role==1){
-                RowArray.push({name:res.data.data[i].name,email:res.data.data[i].email,details:detail+investor_d+financial_d+professor_d+tell_us_more_d,action:[<Button onClick={this.EditUser.bind(this, res.data.data[i])} variant="success" size="sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></Button>,<Button onClick={this.delUser.bind(this, res.data.data[i]._id, i)} variant="danger" size="sm"><i class="fa fa-trash-o" aria-hidden="true"></i></Button>]}) 
+                console.log('status'+i+':' , res.data.data[i].tool_enabled);
+                RowArray.push({name:res.data.data[i].name,email:res.data.data[i].email,details:detail+investor_d+financial_d+professor_d+tell_us_more_d,action:[
+                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Edit</Tooltip>}>
+                    <Button onClick={this.EditUser.bind(this, res.data.data[i])} variant="success" size="sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></Button>
+                </OverlayTrigger>,
+                <OverlayTrigger overlay={<Tooltip id="tooltip-top">Delete</Tooltip>}>
+                    <Button onClick={this.openDialogEvent.bind(this, res.data.data[i]._id, i)} variant="danger" size="sm"><i class="fa fa-trash-o" aria-hidden="true"></i></Button>
+                </OverlayTrigger>,
+                <OverlayTrigger overlay={<Tooltip id="tooltip-top">reset password E-mail</Tooltip>}>
+                    <Button onClick={this.restPasswordEmail.bind(this, res.data.data[i]._id, i)} variant="primary" size="sm"><i class="fa fa-key" aria-hidden="true"></i></Button>
+                </OverlayTrigger>,
+                 <OverlayTrigger overlay={<Tooltip id="tooltip-top"> {res.data.data[i].tool_enabled == true  ? "Tool Enable" : "Tool Disable" }</Tooltip>}>
+                      {res.data.data[i].tool_enabled == true ? (<Button onClick={this.toolsStatus.bind(this, res.data.data[i]._id,'false', i)} variant="success" size="sm"><i class="fa fa-eye" aria-hidden="true"></i></Button>) : (<Button onClick={this.toolsStatus.bind(this, res.data.data[i]._id,'true', i)} variant="danger" size="sm"><i class="fa fa-eye-slash" aria-hidden="true"></i></Button>) }
+                    
+                </OverlayTrigger>
+                ]}) 
               }
         }
           //console.log('userServicArray:', RowArray);
@@ -66,18 +103,93 @@ handleHide() {
 }
 
 
-delUser(id) {
+toolsStatus(id,status){
+    const toolInfoVo = {
+        'id': id,
+        'status': status
+    }
+    AdminAPI.AdminToolsStatus(toolInfoVo)
+    .then(res => {
+       
+        console.log('xxxxxxxx', res);
+        if (res.data.success) {
+            this.setState({
+                showAlert: true,
+                color: 'success',
+                message: res.data.message
+            });
+
+            setTimeout(
+                function () {
+                    this.setState({ showAlert: false });
+                    this.getAllUser();
+                }
+                    .bind(this),
+                2000
+            );
+
+        }else{
+            this.setState({
+                showAlert: true,
+                color: 'warning',
+                message: res.data.message
+            });
+        }
+    }).catch(err => {
+        console.log('xxxxxxxxxx xxxxxxxxx err from com ' + err)
+    });
+}
+
+
+
+restPasswordEmail(id){
+    const userInfoVo = {
+        'id': id
+    }
+    AdminAPI.AdminSendresetpassword(userInfoVo)
+    .then(res => {
+        console.log('xxxxxxxx', res);
+        if (res.data.success) {
+            this.setState({
+                showAlert: true,
+                color: 'success',
+                message: res.data.message
+            });
+
+            setTimeout(
+                function () {
+                    this.setState({ showAlert: false });
+                }
+                    .bind(this),
+                2000
+            );
+
+        }else{
+            this.setState({
+                showAlert: true,
+                color: 'warning',
+                message: res.data.message
+            });
+        }
+    }).catch(err => {
+        console.log('xxxxxxxxxx xxxxxxxxx err from com ' + err)
+    });
+}
+
+
+delUser(id) { 
         console.log('userid: ',id);
+
   AdminAPI.AdmindeleteUserById(id)
       .then(res => {
          this.getAllUser();
+          this.closeDialog();
           console.log('xxxxxxxx', res);
           if (res.data.success) {
               this.setState({
                   showAlert: true,
                   color: 'success',
                   message: res.data.message
-
               });
 
               setTimeout(
@@ -170,7 +282,7 @@ render(){
           label: 'Name',
           field: 'name',
           sort: 'asc',
-          width: 150
+          width: 50
         },
         {
           label: 'Email',
@@ -188,7 +300,7 @@ render(){
           label: 'Action',
           field: 'action',
           sort: 'asc',
-          width: 100
+          width: 200
         }
       ],
       rows: RowArray
@@ -201,11 +313,35 @@ render(){
             <div class="dashboard-content">
               <div className="heading"><h4>User lists</h4></div>
               
-              <div class="edit-form-main">
+              <div class="edit-form-main userlistsection">
               {this.state.showAlert ? (<Alert bsStyle={this.state.color}><strong>{this.state.message}</strong></Alert> ) : ( null )}
 
                  <MDBDataTable striped bordered hover data={data}  />
+
+
+    
+
               </div>
+
+
+              <Modal className="static-modal-confirm" show={this.state.showModalDialog} onHide={this.closeDialog}>
+
+                            <Modal.Header closeButton>
+                                <Modal.Title id="contained-modal-title">
+                                   Confirmation 
+                              </Modal.Title>
+                            </Modal.Header>
+
+                                    <Modal.Body>
+                                       <p>Are you sure you wish to delete this User?</p>
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                        <Button variant="success" size="sm" onClick={this.closeDialog} >Cancel</Button>
+                                        <Button variant="danger" size="sm" onClick={this.confirmBtn} >Proceed</Button>
+                                    </Modal.Footer>
+             </Modal>
+
+
               <Modal
                             show={this.state.show}
                             onHide={this.handleHide}

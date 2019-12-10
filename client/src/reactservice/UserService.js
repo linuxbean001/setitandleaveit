@@ -1,12 +1,12 @@
 import axios from 'axios';
 import decode from 'jwt-decode';
 
-
 export default class RegisterService {   
 
     constructor() {
         
-        this.domain = 'http://localhost:3300'; // API server domain
+        //this.domain = 'ec2-18-221-255-18.us-east-2.compute.amazonaws.com';
+        this.domain = 'http://localhost:3300';
     }    
 
     getProfile() {
@@ -14,7 +14,7 @@ export default class RegisterService {
     }
     
     registerUser(userInfoVo) {
-           return axios.post(this.domain + '/sellandleave/addUser', userInfoVo) 
+           return axios.post(this.domain+'/sellandleave/addUser', userInfoVo) 
             .then((result) => {
                 console.log('xxxxxxx xxxxxxxxxxx here yes  is::: ', result);
                 return (result);
@@ -27,7 +27,7 @@ export default class RegisterService {
     }
 
     login(email, password) {
-        return axios.post(this.domain + '/sellandleave/login', {
+        return axios.post(this.domain+'/sellandleave/login', {
             email: email,
             pass: password
         }).then(result => {
@@ -78,10 +78,9 @@ export default class RegisterService {
         return !!token && !this.isTokenExpired(token) 
     }
 
-
     contactUsService(userInfoVo) {
         console.log('hello: ',userInfoVo);
-        return axios.post(this.domain + '/sellandleave/contactus', userInfoVo) 
+        return axios.post(this.domain+'/sellandleave/contactus', userInfoVo) 
          .then((result) => {
              console.log('xxxxxxx xxxxxxxxxxx here yes  is::: ', result);
              return (result);
@@ -93,7 +92,7 @@ export default class RegisterService {
 
     updateProfileUser(userInfoVo) {
         console.log('updateuser:',userInfoVo );
-        return axios.post(this.domain + '/sellandleave/updateProfile', userInfoVo) 
+        return axios.post(this.domain+'/sellandleave/updateProfile', userInfoVo) 
          .then((result) => {
              console.log('xxxxxxx xxxxxxxxxxx here yes  is::: ', result);
              localStorage.removeItem('id_token');
@@ -105,9 +104,57 @@ export default class RegisterService {
          });
     }
 
+    passwordReset(userInfoVo) {
+        console.log('updateuser:',userInfoVo );
+        return axios.post(this.domain+'/sellandleave/resetpassword', userInfoVo) 
+         .then((result) => {
+             return (result);
+         }).catch(err => {
+             console.log('xxxxxxx xxxxxxxxxxx err is::: ', err);
+             return (err);
+         });
+    }
+
+    
+    emailpasswordReset(userInfoVo) {
+        console.log('updateuser:',userInfoVo );
+        return axios.post(this.domain+'/sellandleave/useremailresetpassword', userInfoVo) 
+         .then((result) => {
+             return (result);
+         }).catch(err => {
+             console.log('xxxxxxx xxxxxxxxxxx err is::: ', err);
+             return (err);
+         });
+    }
+
+    getpasswordlinkstatus(userInfoVo) {
+        console.log('updateuser:',userInfoVo );
+        return axios.post(this.domain+'/sellandleave/passwordlinkstatus', userInfoVo) 
+         .then((result) => {
+             return (result);
+         }).catch(err => {
+             console.log('xxxxxxx xxxxxxxxxxx err is::: ', err);
+             return (err);
+         });
+    }
+
+
+    getemailverificationStatus(userInfoVo) {
+        console.log('updateuser:',userInfoVo );
+        return axios.post(this.domain+'/sellandleave/emailstatus', userInfoVo) 
+         .then((result) => {
+             return (result);
+         }).catch(err => {
+             console.log('xxxxxxx xxxxxxxxxxx err is::: ', err);
+             return (err);
+         });
+    }
+
+
+
     toolsInputsActivityLog(toolsInputs) {        
 
-        return axios.post(this.domain + '/sellandleave/toolsInputs', toolsInputs) 
+        return axios.post(this.domain+'/sellandleave/toolsInputs', toolsInputs) 
          .then((result) => {           
             
              console.log('xxxxxxx xxxxxxxxxxx here yes  is::: ', result);
@@ -119,11 +166,10 @@ export default class RegisterService {
              return (err);
          });
     }
-
 
     generatePDFActivityLog(generatePDF) {        
         
-        return axios.post(this.domain + '/sellandleave/generatePDF', generatePDF) 
+        return axios.post(this.domain+'/sellandleave/generatePDF', generatePDF) 
          .then((result) => {           
             
              console.log('xxxxxxx xxxxxxxxxxx here yes  is::: ', result);
@@ -136,6 +182,27 @@ export default class RegisterService {
          });
     }
 
+    submitQuestionService(questionInfoVo) {
+        console.log('submitQuestionService:',questionInfoVo );
+        return axios.post(this.domain+'/sellandleave/submitquestion', questionInfoVo) 
+         .then((result) => {
+             console.log('xxxxxxx xxxxxxxxxxx here yes  is::: ', result);
+             return (result);
+         }).catch(err => {
+             console.log('xxxxxxx xxxxxxxxxxx err is::: ', err);
+             return (err);
+         });
+    }
+
+    getQuestionService(id){
+        console.log('usergetQuestionService...xx..x',id);
+        return axios.post(this.domain+'/sellandleave/questionList', id)
+            .then((result) => {
+                return (result);
+            }).catch(err => {
+                console.log('xxxxxxx xxxxxxxxxxx err is ', err);
+            });
+    }
 
 
 }

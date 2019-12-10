@@ -2,21 +2,31 @@ import React from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import UserService from '../../reactservice/UserService';
-const API = new UserService();
 
+const API = new UserService();
 
 
 const PrintButton = ({label}) => (<div className="tc mb4 mt2">
   <div
     className="calculat"
     onClick={() => {     
+      let userData=API.getProfile().data;
+      var date = (new Date()).toISOString().split('T')[0];
       html2canvas(document.querySelector('#tools_pdf')).then(canvas => {  
         var dataURL = canvas.toDataURL();
-        var pdf = new jsPDF();
-        pdf.addImage(dataURL, 'JPEG', 5, -135, 200, 500); //addImage(image, format, x-coordinate, y-coordinate, width, height)
-        pdf.save("tools.pdf");
+        var pdf = new jsPDF({compress: true});
+       // pdf.addImage(dataURL, 'PNG', 5, -200, 200, 500); 
+        pdf.addImage(dataURL, 'PNG',  5, -190, 200, 500);
+        //addImage(image, format, x-coordinate, y-coordinate, width, height)
+        // pdf.setTextColor(239,225,225);
+        // pdf.setFontSize(50);
+        // pdf.text(20, 200, 'NOT FOR COMMERCIAL USE', 45);
+        // pdf.setFont("helvetica");
+        // pdf.setFontType("bold");
+       
+        pdf.save(userData.name+'-'+date+".pdf");
       });   
-      let userData=API.getProfile().data;
+     
       const generatePDF ={
         "id":userData._id,
         "name":userData.name            

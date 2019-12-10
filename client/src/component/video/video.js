@@ -1,15 +1,52 @@
 import React, { Component } from 'react';
-import video_banner from '../../assets/img/video-banner-bg.jpg';
-import graph1 from '../../assets/img/graph-1.png';
+//import video_banner from '../../assets/img/video-banner-bg.jpg';
+//import graph1 from '../../assets/img/graph-1.png';
+import AdminService from '../../admin/Aservice/adminservice';
+const AdminAPI = new AdminService();
 
 class Video extends Component{
     constructor(props){
         super(props);
         this.state ={
-            isHide:false
+            isHide:false,
+            VideoBannerData:[],
+            videoContent1:[],
+            videoContent2:[],
+            videoContent3:[],
+            videoContent4:[],
+            videoContent5:[],
+            videoContent6:[]
         }
+        this.getVideos = this.getVideos.bind(this);
     }
+
+componentDidMount(){
+    window.scrollTo(0, 0);
+    this.getVideos();
+}
+
+getVideos() {
+    AdminAPI.GetVideos()
+            .then(res => {
+
+                this.setState({ 
+                    VideoBannerData: res.data.data[0],
+                    videoContent1: res.data.data[1],
+                    videoContent2: res.data.data[2],
+                    videoContent3: res.data.data[3],
+                    videoContent4: res.data.data[4],
+                    videoContent5: res.data.data[5],
+                    videoContent6: res.data.data[6]
+                });
+               
+            }).catch(err => {
+                console.log('xxxxxxx xxxx ', err);
+            });
+    }
+
 render(){
+
+    console.log('data',this.state.videoContent1)
             return(
                 <div className="video-section">
                     
@@ -21,9 +58,9 @@ render(){
                                     <h2> VIDEOS</h2>
                                 </div>
                                 
-                                <div class="inner-page-banner-image">
+                                {/* <div class="inner-page-banner-image">
                                     <img src={video_banner}/>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </section>
@@ -32,85 +69,125 @@ render(){
                     <section id="blouq-content">
                         <div class="container">
                             <div class="blouq-content-inner hq">
-                                <h5>The short videos below describe some of the pros and cons associated with two traditional retirement income strategies and our <em> Set It and Leave It </em> approach. </h5>
+                            <p dangerouslySetInnerHTML={{ __html: this.state.VideoBannerData.content }}  />
+                                {/* <h5>The short videos below describe some of the pros and cons associated with two traditional retirement income strategies and our <em> Set It and Leave It </em> approach. </h5> */}
                             </div>
                         </div>
                     </section>
 
-                    <section class="video-section">
+                   
+
+
+                    <section class="video-section mg-top-10" id="video1">
                         <div class="container">
                             <div class="row">
                             <div class="col-md-6">
                             <div class="video-content">
-                                <h3> SAFE WITHDRAWAL RATE (SWR)  </h3>
-                                <h4> Executive summary </h4>  
-                                <ul>
-                                    <li> Can be implemented cost-effectively </li>
-                                    <li> Requires maintenance </li>
-                                    <li>  Market dependent </li>
-                                </ul>
-                                </div>
+                              <p dangerouslySetInnerHTML={{ __html: this.state.videoContent1.content }}  />
+                            </div>
                             </div>
                             
                             <div class="col-md-6">
                             <div class="video-box">
-                                {/* <img src={video1} alt=""/> */}
-                                <iframe src="https://player.vimeo.com/video/350372529" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                               <iframe src={this.state.videoContent1.title} width="100%" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
                             </div>
                             </div>
                             </div>
                         </div>
                     </section>
 
-
-                    <section class="video-section mg-top-10" >
+                    <section class="video-section mg-top-10" id="video2">
                     <div class="container">
                         <div class="row">
                         <div class="col-md-6">
                         <div class="video-content">
-                            <h3> VARIABLE ANNUITIES  </h3>
-                            <h4> Executive summary </h4>  
-                            <ul>
-                                <li> Can guarantee income  </li>
-                                <li> No maintenance </li>
-                                <li> Typically very expensive </li>
-                            </ul>
-                            </div>
+                            <p dangerouslySetInnerHTML={{ __html: this.state.videoContent2.content }}  />
+                        </div>
                         </div>
                         
                         <div class="col-md-6">
                         <div class="video-box">
-                        {/* <img src={video2} alt=""/> */}
-                        <iframe title="vimeo-player" src="https://player.vimeo.com/video/350372584" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+                        <iframe title="vimeo-player" src={this.state.videoContent2.title} width="100%" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
                        </div>
                         </div>
                         </div>
                     </div>
                     </section>
-                    
-                    <section class="video-section mg-top-10" >
+
+                    <section class="video-section  mg-top-10" id="video3">
                     <div class="container">
                         <div class="row">
                         <div class="col-md-6">
                         <div class="video-content">
-                            <h3> <em> SET IT AND LEAVE IT </em>  </h3>
-                            <h4> Executive summary </h4>  
-                            <ul>
-                                <li> Low-cost </li>
-                                <li> Low maintenance </li>
-                                <li> Removes market risk </li>
-                            </ul>
-                            </div>
+                             <p dangerouslySetInnerHTML={{ __html: this.state.videoContent3.content }}  />
+                        </div>
                         </div>
                         
                         <div class="col-md-6">
-                        <div class="video-box">
-                        <img src={graph1} alt=""/>
-                            </div>
+                        <div class="video-box" id={this.state.videoContent3.title}>
+                        <iframe title="vimeo-player" src={this.state.videoContent3.title} width="100%" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
+                       </div>
                         </div>
                         </div>
                     </div>
                     </section>
+
+
+                      
+                    <section class="video-section mg-top-10" id="video4">
+                    <div class="container">
+                        <div class="row">
+                        <div class="col-md-6">
+                        <div class="video-content">
+                             <p dangerouslySetInnerHTML={{ __html: this.state.videoContent4.content }}  />
+                        </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                        <div class="video-box" id={this.state.videoContent4.title}>
+                        <iframe title="vimeo-player" src={this.state.videoContent4.title} width="100%" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
+                       </div>
+                        </div>
+                        </div>
+                    </div>
+                    </section>
+
+                    <section class="video-section mg-top-10" id="video5">
+                    <div class="container">
+                        <div class="row">
+                        <div class="col-md-6">
+                        <div class="video-content">
+                             <p dangerouslySetInnerHTML={{ __html: this.state.videoContent5.content }}  />
+                        </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                        <div class="video-box" id={this.state.videoContent5.title}>
+                        <iframe title="vimeo-player" src={this.state.videoContent5.title} width="100%" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
+                       </div>
+                        </div>
+                        </div>
+                    </div>
+                    </section> 
+
+
+                    <section class="video-section mg-top-10" id="video6">
+                    <div class="container">
+                        <div class="row">
+                        <div class="col-md-6">
+                        <div class="video-content">
+                             <p dangerouslySetInnerHTML={{ __html: this.state.videoContent6.content }}  />
+                        </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                        <div class="video-box" id={this.state.videoContent6.title}>
+                        <iframe title="vimeo-player" src={this.state.videoContent6.title} width="100%" height="360" frameborder="0" allow="autoplay; fullscreen"  webkitallowfullscreen="true"  mozallowfullscreen="true" allowfullscreen="true"></iframe>
+                       </div>
+                        </div>
+                        </div>
+                    </div>
+                    </section>        
 	
 
                 </div>

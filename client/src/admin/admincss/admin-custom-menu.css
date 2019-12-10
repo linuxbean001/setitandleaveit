@@ -3384,3 +3384,132 @@ section#main-dashboard {
   }
 }
  
+.menuhead {
+  padding: 9px;
+  text-align: center;
+  color: honeydew;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.dropicon {
+  float: right;
+}
+.admin-mainmenu li:hover .adminsubmenu {
+  display: block;
+  max-height: 500px;
+}
+
+.admin-mainmenu .adminsubmenu li:hover .adminsubmenu-menu {
+  display: block;
+  max-height: 500px;
+}
+
+.adminsubmenu {
+   overflow: hidden;
+   max-height: 0;
+  -webkit-transition: all 0.5s ease-out;
+}
+.adminsubmenu-menu {
+  overflow: hidden;
+  max-height: 0;
+ -webkit-transition: all 0.5s ease-out;
+}
+
+ul.adminsubmenu li a {
+  padding: 6px 20px 6px 40px;
+  font-size: 11px;
+}
+ul.adminsubmenu li {
+  background: linear-gradient(#474648, #37353a);
+}
+.subaj_fa {
+  position: absolute;
+  left: 20px;
+  top: 6px;
+  font-size: 14px;
+}
+
+
+section#main-dashboard .panel-heading {
+  padding: 10px;
+  background: #222222;
+}
+section#main-dashboard .panel-heading .panel-title {
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: #fff;
+}
+section#main-dashboard .panel-body {
+  padding: 20px 10px;
+  background: #fff;
+}
+section#main-dashboard .panel.panel-default {
+  border: 1px solid #222222;
+}
+section#main-dashboard .panel-body form label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.modal-body label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 0.3rem;
+}
+
+.modal-header{ background: #272727; }
+.modal-header div#contained-modal-title {
+  color: #fff;
+  font-size: 17px;
+  text-transform: uppercase;
+}
+
+.imgOver img{
+margin-left: auto;
+margin-right: auto;
+display: block;
+padding: 8px;
+}
+
+a span {
+  color: #007bff;
+}
+.demo-editor.rdw-editor-main {
+  height: 250px;
+}
+.userlistsection tbody tr td:nth-child(4) {
+  width: 110px;
+}
+.userlistsection tbody tr td button.btn.btn-sm {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.answerContent {
+  font-size: 13px;
+  color: red;
+  margin-bottom: 0px;
+  margin-top: -9px;
+  font-weight: 400;
+}
+#profileDashboardprint label {
+  font-size: 12px;
+  margin-bottom: 15px;
+  color: #000;
+  font-weight: 600;
+}
+
+#profileDashboardprint h4{
+  text-align: center;
+  width: 100%;
+}
+span.bline {
+  border: 0.5px solid #ccccccb3;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}

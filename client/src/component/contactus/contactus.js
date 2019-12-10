@@ -6,6 +6,7 @@ const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 class Contactus extends Component{
     constructor(props){
         super(props);
+        this.props.onHeaderHover(true);
         this.state ={
             isHide:false,
             fields: [],        
@@ -15,6 +16,10 @@ class Contactus extends Component{
         this.ContactusMe = this.ContactusMe.bind(this);
         this.resetForm = this.resetForm.bind(this);
     }
+    
+componentDidMount(){
+    window.scrollTo(0, 0);
+}
 
 resetForm(){
     this.setState({ fields:[] });  
@@ -133,8 +138,7 @@ render(){
                                 <div class="col-md-6">
                                     <div class="contact-form-box">
                                         <form >
-                                        { this.state.showAlert	? (<div style={{background:this.state.color}} className="IdmessageContact">{this.state.message}</div>) : '' }
-                                        
+                                       
                                             <div class="form-group">
                                                 <label> Tell us what you’re up to <span> (message) </span> </label>
                                                 <textarea className={this.state.errors["message"] ? this.state.errors["message"] : 'form-control'} onChange={this.contactushandleChange.bind(this, "message")} rows="4" cols="50" placeholder="Message">{this.state.fields["message"] ? this.state.fields["message"] :'' }</textarea>
@@ -160,8 +164,10 @@ render(){
                                              <div class="submit-btn">
                                                 <button onClick={this.ContactusMe} type="button" class="btn"> Go </button>
                                             </div>
-
+                                             
                                         </form>
+                                        { this.state.showAlert	? (<div style={{background:this.state.color}} className="IdmessageContact">{this.state.message}</div>) : '' }
+                                        
                                     </div>
                                 </div>
 
@@ -170,8 +176,8 @@ render(){
                                         <h3> CONTACT DETAILS </h3>
                                         <div class="c-detail">
                                             <p> Phone: <span> 1-866-900-5050 </span> </p>
-                                            <p> Email: <span> info@SetItandLeaveIt.com </span> </p>
-                                            <p> Internet: <span> www.SetItandLeaveIt.com </span> </p>
+                                            <p> Email: <span> <a href="mailto: info@setitandleaveit.com">info@setitandleaveit.com</a>  </span> </p>
+                                           
                                         </div>
                                     </div>
                                 </div>

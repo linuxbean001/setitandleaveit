@@ -1,7 +1,7 @@
 const http = require('http');
 const mongoose = require('mongoose');
 const config = require('./config');
-const port =3300;
+const port = 3300;
 const app = require('./app');
 
 mongoose.connect(config.url, { useNewUrlParser: true })
@@ -11,7 +11,7 @@ mongoose.connect(config.url, { useNewUrlParser: true })
 }).catch( err =>{
     console.log('error', err);
     process.exit();
-})
+});
 
 
 const server =http.createServer(app);

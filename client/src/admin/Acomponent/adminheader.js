@@ -31,9 +31,7 @@ class adminHeader extends Component{
         <div class="wsmenucontainer clearfix">
             <div id="overlapblackbg"></div>
             <div class="wsmobileheader clearfix">
-                <a id="wsnavtoggle" class="animated-arrow"><span></span></a>
                 <div class="smallogo"><a href="/admin"><img src={logo} alt=""/></a></div>
-                <a class="callusicon" href="#"><span class="fa fa-user-o"></span></a>
             </div>
 
             <div class="headerfull navigation" id="">

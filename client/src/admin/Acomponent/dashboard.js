@@ -59,7 +59,9 @@ class Dashboard extends Component{
         <div class="col-md-12">
             <div class="dashboard-icon-boxes-main">
                 <div className="row">
-                <div class="col-md-3 col-sm-6">
+
+                   
+              {/*   <div class="col-md-3 col-sm-6">
                     <div class="dashboard-icon-boxes">
                         <div class="d_inner">
                         <i class="fa fa-user" aria-hidden="true"></i>
@@ -93,7 +95,7 @@ class Dashboard extends Component{
                         <h3 class="num">6</h3>
                         <p>Doler</p></div>
                     </div>
-                </div>
+                </div> */}
                 </div>
             </div>
         </div>

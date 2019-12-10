@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 const regSchema = new Schema({
     name:String,
     email: String,
-    username: String,
     password: String,
     investor:String,
     financial:String,
@@ -13,6 +12,9 @@ const regSchema = new Schema({
     datetime:String,
     tool_enabled:Boolean,
     number_of_signins:Number,
-    last_uses_date:String
+    last_uses_date:String,
+    presetemail:String,
+    presetlink:String,
+    signup_status:Boolean
 });
 module.exports = mongoose.model('Register', regSchema);  

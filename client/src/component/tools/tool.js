@@ -1,28 +1,30 @@
 import React, { Component } from 'react';
 import NumberFormat from 'react-number-format';
+import { Link, withRouter, BrowserRouter as Router } from 'react-router-dom'
 import CanvasJSReact from './assets/js/canvasjs.react';
+import { Button,Alert,Modal } from 'react-bootstrap';
 import { tsConstructSignatureDeclaration } from '@babel/types';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import axios from 'axios';
-import PrintButton from './PrintButton';
+import logo from '../../assets/img/logo1.png';
+import watermark from '../../assets/img/watermark.png'
 import UserService from '../../reactservice/UserService';
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import AlertModalBox from "./alertModalBox";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 const API = new UserService();
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 class Tool extends Component{
+
     constructor(props){
-        let userData=API.getProfile().data;           
-        console.log('userData: ',userData);
-        
+    
         super(props);
+        this.props.onHeaderHover(false);
         this.state={
-            _id:userData._id,
-            name:userData.name,
             fields:{},
             errors:{},
             liquid_assets:'',
@@ -56,6 +58,12 @@ class Tool extends Component{
             perYearReturn:'',
             totalYearReturn:'',
             totalAnnuityError : false,
+            show: false,
+            pdfmsgshow:false,
+            pdfMsg:false,
+            email:'',
+            toolenable:'',
+            pdfName:'',
             errors:{}
         }
         this.mockupToolsFun = this.mockupToolsFun.bind(this);
@@ -64,6 +72,98 @@ class Tool extends Component{
         this.stockPortfolioBarGraph = this.stockPortfolioBarGraph.bind(this);
         this.AllbudgetGraph = this.AllbudgetGraph.bind(this);
         this.EquityallocationGraph = this.EquityallocationGraph.bind(this);
+        this.handleHide = this.handleHide.bind(this);
+        this.priviewReport = this.priviewReport.bind(this);
+
+        console.log('props:',props.onHeaderHover)
+    }
+
+
+    handleHide() {
+        this.setState({ show: false, pdfmsgshow:false });
+      }
+    
+    priviewReport(){
+            this.setState({
+                show: true
+            });
+    }
+
+    pdfPrintsuccess=()=>{  
+        let userData=API.getProfile().data;
+        var date = (new Date()).toISOString().split('T')[0];
+        html2canvas(document.querySelector('#tools_pdf')).then(canvas => {  
+          var dataURL = canvas.toDataURL();
+          var pdf = new jsPDF({compress: true});
+          //pdf.addImage(dataURL, 'PNG',  5, -190, 200, 500);
+          //var pdf = new jsPDF("p", "mm", "a4");
+
+            var width = pdf.internal.pageSize.getWidth();
+            var height = pdf.internal.pageSize.getHeight();
+
+            //console.log('width:',width);
+           // console.log('height',height);
+
+          pdf.addImage(dataURL, 'PNG', 5,-140, width, 500);
+          pdf.save(userData.name+'-'+date+".pdf");
+        });   
+        const generatePDF ={
+          "id":userData._id,
+          "name":userData.name            
+        }
+        API.generatePDFActivityLog(generatePDF)
+          .then((result) => {
+              if(result.data.success){
+                  // console.log('xxx res:', result );
+                  //this.resetForm();
+                  this.setState({
+                      showAlert:true,
+                      color:'green',
+                      message: result.data.message
+                  });
+              }else{
+                  // console.log('xxx errocode:', result );
+                  this.setState({
+                      showAlert:true,
+                      color:'#b31313d6',
+                      message: result.data.message
+                  });
+      
+              } 
+          }).catch(err => {
+              // console.log('xxx new:', err);
+          }) 
+          
+          this.setState({ 
+            pdfMsg: true,  
+            show: false,
+            pdfmsgshow:true,
+            pdfName:userData.name+'-'+date+".pdf" 
+        });
+    }
+
+
+    componentDidMount(){
+
+        window.scrollTo(0, 0);
+        if(API.loggedIn()){
+          
+            let userData=API.getProfile().data;           
+            console.log('userData: ',userData);
+            this.setState({
+                modalShow:false,
+                setModalShow:false,
+                _id:userData._id,
+                name:userData.name,
+                email:userData.email,
+                toolenable:userData.tool_enabled 
+            })
+        }else{
+            this.setState({
+                modalShow:true,
+                setModalShow:true
+            })
+        }
     }
    
     validationCheck(){
@@ -279,8 +379,11 @@ class Tool extends Component{
     }
 
     mockupToolsFun(e){
+
         e.preventDefault();
-     if(this.validationCheck()){ 
+     if(this.validationCheck()){        
+        var elmnt = document.getElementById("reportSectionIdss");
+         elmnt.scrollIntoView({behavior:"smooth"});
        let initial_required_yield =0;
        let liquid_assets = this.state.fields.liquid_assets.replace(/,/g,"");
        let req_budget = this.state.fields.budget.replace(/,/g,"");
@@ -307,7 +410,8 @@ class Tool extends Component{
        const cashGraphDataPoint = [], stockPortfolioGraphDataPoint = [], stockPortfolioLineGraphDataPoint = [], EquityAllocationGraphDataPoint=[], FromstockEquity=[], InfuCashEquity=[];
        const AnnuityGraphDataPoint =[], SS_pensionGraphDataPoint =[], AreaGraphhighlightArray = [],ReqBudget_Max=[], DividendGraphDataPoint=[], infusionGraphDataPoint=[],req_budgetGraphDataPoint=[];
 
-
+         
+       console.log('First Annuity: ('+actualannuity+'*('+parseFloat(annuity_payout)+'/100))');
        
       if(req_budget && liquid_assets && social_security && pension){
         initial_required_yield = ((parseInt(req_budget)-parseInt(social_security)-parseInt(pension))/parseInt(liquid_assets))*(100);
@@ -343,11 +447,15 @@ class Tool extends Component{
 
     let req_budget_point=0,org_RHS_point=0,social_security_ponit=0,pension_point=0,Actual_dividend_point=0,infu_cash_point=0,stockPortfolio_point=0,untappedStock_point=0;
     infu_cash=actualcash;
+    console.log('ActualCash:',actualcash)
+    console.log('infu_cash:',infu_cash)
             for(i=1;i<=parseInt(time_horizon);i++){
-       
+                console.log('=========='+i+'==========');
                 /*--- SS+Pension ---*/
                 SS_pension = (parseInt(social_security)+parseInt(pension));
                 SS_pensionGraphDataPoint.push({x:i,y:SS_pension});
+
+                console.log('SS_pension:',SS_pension)
 
                 /*--- Residual ---*/
                 residual = (parseInt(req_budget)-parseInt(SS_pension));
@@ -359,14 +467,17 @@ class Tool extends Component{
                  }else{
                     Actual_Annuity = 0; 
                  }
+                 console.log('Actual_Annuity:',Actual_Annuity);
                  AnnuityGraphDataPoint.push({x:i,y:Actual_Annuity});
                 
         
                 /*--- Cash Needed ---*/  
                 cash_needed = (req_budget-SS_pension)-(Actual_dividend+Actual_Annuity);
-                
+                console.log('cash_neededCal:('+req_budget+'-'+SS_pension+')-('+Actual_dividend+'+'+Actual_Annuity+')');
+                console.log('cash_needed:',cash_needed);
 
                 /*--- Req Budget ---*/
+                console.log('req_budget:',req_budget)  
                 req_budgetGraphDataPoint.push({x:i,y:parseFloat(req_budget)});
                 ReqBudget_Max.push(req_budget);
                 if(i==1){
@@ -377,9 +488,10 @@ class Tool extends Component{
                  inflation_budget = (parseFloat(req_budget_point)*(1+parseFloat(est_inflation)/100));
                  req_budget_point = inflation_budget;
                  req_budget = Math.round(req_budget_point);
-                  
+                
      
                 /*--- Social Security ---*/
+                console.log('social_security:',social_security)  
                 if(i==1){
                     social_security_ponit = social_security;
                  }else{
@@ -388,9 +500,10 @@ class Tool extends Component{
                  inf_socialSecurity = parseFloat(social_security_ponit)*(1+parseFloat(social_security_colas)/100);
                  social_security_ponit = inf_socialSecurity;
                  social_security = Math.round(social_security_ponit);
-        
+                
                 /*--- Pension ---*/
 
+                console.log('pension:',pension) 
                 if(i==1){
                     pension_point = pension;
                  }else{
@@ -414,15 +527,19 @@ class Tool extends Component{
  
                 if(i==1){
                     infu_cash_point = infu_cash;
+                    console.log('cashttttIF1:',infu_cash_point)
                  }else{
                     infu_cash_point =  infu_cash_point;
+                    console.log('cashttttelse1:',infu_cash_point)
                  }
 
                  if(i == 1){
                        if(cash_needed < 0){
+                           console.log('cashCalif1:('+infu_cash_point+'*(1+('+parseInt(interest_rate)+'/100))-('+cash_needed+'))')
                            infu_cash_point = (infu_cash_point*(1+(parseInt(interest_rate)/100))-(cash_needed));
                            infu_cash = Math.round(infu_cash_point);
                        }else{
+                           console.log('cashCalelse1:(('+infu_cash_point+')-('+cash_needed+'))*(1+('+parseInt(interest_rate)+'/100))')
                            infu_cash_point = ((infu_cash_point)-(cash_needed))*(1+(parseInt(interest_rate)/100));
                            infu_cash = Math.round(infu_cash_point);
                        }
@@ -430,9 +547,11 @@ class Tool extends Component{
                     if(((infu_cash)-(cash_needed)) >0 ){
                        if(cash_needed < 0){ 
                           infu_cash_point = (infu_cash_point*(1+(parseInt(interest_rate)/100))-(cash_needed));
+                          console.log('cashCalif:('+infu_cash_point+'*(1+('+parseInt(interest_rate)+'/100))-('+cash_needed+'))')
                           infu_cash = Math.round(infu_cash_point);
                        }else{
-                          infu_cash_point = ((infu_cash_point)-(cash_needed))*(1+(parseInt(interest_rate)/100));  
+                          infu_cash_point = ((infu_cash_point)-(cash_needed))*(1+(parseInt(interest_rate)/100)); 
+                          console.log('cashCalelse1:(('+infu_cash_point+')-('+cash_needed+'))*(1+('+parseInt(interest_rate)+'/100))') 
                           infu_cash = Math.round(infu_cash_point); 
                        }
                     }else{
@@ -443,27 +562,36 @@ class Tool extends Component{
                  InfuCashArray.push(infu_cash);
                  cashGraphDataPoint.push({x:i,y:infu_cash});
                  totalYearCash += infu_cash;
+               
+                 console.log('cash:',infu_cash);
 
             /*--- From Stock ---*/ 
                 
                 if(infu_cash == 0){
+                    console.log('fromStockCal: (('+cash_needed+')-('+InfuCashArray[i-2]+'))')
                     fromStock = ((cash_needed)-(InfuCashArray[i-2]));
                 }else{
                     fromStock = 0;
                 }
+                console.log('fromStock:',fromStock);
         
             /*--- Stock Portfolio ---*/
         
                 if(i == 1){
                     stockPortfolio = actualstock;
                     stockPortfolio_point = stockPortfolio;
+                   
                 }else{
+                    console.log('((('+i+':'+stockPortfolio_point+')-('+fromStock+'))*(1+('+parseFloat(div_capGrowth)+'/100)))');
                     stockPortfolio_point = (((stockPortfolio_point)-(fromStock))*(1+(parseFloat(div_capGrowth)/100)));
                     stockPortfolio = Math.round(stockPortfolio_point);
                 }
                 EquitystockPortfolio = stockPortfolio;
                 stockPortfolioGraphDataPoint.push({x:i,y:stockPortfolio});
                 totalYearStock += stockPortfolio;
+
+                console.log('stockPortfolio:',stockPortfolio);
+                console.log('stockPortfolioGraphDataPoint:',stockPortfolioGraphDataPoint);
         
             /*--- Untapped Stock ---*/
                 if(i == 1){
@@ -525,20 +653,28 @@ class Tool extends Component{
                     };
                 
                 
+
+                console.log('ReqBudget_Max:',ReqBudget_Max);
+
                 for(let k=1; k<=parseInt(time_horizon); k++){
+                    console.log('actualcash:',actualcash);
+                    console.log('InfuCashArray:',InfuCashArray);
                     let maxCash ='',roundto='';
                     let number = parseInt(50000);
                     let offSetMax = ReqBudget_Max.max();
-                    if(parseInt(InfuCashArray[k-1]) < parseInt(actualcash)){
+                    //if(parseInt(InfuCashArray[k-1]) < parseInt(actualcash)){
+                    if(parseInt(InfuCashArray[k-1]) == 0){
                             maxCash  = (parseInt(50000)+parseInt(offSetMax));
-                            roundto = (parseInt(number)*Math.round(parseInt(maxCash)/parseInt(number)));
+                            console.log('maxCash:',maxCash);
+                            roundto = (parseInt(number)*(Math.round(parseInt(maxCash)/parseInt(number))));
                             AreaGraphhighlightArray.push({x:k, y:roundto});
                     }else{
                             roundto = 0;
                     }
                 }
+        
+                console.log('AreaGraphhighlightArray:',AreaGraphhighlightArray);
 
-              
     // EQUITY ALLOCATION
   
     stockXvalue1 = parseInt(5);
@@ -572,13 +708,16 @@ class Tool extends Component{
         infu_cash_point1=0;
         org_RHS1=0;
        
-
+        let actualstockold1 = actualstock1;
         if(stockXvalue1 <= 100){
-            
+            console.log('============='+stockXvalue1+'================');
             inf_dividend1 = parseFloat(Actual_dividend11)*(parseFloat(div_capGrowth1)/100);
             if(stockXvalue1 != parseInt(this.state.fields.stock)){
+                console.log('actualstock1Cal:(('+parseInt(liquid_assets)+'*'+parseFloat(stockXvalue1)+')/100)')
                 actualstock1 = ((parseInt(liquid_assets)*parseFloat(stockXvalue1))/100);  
+                
             }
+            console.log('actualstock1:',actualstock1)
   
           for(i=1;i<=parseInt(time_horizon1);i++){
 
@@ -690,17 +829,20 @@ class Tool extends Component{
             }
            
             /*--- Stock Portfolio ---*/
-    
+          
             if(i == 1){
                 stockPortfolio1 = actualstock1;
                 stockPortfolio_point1 = stockPortfolio1;
             }else{
+                console.log('stockPorCal:((('+i+':'+stockPortfolio_point1+')-('+fromStock1+'))*(1+('+parseFloat(div_capGrowth1)+'/100)))');
                 stockPortfolio_point1 = (((stockPortfolio_point1)-(fromStock1))*(1+(parseFloat(div_capGrowth1)/100)));
                 stockPortfolio1 = Math.round(stockPortfolio_point1);
             }
             EquitystockPortfolio1 = stockPortfolio1;
             stockPortfolioGraphDataPoint1.push({x:i,y:stockPortfolio1});
+            console.log('stockPortfolio1:',stockPortfolio1);
             totalYearStock1 += stockPortfolio1;
+            console.log('totalYearStock1:',totalYearStock1);
 
     
             /*--- Untapped Stock ---*/
@@ -740,14 +882,17 @@ class Tool extends Component{
                     neturalYear = i;
                 }
           }
+          console.log('TotalLagecy:',parseInt(stockPortfolio1) +'+'+ parseInt(infu_cash1));
           totalCashYear1 = parseInt(stockPortfolio1) + parseInt(infu_cash1);
           EquityAllocationGraphDataPoint.push({x:stockXvalue1,y:totalCashYear1});
           EquityAllocationNaturalYearIncome.push({x:stockXvalue1,y:neturalYear});
           stockXvalue1 = parseInt(stockXvalue1) +  parseInt(5);
+          actualstock1=actualstockold1;
         }
       }
      }
-
+console.log('EquityAllocationGraphDataPoint:',EquityAllocationGraphDataPoint)
+console.log('EquityAllocationNaturalYearIncome:',EquityAllocationNaturalYearIncome)
       this.setState({ 
           reportSection:true,
           liquid_assets : liquid_assets,
@@ -765,9 +910,11 @@ class Tool extends Component{
           EquitystockPortfoliocapital:EquitystockPortfolio,
           EquityCashcapital:EquityCash,
           perYearReturn:Rate,
-          totalYearReturn:totalRate         
+          totalYearReturn:totalRate
+            
       });
 
+     
       const toolsInputs ={
           "id":this.state._id,
           "name":this.state.name,
@@ -787,14 +934,14 @@ class Tool extends Component{
             "stock":this.state.fields["stock"],
             "total_annutiy_auto":this.state.totalAnnutiyAuto          
       }
-
+      console.log('toolsInputs:',toolsInputs);
       API.toolsInputsActivityLog(toolsInputs)
         .then((result) => {
             if(result.data.success){
                 // console.log('xxx res:', result );
                 //this.resetForm();
                 this.setState({
-                    showAlert:true,
+                    showAlert:true,    
                     color:'green',
                     message: result.data.message
                 });
@@ -812,11 +959,34 @@ class Tool extends Component{
         }) 
 
 
+   console.log('Large:',Math.max.apply(Math, EquityAllocationNaturalYearIncome.map(function(o) { return o.y; })));
+     let yearMaxLimit = Math.max.apply(Math, EquityAllocationNaturalYearIncome.map(function(o) { return o.y; }));
+      let yearInterval=0;
+
+     if(yearMaxLimit >=40){
+        yearMaxLimit=50;
+        yearInterval=5; 
+     }else if(yearMaxLimit >= 30){
+        yearMaxLimit=50;
+        yearInterval=5; 
+     }else if(yearMaxLimit >= 20){
+        yearMaxLimit=30;
+        yearInterval=3; 
+
+     }else if(yearMaxLimit >= 10){
+        yearMaxLimit=20;
+        yearInterval=2; 
+     }else{
+        yearMaxLimit=50;
+        yearInterval=5; 
+     }
+
+
      this.pieGraph(actualcash,actualstock,actualannuity);
      this.cashBarGraph(cashGraphDataPoint);
      this.stockPortfolioBarGraph(stockPortfolioGraphDataPoint,stockPortfolioLineGraphDataPoint);
      this.AllbudgetGraph(AreaGraphhighlightArray,AnnuityGraphDataPoint, SS_pensionGraphDataPoint, DividendGraphDataPoint, infusionGraphDataPoint,req_budgetGraphDataPoint); 
-     this.EquityallocationGraph(EquityAllocationGraphDataPoint,EquityAllocationNaturalYearIncome);
+     this.EquityallocationGraph(EquityAllocationGraphDataPoint,EquityAllocationNaturalYearIncome,yearMaxLimit,yearInterval);
      }
     }
 
@@ -865,7 +1035,7 @@ class Tool extends Component{
                 indexLabel: "${y}",
                 radius: "70%",
                 dataPoints: [
-                    { y: actualannuity, label: "Annuity", color: "#F79646"  },
+                    { y: actualannuity, label: "Fixed income", color: "#F79646"  },
                     { y: actualstock, label: "Stock", color: "#0070C0"  },
                     { y: actualcash, label: "Cash", color: "#00B050"  }
                 ]
@@ -883,6 +1053,7 @@ class Tool extends Component{
 				text: ""
             },
             axisX:{
+                title: "Years",
                 interval: 6,
                 labelFontSize: 12
              },
@@ -915,6 +1086,7 @@ class Tool extends Component{
 				text: ""
             },
             axisX:{
+                title: "Years",
                 interval: 6,
                 labelFontSize: 12
              },
@@ -979,6 +1151,7 @@ class Tool extends Component{
 				//interval: 100000
 			},
 			axisX:{
+               title: "Years",
 			   interval: 6,
 			   includeZero: false,
 			},
@@ -1006,7 +1179,7 @@ class Tool extends Component{
             },
             {
 				type: "stackedColumn",
-                name: "Annuity",
+                name: "Fixed income",
                 color:"#F79646",
 				showInLegend: true,
                 dataPoints: AnnuityGraphDataPoint
@@ -1048,7 +1221,7 @@ class Tool extends Component{
 
     }
 
-    EquityallocationGraph(EquityAllocationGraphDataPoint,EquityAllocationNaturalYearIncome){
+    EquityallocationGraph(EquityAllocationGraphDataPoint,EquityAllocationNaturalYearIncome,yearMaxLimit,yearInterval){
         const EquityAllocationGraphoptions = {
 			title: {
 				text: ""
@@ -1056,7 +1229,9 @@ class Tool extends Component{
             axisX:{
                 interval: 5,
                 suffix: "%",
-                labelFontSize: 12
+                labelFontSize: 12,
+                title: "Initial stock allocation",
+                titleFontSize: 12
              },
              axisY: {
                 prefix: "$",
@@ -1067,8 +1242,8 @@ class Tool extends Component{
 				lineColor: "#51CDA0",
                 tickColor: "#51CDA0",
                 includeZero: true,
-                maximum: 45,
-                interval: 5
+                maximum:yearMaxLimit,
+                interval: yearInterval
             },
             dataPointWidth: 8, 
             data: [
@@ -1102,162 +1277,22 @@ class Tool extends Component{
     }
 
 
-    generatePdf = () => {
-        var documentDefinition = {
-            content: 
-            [
-                {
-                    div:{
-                        table:{
-                            headerRows: 1,
-                            widths: [ '*', '*', '*' ],
-                            body: [
-                                [
-                                    { text: 'Header 1', style: 'tableHeader' }, 
-                                    { text: 'Header 2', style: 'tableHeader' }, 
-                                    { text: 'Header 3', style: 'tableHeader' }
-                                ],
-                                [
-                                    { text: 'Hello' }, 
-                                    { text: 'I' }, 
-                                    { text: 'am' }
-                                ],
-                                [
-                                    { text: 'a' }, 
-                                    { text: 'table' }, 
-                                    { text: '.' }
-                                ]
-                            ]   
-                        }
-                    }
-                },
-                {
-                    text:"This SET IT AND LEAVE IT report was prepared for JOHN C. DOE.", style:'header'
-                },
-                {
-                    text:"All illustrations are based on user inputs. Please read the DISCLAIMER at the end of this report.", style:'sub_header'
-                },
-                {
-                    table: 
-                    {
-                        headerRows: 1,
-                        widths: [ '*', '*', '*' ],
-                        body: [
-                            [
-                                { text: 'Header 1', style: 'tableHeader' }, 
-                                { text: 'Header 2', style: 'tableHeader' }, 
-                                { text: 'Header 3', style: 'tableHeader' }
-                            ],
-                            [
-                                { text: 'Hello' }, 
-                                { text: 'I' }, 
-                                { text: 'am' }
-                            ],
-                            [
-                                { text: 'a' }, 
-                                { text: 'table' }, 
-                                { text: '.' }
-                            ]
-                        ]   
-                    },
-                    style:'table1'
-                },
-                {
-                    table: 
-                    {
-                        headerRows: 1,
-                        widths: [ '*', '*', '*' ],
-                        body: [
-                            [
-                                { text: 'Header 1', style: 'tableHeader' }, 
-                                { text: 'Header 2', style: 'tableHeader' }, 
-                                { text: 'Header 3', style: 'tableHeader' }
-                            ],
-                            [
-                                { text: 'Hello' }, 
-                                { text: 'I' }, 
-                                { text: 'am' }
-                            ],
-                            [
-                                { text: 'a' }, 
-                                { text: 'table' }, 
-                                { text: '.' }
-                            ]
-                        ]   
-                    },
-                    style:'table2'
-                },
-                {
-                    table: 
-                    {
-                        headerRows: 1,
-                        widths: [ '*', '*', '*' ],
-                        body: [
-                            [
-                                { text: 'Header 1', style: 'tableHeader' }, 
-                                { text: 'Header 2', style: 'tableHeader' }, 
-                                { text: 'Header 3', style: 'tableHeader' }
-                            ],
-                            [
-                                { text: 'Hello' }, 
-                                { text: 'I' }, 
-                                { text: 'am' }
-                            ],
-                            [
-                                { text: 'a' }, 
-                                { text: 'table' }, 
-                                { text: '.' }
-                            ]
-                        ]   
-                    },
-                    style:'table3'
-                }
-            ],
-            styles: 
-            {
-                header:{
-                    fontSize: 16,
-                    bold: true,
-                    margin: [0, 10, 0, 10],
-                    alignment: 'center'
-                },
-                sub_header:{
-                    fontSize: 14,
-                    alignment: 'center',
-                    margin: [0, 0, 0, 20],
-                    color:'#ff0000'
-                },
-                tableHeader:{
-                    fillColor: '#4CAF50',
-                    color: 'white'
-                }                
-            }
-        };
-        
-        pdfMake.createPdf(documentDefinition).download('testdoc.pdf');
-      }
-
-
-      
-
-    generateImage = () =>{
-        console.log(document.querySelector(".report-section"));
-        html2canvas(document.body.querySelector(".report-section")).then(canvas => {  
-            var dataURL = canvas.toDataURL();
-            var pdf = new jsPDF();
-            pdf.addImage(dataURL, 'JPEG', 20, 20, 170, 120); //addImage(image, format, x-coordinate, y-coordinate, width, height)
-            pdf.save("Charts.pdf");
-          });     
-    }
  
 render(){
+   
             return(
                 <div className="tool-section">
+
+                        <AlertModalBox
+                            show={this.state.modalShow}
+                            // onHide={() => this.setModalShow(true)}
+                        />                        
+
                         <section id="inner-page-banner">
                             <div className="container-fluid">
                                 <div className="row">
                                     <div className="inner-page-banner-heading hdng">
-                                        <h2> SET IT <span> AND </span> LEAVE IT TOOL. </h2>
+                                        <h2> RETIREMENT INCOME TOOL </h2>
                                     </div>
                                 </div>
                             </div>
@@ -1268,21 +1303,32 @@ render(){
                             <div className="row">
                                 <div className="col-md-12">
                                     <div className="disclimer">
-                                        <p> <i className="fa fa-times" aria-hidden="true"></i> DISCLAIMER: This tool is for illustration purposes only. It does not constitute investment advice and makes no recommendations. Please refer to the <a href="#"> terms and conditions </a> for more information. </p>
+                                        <p> <i className="fa fa-times" aria-hidden="true"></i> DISCLAIMER: This tool is for illustration purposes only. It does not constitute investment advice and makes no recommendations. Please refer to the <Link target="_blank" to={'/front/tnc'}> terms and conditions </Link> for more information. </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <div className="container">
+                            <img src='' id='img_id'/>
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <div className="helpfulLink">
+                                        <p style={{textAlign:'right', fontSize:'16px'}}><strong style={{color:'#7030A0'}}>HELPFUL LINKS:</strong> <a href="/front/videos#video6">VIDEO TUTORIAL</a> | <Link to={'/front/usermanual'}>HELP MANUAL</Link> | <Link to={"/front/faq"}>FAQ</Link> | <Link to={"/front/contact"}>CONTACT</Link> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {this.state.toolenable == true ? (
                         <section>
                         <div className="container">
                             <div className="row">
-                                <div className="col-lg-5 col-md-5 col-sm-6">
+                                <div className="col-lg-5 col-md-5 col-sm-6 col-xs-12">
                                     <div className="tol-box-inner">
-                                        <h4> USER INPUT </h4>
+                                        <h4> USER INPUTS </h4>
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-5 head-text">LIQ ASSETS
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-5 head-text mb-res">LIQ ASSETS
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
                                                         <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Liquid assets: The dollar value of liquid assets that can be readily invested in stocks, bonds, or other investments. </span> </i>
                                                     </span>
@@ -1291,7 +1337,7 @@ render(){
 
                                                 
 
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 input-file">
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 input-file mb-res">
                                                     $
                                                     {/* <input type="text" className="form-control-custom big-input" placeholder="1,000,000"/> */}
                                                     <NumberFormat className={this.state.errors["liquid_assets"] ? this.state.errors["liquid_assets"] : 'form-control-custom big-input'}  thousandSeparator={true} value={this.state.fields["liquid_assets"]} onChange={this.handleChange.bind(this, "liquid_assets")} placeholder="1,000,000" name="liquid_assets" />
@@ -1301,24 +1347,24 @@ render(){
                                         
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-5 head-text">BUDGET
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-5 head-text mb-res">BUDGET
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
-                                                        <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Spending budget: The estimated dollar amount of annual spending.</span>  </i>
+                                                        <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Spending budget: Your estimate of current annual spending (in dollars).</span>  </i>
                                                     </span>
                                                 </div>
 
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 input-file">
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 input-file mb-res">
                                                     $
                                                     {/* <input type="text" className="form-control-custom big-input" placeholder="100,000"/> */}
                                                     <NumberFormat className={this.state.errors["budget"] ? this.state.errors["budget"] : 'form-control-custom big-input'} thousandSeparator={true}  value={this.state.fields["budget"]} onChange={this.handleChange.bind(this, "budget")} placeholder="100,000" name="budget" />  
                                                 </div>
 
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-3 input-file">
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-3 input-file mb-res">
                                                     <div className="form-group">
                                                         <label htmlFor="email" className="cols-sm-2 control-label">
-                                                            INFL.
+                                                            INFL
                                                             <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
-                                                                <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Inflation: The estimated increase in the costs of goods and services (measured in percent).</span> </i>
+                                                                <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Inflation: An estimate for the annual rate of price increases for the goods and services you will purchase in retirement (measured in percent).</span> </i>
                                                             </span>
                                                         </label>
                                                         {/* <input type="text" className="form-control-custom" placeholder="3"/> % */}
@@ -1330,24 +1376,24 @@ render(){
                                         
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-5 head-text">SOCIAL SEC
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-5 head-text mb-res">SOCIAL SEC
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
                                                         <i className="fa fa-question-circle tooltip" aria-hidden="true">  <span className="tooltiptext">Social security: A guaranteed source of life-time income provided by the U.S. government.</span> </i>
                                                     </span>
                                                 </div>
 
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 input-file">
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 input-file mb-res">
                                                     $
                                                     {/* <input type="text" className="form-control-custom big-input" placeholder="35,000"/> */}
                                                     <NumberFormat className={this.state.errors["social_security"] ? this.state.errors["social_security"] : 'form-control-custom big-input'} thousandSeparator={true}  value={this.state.fields["social_security"]} onChange={this.handleChange.bind(this, "social_security")} placeholder="35,000" name="social_security" />
                                                 </div>
 
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-3 input-file">
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-3 input-file mb-res">
                                                     <div className="form-group">
                                                         <label htmlFor="email" className="cols-sm-2 control-label">
-                                                            COLA.
+                                                            COLA
                                                             <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
-                                                                <i className="fa fa-question-circle tooltip" aria-hidden="true">  <span className="tooltiptext">COLA: Thesearethe estimated ‘cost of living adjustments’ which are applied to sources of income in order to address inflation(measured in percent).</span> </i>
+                                                                <i className="fa fa-question-circle tooltip" aria-hidden="true">  <span className="tooltiptext">COLA: These are estimated ‘cost of living adjustments’ which are applied to sources of income in order to address inflation(measured in percent).</span> </i>
                                                             </span>
                                                         </label>
                                                         
@@ -1360,19 +1406,19 @@ render(){
                                         
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-5 head-text">PENSION
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-5 head-text mb-res">PENSION
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
                                                         <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Pension: A guaranteed source of life-time income provided by an employer. </span> </i>
                                                     </span>
                                                 </div>
 
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 input-file">
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 input-file mb-res">
                                                     $
                                                     {/* <input type="text" className="form-control-custom big-input" placeholder="25,000"/> */}
                                                     <NumberFormat className={this.state.errors["pension"] ? this.state.errors["pension"] : 'form-control-custom big-input'} thousandSeparator={true}  value={this.state.fields["pension"]} onChange={this.handleChange.bind(this, "pension")} placeholder="25,000" name="pension"/>
                                                 </div>
 
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-3 input-file">
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-3 input-file mb-res">
                                                     <div className="form-group"> 
                                                         {/* <input type="text" className="form-control-custom" placeholder="2"/> % */}
                                                         <input type="text" placeholder="2" className={this.state.errors["Pension_colas"] ? this.state.errors["Pension_colas"] : 'form-control-custom'}  value={this.state.fields["Pension_colas"]} onChange={this.handleChange.bind(this, "Pension_colas")} name="Pension_colas" /> %
@@ -1384,13 +1430,13 @@ render(){
                                       
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-5 head-text">TIME
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-5 head-text mb-res">TIME
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
-                                                        <i className="fa fa-question-circle tooltip" aria-hidden="true">  <span className="tooltiptext">Time: As estimate of the maximum likely time horizon for retirement (measured in years).</span> </i>
+                                                        <i className="fa fa-question-circle tooltip" aria-hidden="true">  <span className="tooltiptext">Time: An estimate of the maximum likely time horizon for retirement (measured in years).</span> </i>
                                                     </span>
                                                 </div>
 
-                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 input-file">
+                                                <div className="col-lg-4 col-md-4 col-sm-4 col-xs-4 input-file mb-res">
                                                     &nbsp;&nbsp;
                                                     {/* <input type="text" className="form-control-custom" placeholder="30"/> Years */}
                                                     <input type="text" placeholder="30" className={this.state.errors["time_horizon"] ? this.state.errors["time_horizon"] : 'form-control-custom'}  value={this.state.fields["time_horizon"]} onChange={this.handleChange.bind(this, "time_horizon")} name="time_horizon" /> Years
@@ -1405,27 +1451,27 @@ render(){
 
 
                                 
-                                <div className="col-lg-4 col-md-4 col-sm-6">
+                                <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
                                     <div className="tol-box-inner">
                                         <h4> MARKET INPUTS </h4>
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text">DIVIDEND YIELD
+                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text mb-res">DIVIDEND YIELD
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
-                                                        <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Dividend yield: The estimated dividends to be paid over the next year divided by the current price(measured in percent).</span> </i>
+                                                        <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Dividend yield: The estimated dividends to be paid over the next year divided by the current price (measured in percent). </span> </i>
                                                     </span>
                                                 </div>
 
-                                                <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-file">
+                                                <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-file mb-res">
                                                     {/* <input type="text" className="form-control-custom" placeholder="2"/> % */}
                                                     <input type="text" placeholder="2" className={this.state.errors["dividend_yield"] ? this.state.errors["dividend_yield"] : 'form-control-custom'} value={this.state.fields["dividend_yield"]} onChange={this.handleChange.bind(this, "dividend_yield")} name="dividend_yield" /> %
                                                 </div>
 
-                                                <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-file">
+                                                <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-file mb-res">
                                                     <div className="form-group">
                                                         <label htmlFor="email" className="cols-sm-2 control-label" style={{top: '-20px', left: '0' }}>Div/cap growth
                                                             <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
-                                                                <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Dividend and capital growth rate: The estimated rate at which dividends and stock investment will grow(measured in percent).</span> </i>
+                                                                <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Dividend and capital growth rate: The estimated rate of growth for dividends and capital appreciation.</span> </i>
                                                             </span>
                                                         </label>
                                                         {/* <input type="text" className="form-control-custom" placeholder="5"/> % */}
@@ -1437,13 +1483,13 @@ render(){
                                         
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text">INTEREST RATE
+                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text mb-res">INTEREST RATE
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
                                                         <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Interest rate: This is the rate of interest assumed for all cash holdings (measured in percent).</span> </i>
                                                     </span>
                                                 </div>
 
-                                                <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-file">
+                                                <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-file mb-res">
                                                     {/* <input type="text" className="form-control-custom" placeholder="2"/> % */}
                                                     <input type="text" placeholder="2" className={this.state.errors["interest_rate"] ? this.state.errors["interest_rate"] : 'form-control-custom'} value={this.state.fields["interest_rate"]} onChange={this.handleChange.bind(this, "interest_rate")} name="interest_rate" /> %
                                                 </div>
@@ -1452,13 +1498,13 @@ render(){
                                         
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text">ANNUITY PAYOUT
+                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text mb-res">ANNUITY PAYOUT
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
-                                                        <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Annuity payout: This is the estimated annual payout of a fixed annuity divided by its upfront cost (measured in percent).</span> </i>
+                                                        <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Annuity payout: This is the estimated annual payout of a single premium immediate annuity (SPIA) divided by its upfront cost (measured in percent).</span> </i>
                                                     </span>
                                                 </div>
 
-                                                <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-file">
+                                                <div className="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-file mb-res">
                                                     {/* <input type="text" className="form-control-custom" placeholder="6"/> % */}
                                                     <input type="text" placeholder="6" className={this.state.errors["annuity_payout"] ? this.state.errors["annuity_payout"] : 'form-control-custom'} value={this.state.fields["annuity_payout"]} onChange={this.handleChange.bind(this, "annuity_payout")} name="annuity_payout" /> %
                                                 </div>
@@ -1467,18 +1513,18 @@ render(){
                                     </div>
                                 </div>
                                 
-                                <div className="col-lg-3 col-md-3 col-sm-6">
+                                <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                     <div className="tol-box-inner">
                                         <h4> ALLOCATIONS </h4>
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text">CASH
+                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text mb-res">CASH
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
-                                                        <i className="fa fa-question-circle tooltip " aria-hidden="true"> <span className="tooltiptext">Cash: This is the initial allocation to cash instruments and bonds (we assume fixed interest rate) as a percentage of the liquid assets.</span> </i>
+                                                        <i className="fa fa-question-circle tooltip " aria-hidden="true"> <span className="tooltiptext">Cash: This is the initial allocation to cash instruments and bonds (we assume a fixed interest rate) as a percentage of the liquid assets.</span> </i>
                                                     </span>
                                                 </div>
 
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 input-file">
+                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 input-file mb-res">
                                                     {/* <input type="text" className="form-control-custom" placeholder="5"/> % */}
                                                     <input type="text" placeholder="25" className={this.state.errors["cash"] ? this.state.errors["cash"] : 'form-control-custom'} value={this.state.fields["cash"]} onChange={this.handleChange.bind(this, "cash")} name="cash" /> %
                                                 </div>
@@ -1488,13 +1534,13 @@ render(){
                                         
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text">STOCK
+                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text mb-res">STOCK
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
                                                         <i className="fa fa-question-circle tooltip" aria-hidden="true"><span className="tooltiptext">Stock: This is the initial allocation to stocks as a percentage of the liquid assets.</span> </i>
                                                     </span>
                                                 </div>
 
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 input-file">
+                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 input-file mb-res">
                                                     {/* <input type="text" className="form-control-custom" placeholder="50"/> % */}
                                                     <input type="text" placeholder="50" className={this.state.errors["stock"] ? this.state.errors["stock"] : 'form-control-custom'} value={this.state.fields["stock"]} onChange={this.handleChange.bind(this, "stock")} name="stock" />%
                                                 </div>
@@ -1506,13 +1552,13 @@ render(){
                                           
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text">ANNUITY
+                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text mb-res">ANNUITY
                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top">
                                                         <i className="fa fa-question-circle tooltip" aria-hidden="true"> <span className="tooltiptext">Annuity: This is the initial allocation to a single premium immediate annuity (SPIA) as a percentage of the liquid assets.</span> </i>
                                                     </span>
                                                 </div>
                                                  
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 input-file">
+                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 input-file mb-res">
                                                     <input type="text" placeholder="25" className={this.state.errors["annuity"] ? this.state.errors["annuity"] : 'form-control-custom'} value={this.state.totalAnnutiyAuto ? this.state.totalAnnutiyAuto : ''}  onChange={this.handleChange.bind(this, "annuity")} name="annuity" /> %
                                                 </div>
                                             </div>
@@ -1520,7 +1566,7 @@ render(){
                                         
                                         <div className="box-main">
                                             <div className="row">
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text">TOTAL
+                                                <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 head-text mb-res">TOTAL
                                                 </div>
 
                                                 <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6">100%
@@ -1549,18 +1595,58 @@ render(){
                             </div>
 
                         </div>
-                    </section>
+                    </section>) : ( <section>
+                        <div className="container">
+                            <div className="row">
+                            <div className="col-lg-12 col-md-12 col-sm-12">
+                               <h5 style={{textAlign:'center'}}> You have not permission to access this tool please wait admin review.</h5>
+                            </div>
+                            </div>
+                        </div>
+                    </section>)} 
 
-                { this.state.reportSection	? (   
+ <div id="reportSectionIdss">
+               { this.state.reportSection	? (   
                                      
                     <section className="report-section" id="reportSectionId">
-                        <html><body id='tools_pdf'>
+                       <html><body  id='tools_pdf'>
                         <div className="container">
-                            <div className="report-heading" id="report-heading">
-                                <h2>This SET IT AND LEAVE IT report was prepared for JOHN C. DOE.</h2>
-                                <h4>All illustrations are based on user inputs. Please read the DISCLAIMER at the end of this report.</h4>
+                            {/* <div className="report-heading" id="report-heading">
+                            <div className="secondhead">
+                            <p className="repprthead">By registering with <em>SET IT AND LEAVE IT</em> and using this tool, you agree to abide by our <a target="_blank" href="http://localhost:3000/front/tnc">Terms & Conditions</a>.</p>
+                                 <hr />
+                                 <h1>RETIREMENT INCOME ANALYSIS</h1> 
+                            </div>
+                            </div> */}
+
+                            <img class="watermarkimg" src={watermark}/>
+
+                            <div className="report-heading Mreport-heading " id="report-heading">
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <div className="top-logo">
+                                        <img src={logo} />
+                                    </div>
+                                </div> 
+                                <div className="col-md-4">
+                                <p><strong>Prepared by:</strong> <span>SET IT AND LEAVE IT</span></p> 
+                                <p><strong>For:</strong> <span>{this.state.email}</span></p> 
+                                </div> 
+                                <div className="col-md-4 info">
+                                <p><strong>Phone:</strong>	1-866-900-5050</p>
+                                <p><strong>Email:</strong>	info@SetItandLeaveIt.com</p>
+                                <p><strong>Web:</strong>	www.SetItandLeaveIt.com</p>
+                                </div> 
+                            </div> 
+                            <div className="secondhead">
+                                <p className="repprthead">By registering with <em>SET IT AND LEAVE IT</em> and using this tool, you agree to abide by our <a target="_blank" href="http://ec2-18-221-255-18.us-east-2.compute.amazonaws.com/front/tnc">Terms & Conditions</a>.</p>
+                            <hr />
+                                <h1>RETIREMENT INCOME ANALYSIS</h1> 
+                            </div>     
                             </div>
 
+
+                          
                             <div className="row">
                                 <div className="col-md-4">
                                     <div className="report-upper-table">
@@ -1577,9 +1663,9 @@ render(){
                                                     <td> inflation </td>
                                                 </tr>
                                                 <tr>
-                                                    <td> Liquid assets </td>
-                                                    <td> <span> <NumberFormat value={this.state.fields.liquid_assets} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
-                                                    <td> <span> {this.state.fields.est_inflation}% </span> </td>
+                                                    <td style={{textAlign:'right'}}> Liquid assets </td>
+                                                    <td style={{textAlign:'center'}}> <span> <NumberFormat value={this.state.fields.liquid_assets} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
+                                                    <td style={{textAlign:'center'}}> <span> {this.state.fields.est_inflation}% </span> </td>
                                                 </tr>
                                                 <tr>
                                                     <td> </td>
@@ -1587,29 +1673,29 @@ render(){
                                                     <td> </td>
                                                 </tr>
                                                 <tr>
-                                                    <td> Estimated budget </td>
-                                                    <td> <span> <NumberFormat value={this.state.fields.budget} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
-                                                    <td> </td>
+                                                    <td style={{textAlign:'right'}}> Estimated budget </td>
+                                                    <td style={{textAlign:'center'}}> <span> <NumberFormat value={this.state.fields.budget} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
+                                                    <td style={{textAlign:'center'}}> </td>
                                                 </tr>
                                                 <tr>
-                                                    <td> Time horizon (yrs) </td>
+                                                    <td style={{textAlign:'right'}}> Time horizon (yrs) </td>
                                                     <td> <span> {this.state.fields.time_horizon} </span> </td>
                                                     <td> </td>
                                                 </tr>
                                                 <tr>
                                                     <td> </td>
                                                     <td> </td>
-                                                    <td> COLAs </td>
+                                                    <td style={{textAlign:'center'}}> COLAs </td>
                                                 </tr>
                                                 <tr>
-                                                    <td> Social security </td>
-                                                    <td> <NumberFormat value={this.state.fields.social_security} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </td>
-                                                    <td> <span> {this.state.fields.SS_colas}% </span> </td>
+                                                    <td style={{textAlign:'right'}}> Social security </td>
+                                                    <td style={{textAlign:'center'}}> <NumberFormat value={this.state.fields.social_security} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </td>
+                                                    <td style={{textAlign:'center'}}> <span> {this.state.fields.SS_colas}% </span> </td>
                                                 </tr>
                                                 <tr>
-                                                    <td> Pension </td>
-                                                    <td> <span> <NumberFormat value={this.state.fields.pension} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
-                                                    <td> <span> {this.state.fields.Pension_colas}% </span> </td>
+                                                    <td style={{textAlign:'right'}}> Pension </td>
+                                                    <td style={{textAlign:'center'}}> <span> <NumberFormat value={this.state.fields.pension} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
+                                                    <td > <span> {this.state.fields.Pension_colas}% </span> </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -1727,12 +1813,12 @@ render(){
 
                             </div>
 
-                            <div className="row pd-top-20">
+                            <div  className="row pd-top-20">
                                 <div className="col-md-6">
                                     <div className="pai-chart-box">
                                         <h3> Asset Allocation </h3>
 
-                                        <div className="chart-inner-box">
+                                        <div className="chart-inner-box ">
                                         { this.state.pieGraphOption ? ( <div className="graph-section">
                                                   <CanvasJSChart options = {this.state.pieGraphOption} />
                                           </div>) : '' }
@@ -1802,7 +1888,8 @@ render(){
                                         <div className="chart-inner-box chart-ct">
                                             <p> Stock <span> <NumberFormat value={this.state.EquitystockPortfoliocapital} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </p>
                                             <p> Cash <span> <NumberFormat value={this.state.EquityCashcapital} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </p>
-                                            <span className="line"> </span>
+                                          
+                                            <hr className="line" />
                                             <p> Total <span> <NumberFormat value={this.state.EstimatedCapital} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </p>
                                             <p> Return net of w/d <span> {this.state.perYearReturn}% ann. ({this.state.totalYearReturn}%) </span> </p>
                                         </div>
@@ -1824,15 +1911,376 @@ render(){
                                 </div>
                             </div>
                         </div>
-                        
-                        {/* <button id="generatePDF" onClick={this.generateImage}>Generate PDF</button> */}
-                        </body></html>
-                        <PrintButton className="convert_btn" id={"multiPage"} label={'CONVERT TO PDF'} /> 
+                        </body> </html>
+                         <div class="calculat">
+                         {/* <a href="javascript:void(0)" className="convert_btn" onClick={this.priviewReport}>Generate Report</a> */}
+                         <a href="javascript:void(0)" className="convert_btn" onClick={this.pdfPrintsuccess}>CONVERT TO PDF</a>
+                         
+                         </div>
+                       
                     </section>
                     
                  ) : '' }
             </div>
+            {/* Preview modal here  */}
+            {/* <Modal show={this.state.show}
+                            onHide={this.handleHide}
+                            container={this}
+                            aria-labelledby="contained-modal-title"
+                            className="reportPreviewModal"
+                        >
+                            <Modal.Header closeButton>
+                                <Modal.Title id="contained-modal-title">
+                                  REPORT
+                                </Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <div id="testtttt">
+                              
+                                { this.state.reportSection	? (     
+                                    <div className="report-section" > 
+                                         <html><body  id='tools_pdf'>
+                                         <div className="container">
 
+                                        
+                                         <img class="watermarkimg" src={watermark}/>
+
+                                             <div className="report-heading Mreport-heading " id="report-heading">
+                                              <div className="row">
+                                                  <div className="col-md-4">
+                                                     <div className="top-logo">
+                                                         <img src={logo} />
+                                                     </div>
+                                                  </div> 
+                                                  <div className="col-md-4">
+                                                    <p><strong>Prepared by:</strong> <span>SET IT AND LEAVE IT</span></p> 
+                                                    <p><strong>For:</strong> <span>{this.state.email}</span></p> 
+                                                  </div> 
+                                                  <div className="col-md-4 info">
+                                                    <p><strong>Phone:</strong>	1-866-900-5050</p>
+                                                    <p><strong>Email:</strong>	info@SetItandLeaveIt.com</p>
+                                                    <p><strong>Web:</strong>	www.SetItandLeaveIt.com</p>
+                                                  </div> 
+                                              </div> 
+                                              <div className="secondhead">
+                                                 <p className="repprthead">By registering with <em>SET IT AND LEAVE IT</em> and using this tool, you agree to abide by our <a target="_blank" href="http://ec2-18-221-255-18.us-east-2.compute.amazonaws.com/front/tnc">Terms & Conditions</a>.</p>
+                                                <hr />
+                                                 <h1>RETIREMENT INCOME ANALYSIS</h1> 
+                                              </div>     
+                                             </div>
+                 
+                                             <div className="row">
+                                                 <div className="col-md-4">
+                                                     <div className="report-upper-table">
+                                                         <table className="table table-bordered">
+                                                             <thead>
+                                                                 <tr>
+                                                                     <th colSpan="3"> USER INPUTS </th>
+                                                                 </tr>
+                                                             </thead>
+                                                             <tbody>
+                                                <tr>
+                                                    <td> </td>
+                                                    <td> </td>
+                                                    <td> inflation </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{textAlign:'right'}}> Liquid assets </td>
+                                                    <td style={{textAlign:'center'}}> <span> <NumberFormat value={this.state.fields.liquid_assets} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
+                                                    <td style={{textAlign:'center'}}> <span> {this.state.fields.est_inflation}% </span> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> </td>
+                                                    <td> </td>
+                                                    <td> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{textAlign:'right'}}> Estimated budget </td>
+                                                    <td style={{textAlign:'center'}}> <span> <NumberFormat value={this.state.fields.budget} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
+                                                    <td style={{textAlign:'center'}}> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{textAlign:'right'}}> Time horizon (yrs) </td>
+                                                    <td> <span> {this.state.fields.time_horizon} </span> </td>
+                                                    <td> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> </td>
+                                                    <td> </td>
+                                                    <td style={{textAlign:'center'}}> COLAs </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{textAlign:'right'}}> Social security </td>
+                                                    <td style={{textAlign:'center'}}> <NumberFormat value={this.state.fields.social_security} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </td>
+                                                    <td style={{textAlign:'center'}}> <span> {this.state.fields.SS_colas}% </span> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{textAlign:'right'}}> Pension </td>
+                                                    <td style={{textAlign:'center'}}> <span> <NumberFormat value={this.state.fields.pension} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
+                                                    <td > <span> {this.state.fields.Pension_colas}% </span> </td>
+                                                </tr>
+                                            </tbody>
+                                                         </table>
+                                                       
+                                                     </div>
+                                                 </div>
+                 
+                                                 <div className="col-md-4">
+                                                     <div className="report-upper-table">
+                                                         <table className="table table-bordered">
+                                                             <thead>
+                                                                 <tr>
+                                                                     <th colSpan="3"> ALLOCATIONS </th>
+                                                                 </tr>
+                                                             </thead>
+                                                             <tbody>
+                                                                 <tr>
+                                                                     <td> </td>
+                                                                     <td> Percent </td>
+                                                                     <td> Doller </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> Cash </td>
+                                                                     <td> <span> {this.state.fields.cash}% </span> </td>
+                                                                     <td> <span> <NumberFormat value={this.state.actualcash} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> Stock </td>
+                                                                     <td> <span> {this.state.fields.stock}% </span> </td>
+                                                                     <td> <span> <NumberFormat value={this.state.actualstock} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> Annuity </td>
+                                                                     <td> <span> {this.state.totalAnnutiyAuto}% </span> </td>
+                                                                     <td> <span> <NumberFormat value={this.state.actualannuity} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                 </tr>
+                                                             </tbody>
+                                                         </table>
+                                                     </div>
+                                                 </div>
+                 
+                                                 <div className="col-md-4">
+                                                     <div className="report-upper-table">
+                                                         <table className="table table-bordered">
+                                                             <thead>
+                                                                 <tr>
+                                                                     <th colSpan="3"> MARKET INPUTS </th>
+                                                                 </tr>
+                                                             </thead>
+                                                             <tbody>
+                                                                 <tr>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                     <td> Div + cap growth </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> Dividend yield </td>
+                                                                     <td> <span> {this.state.fields.dividend_yield}% </span> </td>
+                                                                     <td> <span> {this.state.fields.div_growth_colas}% </span> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> Annuity yield </td>
+                                                                     <td> <span> {this.state.fields.annuity_payout}% </span> </td>
+                                                                     <td> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> Interest rate </td>
+                                                                     <td> <span> {this.state.fields.interest_rate}% </span> </td>
+                                                                     <td> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                     <td> </td>
+                                                                 </tr>
+                                                             </tbody>
+                                                         </table>
+                                                     </div>
+                                                 </div>
+                 
+                                             </div>
+                 
+                                             <div  className="row pd-top-20">
+                                                 <div className="col-md-6">
+                                                     <div className="pai-chart-box">
+                                                         <h3> Asset Allocation </h3>
+                 
+                                                         <div className="chart-inner-box">
+                                                         { this.state.pieGraphOption ? ( <div className="graph-section">
+                                                                   <CanvasJSChart options = {this.state.pieGraphOption} />
+                                                           </div>) : '' }
+                                                         </div>
+                 
+                                                     </div>
+                                                 </div>
+                 
+                                                 <div className="col-md-6">
+                                                     <div className="pai-chart-box">
+                                                         <h3> Income vs Budget </h3>
+                 
+                                                         <div className="chart-inner-box">
+                                                         
+                                                         { this.state.AllbudgetGraphoptions ? (<div className="graph-section">
+                                                             <CanvasJSChart options = {this.state.AllbudgetGraphoptions} />
+                                                         </div>) : '' }
+                 
+                                                         </div>
+                 
+                                                     </div>
+                                                 </div>
+                 
+                                             </div>
+                 
+                 
+                                             <div className="row pd-top-10">
+                                                 <div className="col-md-6">
+                                                     <div className="pai-chart-box">
+                                                         <h3> Cash Profile </h3>
+                 
+                                                         <div className="chart-inner-box">
+                 
+                                                         { this.state.cashBarGraphOption ? ( <div className="graph-section">
+                                                              <CanvasJSChart options = {this.state.cashBarGraphOption} />
+                                                         </div>) : '' }
+                 
+                                                         </div>
+                 
+                                                     </div>
+                                                 </div>
+                 
+                                                 <div className="col-md-6">
+                                                     <div className="pai-chart-box">
+                                                         <h3> Stock Allocation </h3>
+                 
+                                                         <div className="chart-inner-box">
+                 
+                                                         { this.state.stockPortfoliooptions ? ( <div className="graph-section">
+                                                                 <CanvasJSChart options = {this.state.stockPortfoliooptions} />
+                                                         </div>) : '' }
+                 
+                                                         </div>
+                 
+                                                     </div>
+                                                 </div>
+                 
+                                             </div>
+                 
+                                             <div className="row pd-top-10">
+                                                 <div className="col-md-6">
+                                                     <div className="pai-chart-box">
+                                                         <h3> Legacy Capital </h3>
+                                                     
+                                                         
+                 
+                                                         <div className="chart-inner-box chart-ct">
+                                                             <p> Stock <span> <NumberFormat value={this.state.EquitystockPortfoliocapital} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </p>
+                                                             <p> Cash <span> <NumberFormat value={this.state.EquityCashcapital} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </p>
+                                                             <hr className="line" />
+                                                             <p> Total <span> <NumberFormat value={this.state.EstimatedCapital} displayType={'text'} thousandSeparator={true} prefix={'$'} /> </span> </p>
+                                                             <p> Return net of w/d <span> {this.state.perYearReturn}% ann. ({this.state.totalYearReturn}%) </span> </p>
+                                                         </div>
+                 
+                                                     </div>
+                                                 </div>
+                 
+                                                 <div className="col-md-6">
+                                                     <div className="pai-chart-box">
+                                                         <h3> Initial Stock Allocation vs Success </h3>
+                 
+                                                         <div className="chart-inner-box">
+                                                         { this.state.EquityAllocationGraphoptions ? (<div className="graph-section">
+                                                             <CanvasJSChart options = {this.state.EquityAllocationGraphoptions} />
+                                                         </div>) : '' }
+                                                         </div>
+                 
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                       
+                                        
+                                         </body></html>
+                                         <div class="calculat">
+                                            <a href="javascript:void(0)" className="convert_btn" onClick={this.pdfPrintsuccess}>CONVERT TO PDF</a>
+                                         </div>
+                                     </div>
+                                     
+                                  ) : '' }
+
+                                </div>
+
+                            </Modal.Body>
+                           
+                        </Modal> */}
+
+
+
+                        {/* PDF SUCCESS ALERT MESSAGE */}
+
+                        <Modal  show={this.state.pdfmsgshow}
+                            onHide={this.handleHide}
+                            container={this}
+                            aria-labelledby="contained-modal-title"
+                            size="lg"
+                            aria-labelledby="contained-modal-title-vcenter"
+                            centered
+                        >
+                            <Modal.Header className="reportAlert" closeButton> 
+                                <Modal.Title id="contained-modal-title">
+                                PDF CREATED
+                                </Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <div id="pdfmessage">
+                                 {this.state.pdfMsg ? (
+                                    <div> 
+                                   <p>Please check your browser’s downloads if the PDF does not open automatically. The filename is {this.state.pdfName ? this.state.pdfName : ''}.</p>
+                                   <a href="javascript:void(0)" onClick={this.handleHide} class="modalcloseOk">OK</a>
+                                   </div>
+                                 ) : '' }
+                                </div>
+
+                            </Modal.Body>
+                           
+                        </Modal>
+
+
+            </div>
             );
 }
 }

@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import ReCAPTCHA from "react-google-recaptcha";
+import {withRouter, BrowserRouter as Router , Link} from 'react-router-dom'
+import ReCAPTCHA from 'react-google-recaptcha';
 import UserService from '../../reactservice/UserService'
 const API = new UserService();
 const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const recaptchaRef = React.createRef();
+const LivesecretKey = '6LeJGb0UAAAAAG_8c6aBDY3RtkztMXyQlnl7dNTL';
 class Signup extends Component{
     constructor(props){
         super(props);
+        this.props.onHeaderHover(true);
         this.state ={
             open:false,
             signinform:false,
@@ -14,7 +17,15 @@ class Signup extends Component{
             loginfields: [],            
             errors: {},
             showAlert:false,
-            loginshowAlert:false
+            loginshowAlert:false,
+            isCheckedOther:false,
+            Cinvestor: false,
+            Cfinancial: false,
+            Cprofessor: false,
+            Cterms:false,
+            gRecaptchaResponse:'',
+            recaptchaError:'',
+            name:''
         }
         this.toggleClass = this.toggleClass.bind(this);
         this.FormtoggleClass = this.FormtoggleClass.bind(this);
@@ -25,6 +36,9 @@ class Signup extends Component{
         this.LoginMevalidationCheck = this.LoginMevalidationCheck.bind(this);
 }
 
+componentDidMount(){
+    window.scrollTo(0, 0);
+}
 
 onSubmit = () => {
     const recaptchaValue = recaptchaRef.current.getValue();
@@ -66,7 +80,6 @@ LoginMevalidationCheck(){
              errors["loginemail"] = "error_sell form-control";
          }
    }  
-
    if(!loginfields["loginpassword"]){
         formIsValid = false;
         errors["loginpassword"] = "error_sell form-control";
@@ -84,7 +97,6 @@ LoginMe(e){
         'email': this.state.loginfields.loginemail,
         'password': this.state.loginfields.loginpassword
     }
-   // console.log('xxxxxxxxxxxx login', userInfoVo);
     API.login(userInfoVo)
         .then((result) => {
            // console.log('xxx ', result);
@@ -92,15 +104,15 @@ LoginMe(e){
            if( result.data.role == 0){
                 this.props.history.replace('/admin/dashboard');
            }else{
-                this.props.history.replace('/front/profile');
+                this.props.history.replace('/front/tool');
            }
         }else{
-                //console.log('message:', result.data.message);
                 this.setState({
                     loginshowAlert:true,
                     color:'#b31313d6',
                     message: result.data.message
                 });
+                setTimeout(() => { this.setState({ loginshowAlert:false });  }, 6000);
         }
 
         }).catch(err => {
@@ -114,10 +126,14 @@ registerMevalidationCheck(){
     let errors = {};
     let formIsValid = true;
 
-   if(!fields["name"]){
+    console.log('fieldsfields:',fields);
+
+   if(!fields["name"] ){
        formIsValid = false;
        errors["name"] = "error_sell form-control";
-   }
+   } 
+
+
    if(!fields["email"]){
     formIsValid = false;
     errors["email"] = "error_sell form-control";
@@ -128,10 +144,7 @@ registerMevalidationCheck(){
           errors["email"] = "error_sell form-control";
          }
    }  
-   if(!fields["username"]){
-    formIsValid = false;
-    errors["username"] = "error_sell form-control";
-   }
+
    if(!fields["password"]){
     formIsValid = false;
     errors["password"] = "error_sell form-control";
@@ -147,31 +160,38 @@ registerMevalidationCheck(){
         errors["password"] = "error_sell form-control";
    }
 
-   if(!fields["investor"]){
+   if(fields["investor"] || fields["financial"] || fields["professor"] || this.state.isCheckedOther){
+    formIsValid = true;
+    errors["investor"] = "";
+   }else{
     formIsValid = false;
-    errors["investor"] = "error_sell";
-   }
-   if(!fields["financial"]){
-    formIsValid = false;
+    errors["investor"] = "Please tick atleast one in given option";
+    errors["investor1"] = "error_sell";
     errors["financial"] = "error_sell";
-   }
-   if(!fields["professor"]){
-    formIsValid = false;
     errors["professor"] = "error_sell";
+    errors["other"] = "error_sell";
    }
+//    if(!fields["financial"]){
+//     formIsValid = false;
+//     errors["financial"] = "error_sell";
+//    }
+//    if(!fields["professor"]){
+//     formIsValid = false;
+//     errors["professor"] = "error_sell";
+//    }
 
-   if(fields["other"]){
+   if(this.state.isCheckedOther){
       if(!fields["tell_us_more"]){
         formIsValid = false;
         errors["tell_us_more"] = "error_sell form-control other-input";
        }
-   }else if(fields["tell_us_more"]){
-       if(!fields["other"]){
+   }
+   else if(fields["tell_us_more"]){
+       if(!this.state.isCheckedOther){
             formIsValid = false;
             errors["other"] = "error_sell";
        }
-   }
-   
+   }   
    
    if(!fields["terms"]){
     formIsValid = false;
@@ -211,11 +231,12 @@ registerSubscribevalidationCheck(){
 
 
 registerMe(e){
-    if(this.registerMevalidationCheck()){ 
+    var recaptchaCheck = this.recaptchaCheck();
+    if(this.registerMevalidationCheck()  && recaptchaCheck){ 
         const userInfoVo ={
             'name': this.state.fields.name,
             'email': this.state.fields.email,
-            'username': this.state.fields.username,
+            //'username': this.state.fields.username,
             'password': this.state.fields.password,
             'investor': this.state.fields.investor,
             'financial': this.state.fields.financial,
@@ -223,8 +244,11 @@ registerMe(e){
             'other': this.state.fields.other,
             'tell_us_more': this.state.fields.tell_us_more,
             'role': this.refs.role.value,
+            'tool_enabled':true,
             'datetime':new Date()
         }
+
+        console.log('test:',userInfoVo);
         API.registerUser(userInfoVo)
         .then((result) => {
 
@@ -237,6 +261,11 @@ registerMe(e){
                     color:'green',
                     message: result.data.message
                 });
+
+                setTimeout(() => {
+                    this.setState({ showAlert:false });
+                }, 6000);
+
             }else{
     
                 console.log('xxx errocode:', result );
@@ -245,6 +274,10 @@ registerMe(e){
                     color:'#b31313d6',
                     message: result.data.message
                 });
+
+                setTimeout(() => {
+                    this.setState({ showAlert:false });
+                }, 6000);
     
             } 
 
@@ -255,16 +288,21 @@ registerMe(e){
 }
 
 
+
+
 registerSubscribe(){
-    if(this.registerSubscribevalidationCheck()){ 
+
+    var recaptchaCheck = this.recaptchaCheck();
+    if(this.registerSubscribevalidationCheck() && recaptchaCheck){ 
         let  password = Math.random().toString(36).slice(-8); 
-        let username = this.state.fields.email.split("@");                 
+        //let username = this.state.fields.email.split("@");                 
         const userInfoVo ={
             'name': this.state.fields.name,
             'email': this.state.fields.email,
             'role': this.refs.role.value,
             'password': password,
-            'username': username[0],
+            'tool_enabled':false,
+            //'username': username[0],
             'datetime':new Date()
         }
         API.registerUser(userInfoVo)
@@ -278,6 +316,11 @@ registerSubscribe(){
                 color:'green',
                 message: result.data.message
             });
+
+            setTimeout(() => {
+                this.setState({ showAlert:false });
+            }, 6000);
+
         }else{
 
             console.log('xxx errocode:', result );
@@ -287,6 +330,9 @@ registerSubscribe(){
                 message: result.data.message
             });
 
+            setTimeout(() => {
+                this.setState({ showAlert:false });
+            }, 6000);
         } 
 
         }).catch(err => { 
@@ -297,10 +343,85 @@ registerSubscribe(){
 
 
 registerMehandleChange(field, e) { 
+    console.log(this.state);
+    let errors = {};
     let fields = this.state.fields;
+    // if(field==='other'){
+    //     this.setState({
+    //         isCheckedOther:!this.state.isCheckedOther
+    //     })         
+    // }else{        
+    //     fields[field] = e.target.value;    
+    //     this.setState({ fields });
+    // }
     fields[field] = e.target.value;    
     this.setState({ fields });
-    console.log('Registerfields..xx...xx:', fields);
+
+    console.log('field:',field);
+    if (field == 'investor') {
+        this.setState({ Cinvestor: !this.state.Cinvestor })
+        if (this.state.Cinvestor) {
+            let t = '';
+            if (e.target.value) { t = ''; }
+            fields[field] = t;    
+            this.setState({ fields});
+        } else {
+            fields[field] = e.target.value;    
+            this.setState({ fields });
+        }
+    }
+    if(field == 'financial') {
+        this.setState({ Cfinancial: !this.state.Cfinancial })
+        if (this.state.Cfinancial) {
+            let t = '';
+            if (e.target.value) { t = ''; }
+            fields[field] = t;    
+            this.setState({ fields});
+        } else {
+            fields[field] = e.target.value;    
+            this.setState({ fields });
+        }
+    }
+    if(field == 'professor') {
+        this.setState({ Cprofessor: !this.state.Cprofessor })
+        if (this.state.Cprofessor) {
+            let t = '';
+            if (e.target.value) { t = ''; }
+            fields[field] = t;    
+            this.setState({ fields});
+        } else {
+            fields[field] = e.target.value;    
+            this.setState({ fields });
+        }
+    }
+
+    if(field == 'other') {
+        this.setState({ isCheckedOther: !this.state.isCheckedOther })
+        if (this.state.isCheckedOther) {
+            let t = '';
+            if (e.target.value) { t = ''; }
+            fields[field] = t;    
+            this.setState({ fields});
+        } else {
+            fields[field] = e.target.value;    
+            this.setState({ fields });
+        }
+    }
+
+    if(field == 'terms') {
+        this.setState({ Cterms: !this.state.Cterms })
+        if (this.state.Cterms) {
+            let t = '';
+            if (e.target.value) { t = ''; }
+            fields[field] = t;    
+            this.setState({ fields});
+        } else {
+            fields[field] = e.target.value;    
+            this.setState({ fields });
+        }
+    }
+
+    console.log('Registerfields..xx...xx:', fields);    
 }
 
 
@@ -318,7 +439,29 @@ loginMehandleChange(field, e) {
 //     console.log('Subscribefields..xx...xx:', fields);
 // }
 
+onChange(response) {
+    console.log(response)
+    this.setState({
+        'gRecaptchaResponse': response,
+        errors : {...this.state.errors,recaptcha:""}
+    });
+}
 
+recaptchaCheck=()=>{
+    if(this.state.gRecaptchaResponse){
+        this.setState({
+            recaptchaError : ""
+        })     
+        // console.log('recaptcha : true')   
+        return true;
+    }else{
+        this.setState({
+            recaptchaError : "Please verify you are not a robot"
+        })
+        // console.log('recaptcha : false')
+        return false;
+    }
+}
 
 render(){
 
@@ -338,7 +481,8 @@ render(){
                         <section id="blouq-content">
                             <div className="container">
                                 <div className="blouq-content-inner">
-                                    <h5>Sign-up below to get on our email list or access the <em> Set is and Leave it </em>  tool</h5>
+                                    {/* <h5>Sign-up below to get on our email list or access the <em> Set is and Leave it </em>  tool</h5> */}
+                                    <h5>Please register or sign-in below to get on our email list or access the <em> Set It and Leave It </em> tool.</h5>
                                 </div>
                             </div>
                         </section>
@@ -349,13 +493,13 @@ render(){
                                     <input id="page1" type="radio" name="screens" checked/>
                                     <div className={`screen  ${!this.state.signinform ? 'show' : 'hide'}`}>
                                         <div className="account-form-heading">
-                                            <h2>Sign-Up</h2>
-                                            <p>Already a member? &nbsp; 
+                                            <h2>Register</h2>
+                                            <p>Already registered? &nbsp; 
                                                 <label onClick={this.FormtoggleClass} className="label-link" for="page2">Sign-in here</label>
                                             </p>
                                         </div>
 
-                                        { this.state.showAlert	? (<div style={{background:this.state.color}} className="Idmessage">{this.state.message}</div>) : '' }
+                                      
                                         
                                         <div className="account-form-content">
                                            <form>
@@ -375,22 +519,28 @@ render(){
                                                         <input onClick={this.toggleClass}  type="checkbox" id="test2" value="red"/>
                                                         <label for="test2" className="inner-label">I want to use the tool</label>
                                                     </div>
-{/* 
-    <ReCAPTCHA
-        ref={recaptchaRef}
-        sitekey="6LePr68UAAAAAA85wRA1fgXOh2pSKbojFpqhZLcL"
-        
-      /> */}
 
-                                                    {!this.state.open ? (<button type="button" onClick={this.registerSubscribe} className="btn">GO</button>) :'' }
+                                                    {!this.state.open ? 
+                                                    (
+                                                        <div>
+                                                            <center>
+                                                                <ReCAPTCHA 
+                                                                    ref="recaptcha" 
+                                                                    sitekey={LivesecretKey}
+                                                                    onChange={this.onChange.bind(this)}
+                                                                />  
+                                                                <p style={{color:'red'}}>{ this.state.recaptchaError }</p>
+                                                            </center>
+                                                        <button type="button" onClick={this.registerSubscribe} className="btn">GO</button>
+                                                        </div>
+                                                    ) :'' 
+                                                    }
                                               
                                             </div>
 
                                             <div  className={`signup-box  ${this.state.open ? 'show' : 'hide'}`}>
                                               
-                                                    <div className="form-group">
-                                                        <input  name="username"   value={this.state.fields["username"] ? this.state.fields["username"] : ''} onChange={this.registerMehandleChange.bind(this, "username")} type="text" className={this.state.errors["username"] ? this.state.errors["username"] : 'form-control'}    placeholder="Username"/>
-                                                    </div>
+                                                
 
                                                     <div className="form-group">
                                                         <input  name="password"   value={this.state.fields["password"] ? this.state.fields["password"] : ''} onChange={this.registerMehandleChange.bind(this, "password")} type="password" className={this.state.errors["password"] ? this.state.errors["password"] : 'form-control'}    placeholder="Password"/>
@@ -401,46 +551,56 @@ render(){
                                                     </div>
                                                     
                                                     <h4>Please tick all that apply</h4>
-                                                    
+                                                    <p style={{color:'red'}}>{this.state.errors["investor"] ? this.state.errors["investor"] : ''}</p>
                                                     <div className="form-group">
-                                                        <input ref="investor" name="investor"   value="investor" onChange={this.registerMehandleChange.bind(this, "investor")}  type="checkbox" id="investor" />
-                                                        <label className={this.state.errors["investor"] ? this.state.errors["investor"] : ''} for="investor">I am an individual investor</label>
+                                                        <input ref="investor" name="investor"   value="investor" defaultChecked={this.state.Cinvestor ? 'checked' : ''}  onChange={this.registerMehandleChange.bind(this, "investor")}  type="checkbox" id="investor" />
+                                                        <label  className={this.state.errors["investor1"] ? this.state.errors["investor1"] : ''} for="investor">I am an individual investor</label>
                                                     </div>
                                                     
                                                     <div className="form-group">
-                                                        <input  ref="financial" name="financial"   value="financial" onChange={this.registerMehandleChange.bind(this, "financial")} type="checkbox" id="financial"/>
+                                                        <input  ref="financial" name="financial"   value="financial" defaultChecked={this.state.Cfinancial ? 'checked' : ''} onChange={this.registerMehandleChange.bind(this, "financial")} type="checkbox" id="financial"/>
                                                         <label className={this.state.errors["financial"] ? this.state.errors["financial"] : ''} for="financial">I am a financial professional</label>
                                                     </div>
                                                     
                                                     <div className="form-group">
-                                                        <input ref="professor" name="professor"   value="professor" onChange={this.registerMehandleChange.bind(this, "professor")} type="checkbox" id="professor"/>
+                                                        <input ref="professor" name="professor"   value="professor" defaultChecked={this.state.Cprofessor ? 'checked' : ''} onChange={this.registerMehandleChange.bind(this, "professor")} type="checkbox" id="professor"/>
                                                         <label className={this.state.errors["professor"] ? this.state.errors["professor"] : ''} for="professor">I am a student or professor</label>
                                                     </div>
                                                     
                                                     <div className="form-group">
-                                                        <input ref="other" name="other"   value="other" onChange={this.registerMehandleChange.bind(this, "other")} type="checkbox" id="other"/>
+                                                        <input ref="other" name="other" defaultChecked={this.state.isCheckedOther ? 'checked' : ''}   value="other" onChange={this.registerMehandleChange.bind(this, "other")} type="checkbox" id="other"/>
                                                         <label className={this.state.errors["other"] ? this.state.errors["other"] : ''} for="other">Other: </label>
                                                         <input ref="tell_us_more" name="tell_us_more"   value={this.state.fields["tell_us_more"] ? this.state.fields["tell_us_more"] : ''} onChange={this.registerMehandleChange.bind(this, "tell_us_more")} type="text" className={this.state.errors["tell_us_more"] ? this.state.errors["tell_us_more"] : 'form-control other-input'}    placeholder="Tell us more"/>
                                                     </div>
                                                     
                                                     <div className="form-group terms">
-                                                        <input ref="terms" name="terms"   value="terms" onChange={this.registerMehandleChange.bind(this, "terms")} type="checkbox" id="terms"/>
-                                                        <label className={this.state.errors["terms"] ? this.state.errors["terms"] : ''} for="terms"><span>I have read and agree to the <a href="#">terms and conditions</a></span></label>
+                                                        <input ref="terms" name="terms" defaultChecked={this.state.Cterms ? 'checked' : ''}  value="terms" onChange={this.registerMehandleChange.bind(this, "terms")} type="checkbox" id="terms"/>
+                                                        <label className={this.state.errors["terms"] ? this.state.errors["terms"] : ''} for="terms"><span>I have read and agree to the <Link target="_blank" to={'/front/tnc'}>terms and conditions</Link></span></label>
                                                     </div>
 
+                                                    <center>
+                                                        <ReCAPTCHA 
+                                                            ref="recaptcha" 
+                                                            sitekey={LivesecretKey}
+                                                            onChange={this.onChange.bind(this)}
+                                                        />  
+                                                        <p style={{color:'red'}}>{this.state.recaptchaError}</p>
+                                                    </center>
                                                     <button type="button" onClick={this.registerMe} className="btn">GO</button>
-                                               
-                                            </div>
+                                            </div>                                            
+                                                                            
                                             </form>
                                         </div>
                                     </div>
 
+                                    { this.state.showAlert	? (<div style={{background:this.state.color}} className="Idmessage">{this.state.message}</div>) : '' }
+                                        
                                     <input id="page2" type="radio" name="screens"/>
                                     <div className={`screen  ${this.state.signinform ? 'show' : 'hide'}`} >
                                         <div className="account-form-heading">
                                             <h2>Sign-In</h2>
-                                            <p>Not yet a member? &nbsp;
-                                                <label onClick={this.FormtoggleClass} className="label-link" for="page1"> Sign-up here</label>
+                                            <p>Not registered yet? &nbsp;
+                                                <label onClick={this.FormtoggleClass} className="label-link" for="page1"> Register here</label>
                                             </p>
                                         </div>
                                         { this.state.loginshowAlert	? (<div style={{background:this.state.color}} className="Idmessage">{this.state.message}</div>) : '' }
@@ -468,4 +628,4 @@ render(){
          );
     }
 }  
-export default Signup;
+export default withRouter(Signup);

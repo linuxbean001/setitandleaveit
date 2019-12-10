@@ -46,7 +46,7 @@ exports.addContactusTODb = async (req, res, next) => {
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
+    host: 'mail.setitandleaveit.com',
     port: 587,
     auth: {
         user: creds.USER, // generated ethereal user
@@ -60,9 +60,8 @@ exports.addContactusTODb = async (req, res, next) => {
   // setup email data with unicode symbols
   let mailOptions = {
       from: '"New Contact" <'+creds.USER+'>', // sender address
-      to: creds.USER, // list of receivers
+      to: 'info@setitandleaveit.com', // list of receivers
       subject: 'New Contact Request', // Subject line
-      text: 'Hello world?', // plain text body
       html: output // html body
   };
 
@@ -82,7 +81,7 @@ exports.addContactusTODb = async (req, res, next) => {
                 res.status(201).json({
                     data: result, 
                     success:true, 
-                    message:'Your details send successfully we will contact you soon.'
+                    message:'Thank you for your message. We will get back to you as soon as we can.'
                 });
 
              /*--- User activity log ---*/

@@ -26,6 +26,7 @@ addToActivityLog=(userid,name,action,activitydata)=>{
 }
 
 toolEnableNow= async (userid)=>{
+    console.log('Inside ToolEnableNow:',userid);
     const result = await updateProfile.findByIdAndUpdate({ _id: userid, }, {
         tool_enabled:true,
         last_uses_date:new Date()
