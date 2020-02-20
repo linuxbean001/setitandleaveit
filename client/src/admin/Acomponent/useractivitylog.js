@@ -32,7 +32,7 @@ getAllActivityLogList() {
         for(let i=0; i<res.data.data.length; i++){          
           activityData = res.data.data[i].activitydata.split('|||');
           var activityDate = res.data.data[i].datetime;
-          const fActivityDate = moment(activityDate).format("YYYY-MM-DD HH:DD");
+          const fActivityDate = moment(activityDate).format("YYYY-MM-DD HH:mm");
           // console.log('activity',JSON.stringify(activityData));
              RowArray.push({name:res.data.data[i].name,activityaction:res.data.data[i].action,activitydata:activityData.join('/'),datetime: fActivityDate,action:<Button onClick={this.delActivityLog.bind(this, res.data.data[i]._id, i)}  variant="danger" size="sm"><i class="fa fa-trash-o" aria-hidden="true"></i></Button>}) 
           }

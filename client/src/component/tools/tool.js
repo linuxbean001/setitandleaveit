@@ -12,7 +12,8 @@ import watermark from '../../assets/img/watermark.png'
 import UserService from '../../reactservice/UserService';
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import AlertModalBox from "./alertModalBox";
+// import AlertModalBox from "./alertModalBox";
+import userGuide from '../../../src/assets/img/GUIDE - Set It and Leave It.pdf'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 const API = new UserService();
@@ -25,7 +26,7 @@ class Tool extends Component{
         super(props);
         this.props.onHeaderHover(false);
         this.state={
-            fields:{},
+            fields:{ liquid_assets:'1,000,000',budget:'100,000',social_security:'35,000', pension:'30,000',est_inflation:'3',SS_colas:'2',Pension_colas:'2',dividend_yield:'2',interest_rate:'2',annuity_payout:'6',div_growth_colas:'5', time_horizon:'25',cash:'5', stock:'50' },
             errors:{},
             liquid_assets:'',
             budget:'',
@@ -33,7 +34,7 @@ class Tool extends Component{
             time_horizon:'',
             social_security:'',
             ini_required_yield:'',
-            pension:'',
+            pension:'30,000',
             SS_colas:'',
             Pension_colas:'',
             dividend_yield:'',
@@ -43,7 +44,7 @@ class Tool extends Component{
             actualcash:'',
             actualstock:'',
             actualannuity:'',
-            totalAnnutiyAuto:'',
+            totalAnnutiyAuto:'45',
             reportSection:false,
             pieGraphOption:'',
             cashBarGraphOption:'',
@@ -80,8 +81,13 @@ class Tool extends Component{
 
 
     handleHide() {
-        this.setState({ show: false, pdfmsgshow:false });
+        this.setState({ show: false, pdfmsgshow:false, modalShow:false });
       }
+
+    handleHideGoback=()=> {
+        this.setState({ modalShow:false });
+        this.props.history.replace(localStorage.getItem('last-page'));
+    }  
     
     priviewReport(){
             this.setState({
@@ -92,21 +98,33 @@ class Tool extends Component{
     pdfPrintsuccess=()=>{  
         let userData=API.getProfile().data;
         var date = (new Date()).toISOString().split('T')[0];
-        html2canvas(document.querySelector('#tools_pdf')).then(canvas => {  
+       /* html2canvas(document.querySelector('#tools_pdf')).then(canvas => {  
           var dataURL = canvas.toDataURL();
           var pdf = new jsPDF({compress: true});
-          //pdf.addImage(dataURL, 'PNG',  5, -190, 200, 500);
-          //var pdf = new jsPDF("p", "mm", "a4");
-
-            var width = pdf.internal.pageSize.getWidth();
-            var height = pdf.internal.pageSize.getHeight();
-
-            //console.log('width:',width);
-           // console.log('height',height);
-
+          var width = pdf.internal.pageSize.getWidth();
+          var height = pdf.internal.pageSize.getHeight();
+          console.log('width:',width);
+          console.log('height:',height);
           pdf.addImage(dataURL, 'PNG', 5,-140, width, 500);
           pdf.save(userData.name+'-'+date+".pdf");
-        });   
+        });  */
+
+        if(window.screen.width < 1024) {
+            document.getElementById("viewport").setAttribute("content", "width=1200px");
+            document.body.classList.add('mobile-canvas');
+        }
+        html2canvas(document.querySelector('#tools_pdf')).then(canvas => {  
+          // Few necessary setting options
+          const contentDataURL = canvas.toDataURL('image/png')
+          let pdf = new jsPDF({compress: true});
+          let width = pdf.internal.pageSize.getWidth();
+          pdf.addImage(contentDataURL, 'PNG', 5,-140, width, 500);
+          pdf.save(userData.name+'-'+date+".pdf"); // Generated PDF
+          if(window.screen.width < 1024) {
+            document.getElementById("viewport").setAttribute("content", "width=device-width, initial-scale=1");
+          }
+
+        });
         const generatePDF ={
           "id":userData._id,
           "name":userData.name            
@@ -164,6 +182,8 @@ class Tool extends Component{
                 setModalShow:true
             })
         }
+
+        document.title = "TOOL - SET IT AND LEAVE IT"
     }
    
     validationCheck(){
@@ -707,9 +727,10 @@ class Tool extends Component{
         infusion1=0;
         infu_cash_point1=0;
         org_RHS1=0;
-       
+       let stockXstop = cashper+stockXvalue1;
+       console.log('stockXstop',stockXstop);
         let actualstockold1 = actualstock1;
-        if(stockXvalue1 <= 100){
+        if(stockXstop <= 100){
             console.log('============='+stockXvalue1+'================');
             inf_dividend1 = parseFloat(Actual_dividend11)*(parseFloat(div_capGrowth1)/100);
             if(stockXvalue1 != parseInt(this.state.fields.stock)){
@@ -1283,13 +1304,34 @@ render(){
             return(
                 <div className="tool-section">
 
-                        <AlertModalBox
+                        {/* <AlertModalBox
                             show={this.state.modalShow}
-                            // onHide={() => this.setModalShow(true)}
-                        />                        
+                        />                         */}
+
+                            <Modal
+                                size="lg"
+                                aria-labelledby="contained-modal-title-vcenter"
+                                centered     
+                                show={this.state.modalShow}   
+                            >        
+                                <Modal.Header>
+                                <Modal.Title id="contained-modal-title-vcenter">
+                                    <h3>Alert</h3>
+                                </Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                <h5 style={{textAlign:'center',padding:10}}>You must be signed in to use the Set It and Leave It tool.</h5>
+                                <div style={{paddingTop:20,textAlign:'center'}}>
+                                    <Link className='btn btn-primary' style={{backgroundColor:'#7030a0',fontWeight:700}} to={'/front/register'}>SIGN IN</Link><br/>
+                                    <br/><p>No thanks. <Link onClick={this.handleHideGoback}>Go back</Link></p>
+                                </div>          
+                                </Modal.Body>
+                        
+                            </Modal>
+
 
                         <section id="inner-page-banner">
-                            <div className="container-fluid">
+                            <div className="container-fluid">  
                                 <div className="row">
                                     <div className="inner-page-banner-heading hdng">
                                         <h2> RETIREMENT INCOME TOOL </h2>
@@ -1302,9 +1344,19 @@ render(){
                             <img src='' id='img_id'/>
                             <div className="row">
                                 <div className="col-md-12">
-                                    <div className="disclimer">
-                                        <p> <i className="fa fa-times" aria-hidden="true"></i> DISCLAIMER: This tool is for illustration purposes only. It does not constitute investment advice and makes no recommendations. Please refer to the <Link target="_blank" to={'/front/tnc'}> terms and conditions </Link> for more information. </p>
-                                    </div>
+                                    <div style={{lineHeight: "1.6"}}className="disclimer not-sect ">
+                                        <p className="toolp clearfix">
+                                            <span className="ex-bf disclaimer_not_symbol">!</span>
+                                            <div className="disclaimer_content">
+                                                <span className="ex-bf1">DISCLAIMER:</span> 
+                                                This tool is for illustration purposes only. It does not constitute investment advice and makes no recommendations. Please refer to the <Link target="_blank" to={'/front/tnc'}><span className="tool-terms" style={{fontSize: "21px" ,textDecorationLine: "underline"}}>terms and conditions</span></Link> for more information.
+                                            </div>
+                                        </p>
+                                        <p className="note-toolp">
+                                    
+                                        <p class="note-tool"><span style={{fontWeight: "bold","fontSize": "21px","color": "red","marginTop": "0px!important","marginLeft":"5px"}}>NOTE:</span>Best viewed on larger screens (tablets, laptops, PCs, etc.)</p>
+                                        </p>
+                                   </div>
                                 </div>
                             </div>
                         </div>
@@ -1314,15 +1366,18 @@ render(){
                             <div className="row">
                                 <div className="col-md-12">
                                     <div className="helpfulLink">
-                                        <p style={{textAlign:'right', fontSize:'16px'}}><strong style={{color:'#7030A0'}}>HELPFUL LINKS:</strong> <a href="/front/videos#video6">VIDEO TUTORIAL</a> | <Link to={'/front/usermanual'}>HELP MANUAL</Link> | <Link to={"/front/faq"}>FAQ</Link> | <Link to={"/front/contact"}>CONTACT</Link> </p>
+                                        <p style={{textAlign:'right', fontSize:'16px'}}><strong style={{color:'#7030A0'}}>HELPFUL LINKS:</strong> <a target="_blank" href="/front/videos#video6">VIDEO TUTORIAL</a> | <a href={userGuide} download >HELP MANUAL</a> | <Link target="_blank" to={"/front/faq"}>FAQ</Link> | <Link target="_blank" to={"/front/contact"}>CONTACT</Link> </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         {this.state.toolenable == true ? (
-                        <section>
+                            <form onSubmit={this.mockupToolsFun}>
+                        <section className="tool-section">
                         <div className="container">
+                        <div class="initial_required_yield_note"><span>NOTE: </span>Please modify/overwrite example inputs.</div>
                             <div className="row">
+                            
                                 <div className="col-lg-5 col-md-5 col-sm-6 col-xs-12">
                                     <div className="tol-box-inner">
                                         <h4> USER INPUTS </h4>
@@ -1571,7 +1626,7 @@ render(){
 
                                                 <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6">100%
                                                 </div>
-                                                {this.state.errors["annuity"] ? (<p className="annuityError">Allocations do not add up to 100% or in Negative!</p>) : ''}
+                                                {this.state.errors["annuity"] ? (<p className="annuityError">Missing or incorrect inputs</p>) : ''}
                                             </div>
                                         </div> 
                                       
@@ -1590,12 +1645,13 @@ render(){
                                 <div className="calculat">
                                 <input type="hidden" ref="id" className="form-control" name="id" onChange={this.handleChange.bind(this, "id")} defaultValue={this.state.fields._id}/>
                                 <input type="hidden" ref="id" className="form-control" name="id" onChange={this.handleChange.bind(this, "name")} defaultValue={this.state.fields.name}/>
-                                    <a onClick={ this.mockupToolsFun } href="javascript:void(0);"> CALCULATE </a>
+                                     {/* <a onClick={ this.mockupToolsFun } href="javascript:void(0);"> CALCULATE </a>  */}
+                                    <button className="submit-btn" type="submit">CALCULATE</button>
                                 </div>
                             </div>
 
                         </div>
-                    </section>) : ( <section>
+                    </section></form>) : ( <section>
                         <div className="container">
                             <div className="row">
                             <div className="col-lg-12 col-md-12 col-sm-12">
@@ -1820,7 +1876,7 @@ render(){
 
                                         <div className="chart-inner-box ">
                                         { this.state.pieGraphOption ? ( <div className="graph-section">
-                                                  <CanvasJSChart options = {this.state.pieGraphOption} />
+                                                  <CanvasJSChart  options = {this.state.pieGraphOption} />
                                           </div>) : '' }
                                         </div>
 
@@ -1834,7 +1890,7 @@ render(){
                                         <div className="chart-inner-box">
                                         
                                         { this.state.AllbudgetGraphoptions ? (<div className="graph-section">
-                                            <CanvasJSChart options = {this.state.AllbudgetGraphoptions} />
+                                            <CanvasJSChart  options = {this.state.AllbudgetGraphoptions} />
                                         </div>) : '' }
 
                                         </div>
@@ -2284,4 +2340,4 @@ render(){
             );
 }
 }
-export default Tool;
+export default withRouter(Tool);

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import AnchorLink from 'react-anchor-link-smooth-scroll';
-import { Link, BrowserRouter as Router } from 'react-router-dom'
+import { Link, NavLink, BrowserRouter as Router } from 'react-router-dom'
 import setleave_banner from '../../assets/img/graph.jpg';
 import serviceFlow_bg1 from '../../assets/img/SET-IT-AND-LEAVE-IT-bg.png';
 import AdminService from '../../admin/Aservice/adminservice';
+import $ from "jquery";
 const AdminAPI = new AdminService();
 class SetItAndLeaveIt extends Component{
     constructor(props){
@@ -26,54 +27,73 @@ class SetItAndLeaveIt extends Component{
 
 
     componentDidMount(){
+
+        
+        // Cache selectors
+var lastId,
+topMenu = $("#testing"),
+topMenuHeight = topMenu.outerHeight()+1,
+// All list items
+menuItems = topMenu.find(".scrolly"),
+// Anchors corresponding to menu items
+scrollItems = menuItems.map(function(){
+  var item = $($(this).attr("data-to"));
+   if (item.length) { return item; }
+});
+
+// Bind click handler to menu items
+// so we can get a fancy scroll animation
+menuItems.click(function(e){
+  
+ var href = $(this).attr("data-to"),
+     offsetTop = href === "#" ? 0 : $(href).offset().top-topMenuHeight+1;
+ $('html, body').stop().animate({ 
+     scrollTop: offsetTop
+ }, 850);
+ e.preventDefault();
+});
+
+// Bind to scroll
+$(window).scroll(function(){
+  // Get container scroll position
+  var fromTop = $(this).scrollTop()+topMenuHeight;
+  
+  // Get id of current scroll item
+  var cur = scrollItems.map(function(){
+    if ($(this).offset().top < fromTop)
+      return this;
+  });
+  // Get the id of the current element
+  cur = cur[cur.length-1];
+  var id = cur && cur.length ? cur[0].id : "";
+  
+  if (lastId !== id) {
+      lastId = id;
+      // Set/remove active class
+      menuItems
+        .parent().removeClass("active")
+        .end().filter("[data-to='#"+id+"']").parent().addClass("active");
+  }                   
+});
+
         window.scrollTo(0, 0);
         this.getSIALIOverview();
         window.addEventListener('scroll', () => {
             let activeClass = 'normal';
             let position = false;
             let top = false;
-            let li1 = '';
-            let li2 = '';
-            let li3 = '';
-            let li4 = '';
-console.log('xxxxxx', window.scrollY);
             if(window.scrollY >= 1300 ){
                 activeClass = 'is-sticky';
                 position = true;
                 top = true;
-                li1 = 'active';
-                li2 = '';
-                li3 = '';
-                li4 = '';
-            }
-            if(window.scrollY >= 2000 ){  
-                li1 = '';              
-                li2 = 'active';
-                li3 = '';
-                li4 = '';
-            }
-            if(window.scrollY >= 4100 ){                
-                li1 = '';              
-                li2 = '';
-                li3 = 'active';
-                li4 = '';
-            }
-            if(window.scrollY >= 6100 ){                
-                li1 = '';              
-                li2 = '';
-                li3 = '';
-                li4 = 'active';
             }
             this.setState({ 
                 activeClass:activeClass,
                 position:position,
-                top:top,
-                li1:li1,
-                li2:li2,
-                li3:li3,
-                li4:li4
+                top:top
              });
          });
+         document.title = "SET IT AND LEAVE IT"
     }
 
  
@@ -94,9 +114,21 @@ console.log('xxxxxx', window.scrollY);
                 });
     }
 
+    pagescroll=(e)=> {
+        if (e.currentTarget.dataset.to) {
+            document.querySelectorAll('#getFixed ul li').forEach(element => {
+                if(element.classList.contains('active')){
+                    element.classList.remove('active')
+                }
+            });
+            document.querySelector(e.currentTarget.dataset.to).scrollIntoView({ behavior: 'smooth' });
+            document.querySelector(e.currentTarget.dataset.to+'1').classList.add('active');
+        }
+    }
+
 render(){
 
-    console.log('SelandLeaveData',this.state.SelandLeaveData);
+    console.log('SelandLeaveData',this.state.SelandLeaveData); 
             return(
                 <div className="set-and-leave-it-section">
                     
@@ -104,7 +136,7 @@ render(){
                         <div className="container-fluid">
                             <div className="row">
                                 <div className="inner-page-banner-heading hdng">
-                                    <h2 className="selandleaveTitle" dangerouslySetInnerHTML={{ __html:this.state.SelandLeaveData.title }}></h2>
+                              <h2 className="selandleaveTitle" dangerouslySetInnerHTML={{ __html:this.state.SelandLeaveData.title }}></h2>
                                 </div>
 
                                 <div className="inner-page-banner-image">
@@ -117,11 +149,15 @@ render(){
 
                    
                     <div className="container">
-                        <div className="not-sect nst">
-                       <p><span>!</span><p><div className="notediv"><b>NOTE:</b> <p>You may also watch our short <Link to={"/front/videos"}>videos</Link> summarizing much of the material below or read our <Link to={"/front/set-it-and-leave-it"} className="c22"> Set It and Leave It </Link> <Link to={"/front/research"}>research paper</Link> for more details and in-depth discussion.</p></div></p></p>
+                        <div className="not-sect">
+                       <p><span>!</span><div className="notediv notediv-research"><b>NOTE:</b> <p>You may also watch our short <Link to={"/front/videos"}>videos</Link> summarizing much of the material below or read our <em style={{'color':'purple'}}>Set It and Leave It</em> <Link to={"/front/research"}>research</Link> for more details and in-depth discussion.</p></div></p>
                         </div>
                     </div>
-
+                    {/* <div className="container">
+                    <div className="not-sect">
+                        <p> <span> !</span> <div className="notediv notediv-research"><b> NOTE: </b> <p>In addition to our research, we have created short <Link to={"/front/videos"}>videos</Link>  summarizing many of the same topics. </p></div></p>
+                    </div>
+                </div> */}
                     <section id="blouq-content">
                         <div className="container">
                             <div className="blouq-content-inner">
@@ -136,13 +172,13 @@ render(){
                             <div className="container">
                                 <div className="row">
                                     <div className="trad-box-inner">       
-                                        <nav className="navbar" style={{marginBottom: '0'}}>
+                                        <nav className="navbar navbar-tab">
                                             <div className="container-fluid">
-                                                <ul className="nav">
-                                                    <li className={`${this.state.li1}`}> <AnchorLink href="#background" className="scrolly"> BACKGROUND </AnchorLink> </li>
-                                                    <li className={`${this.state.li2}`}> <AnchorLink href="#withdrawal" className="scrolly"> MECHANICS </AnchorLink> </li>
-                                                    <li className={`${this.state.li3}`}> <AnchorLink href="#varible" className="scrolly"> PROS & CONS </AnchorLink> </li>
-                                                    <li className={`${this.state.li4}`}> <AnchorLink href="#executivesummary" className="scrolly"> EXAMPLE </AnchorLink> </li>
+                                                <ul id="testing" className="nav">
+                                                    <li id="background1"> <NavLink onClick={this.pagescroll} data-to="#background" className="scrolly"> BACKGROUND </NavLink> </li>
+                                                    <li id="withdrawal1"> <NavLink onClick={this.pagescroll} data-to="#withdrawal" className="scrolly"> MECHANICS </NavLink> </li>
+                                                    <li id="varible1"> <NavLink onClick={this.pagescroll} data-to="#varible" className="scrolly"> PROS & CONS </NavLink> </li>
+                                                    <li id="executivesummary1"> <NavLink onClick={this.pagescroll} data-to="#executivesummary" className="scrolly"> EXAMPLE </NavLink> </li>
                                                 </ul>
                                             </div>
                                         </nav>

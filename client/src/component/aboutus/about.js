@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import AnchorLink from 'react-anchor-link-smooth-scroll'
+import { Link, NavLink, BrowserRouter as Router } from 'react-router-dom'
 import about_banner from '../../assets/img/about-banner-bg.jpg';
-import about_bg from '../../assets/img/about-flower-bg.png';
+import about_bg from '../../assets/img/img1/ABOUT.png';
 import AdminService from '../../admin/Aservice/adminservice';
+import $ from "jquery";
 const AdminAPI = new AdminService();
 
 class AboutUs extends Component{
@@ -28,43 +29,71 @@ class AboutUs extends Component{
 
 
     componentDidMount(){
+        var lastId,
+        topMenu = $("#testing"),
+        topMenuHeight = topMenu.outerHeight() + 1,
+        // All list items
+        menuItems = topMenu.find(".scrolly"),
+        // Anchors corresponding to menu items
+        scrollItems = menuItems.map(function () {
+            var item = $($(this).attr("data-to"));
+            if (item.length) { return item; }
+        });
+
+    // Bind click handler to menu items
+    // so we can get a fancy scroll animation
+    menuItems.click(function (e) {
+
+        var href = $(this).attr("data-to"),
+            offsetTop = href === "#" ? 0 : $(href).offset().top - topMenuHeight + 1;
+        $('html, body').stop().animate({
+            scrollTop: offsetTop
+        }, 850);
+        e.preventDefault();
+    });
+
+    // Bind to scroll
+    $(window).scroll(function () {
+        // Get container scroll position
+        var fromTop = $(this).scrollTop() + topMenuHeight;
+
+        // Get id of current scroll item
+        var cur = scrollItems.map(function () {
+            if ($(this).offset().top < fromTop)
+                return this;
+        });
+        // Get the id of the current element
+        cur = cur[cur.length - 1];
+        var id = cur && cur.length ? cur[0].id : "";
+
+        if (lastId !== id) {
+            lastId = id;
+            // Set/remove active class
+            menuItems
+                .parent().removeClass("active")
+                .end().filter("[data-to='#" + id + "']").parent().addClass("active");
+        }
+    });
         window.scrollTo(0, 0);
         this.getAbout();
         window.addEventListener('scroll', () => {
             let activeClass = 'normal';
             let position = false;
             let top = false;
-            let li1 = '';
-            let li2 = '';
-            let li3 = '';
 
             if(window.scrollY >= 1000 ){
                 activeClass = 'is-sticky';
                 position = true;
                 top = true;
-                li1 = 'active';
-                li2 = '';
-                li3 = '';
-            }
-            if(window.scrollY >= 1650 ){
-                li1 = '';
-                li2 = 'active';
-                li3 = '';
-            }
-            if(window.scrollY >= 2350 ){
-                li1 = '';
-                li2 = '';
-                li3 = 'active';
             }
             this.setState({ 
                 activeClass:activeClass,
                 position:position,
-                top:top,
-                li1:li1,
-                li2:li2,
-                li3:li3
+                top:top
              });
          });
+         
+      document.title = "ABOUT - SET IT AND LEAVE IT"
     }
 
  
@@ -80,6 +109,18 @@ class AboutUs extends Component{
                 }).catch(err => {
                     console.log('xxxxxxx xxxx ', err);
                 });
+    }
+
+    pagescroll=(e)=> {
+        if (e.currentTarget.dataset.to) {
+            document.querySelectorAll('#getFixed ul li').forEach(element => {
+                if(element.classList.contains('active')){
+                    element.classList.remove('active')
+                }
+            });
+            document.querySelector(e.currentTarget.dataset.to).scrollIntoView({ behavior: 'smooth' });
+            document.querySelector(e.currentTarget.dataset.to+'1').classList.add('active');
+        }
     }
 
 render(){
@@ -113,12 +154,12 @@ render(){
                             <div class="container">
                                 <div class="row">
                                     <div class="trad-box-inner">
-                                        <nav class="navbar" style={{ marginBottom: '0'}}>
+                                        <nav class="navbar navbar-tab">
                                             <div class="container-fluid">
-                                                <ul class="nav">
-                                                    <li className={`${this.state.li1}`}> <AnchorLink href="#motivation" class="scrolly"> MOTIVATION </AnchorLink> </li>
-                                                    <li className={`${this.state.li2}`}> <AnchorLink href="#mybg" class="scrolly"> MY BACKGROUND </AnchorLink> </li>
-                                                    <li className={`${this.state.li3}`}> <AnchorLink href="#evolution" class="scrolly"> EVOLUTION OF SET IT AND LEAVE IT </AnchorLink> </li>
+                                                <ul id="testing" class="nav">
+                                                    <li id="motivation1"> <NavLink onClick={this.pagescroll} data-to="#motivation" class="scrolly"> MOTIVATION </NavLink> </li>
+                                                    <li id="mybg1"> <NavLink onClick={this.pagescroll} data-to="#mybg" class="scrolly"> MY BACKGROUND </NavLink> </li>
+                                                    <li id="evolution1"> <NavLink onClick={this.pagescroll} data-to="#evolution" class="scrolly"> EVOLUTION OF SET IT AND LEAVE IT </NavLink> </li>
                                                 </ul>
                                             </div>
                                         </nav>

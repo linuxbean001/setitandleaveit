@@ -7,6 +7,7 @@ const AdminAPI = new AdminService();
 class Video extends Component{
     constructor(props){
         super(props);
+        this.props.onHeaderHover(true);
         this.state ={
             isHide:false,
             VideoBannerData:[],
@@ -23,6 +24,7 @@ class Video extends Component{
 componentDidMount(){
     window.scrollTo(0, 0);
     this.getVideos();
+    document.title = "VIDEOS - SET IT AND LEAVE IT"
 }
 
 getVideos() {
@@ -78,7 +80,7 @@ render(){
                    
 
 
-                    <section class="video-section mg-top-10" id="video1">
+                    <section class="video-section " id="video1">
                         <div class="container">
                             <div class="row">
                             <div class="col-md-6">

@@ -1,9 +1,9 @@
 const ContactUs = require('../models/contactusModel');
 const Register = require('../models/registerModel');
 const Activitylog = require('../models/useractivityModel');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 const creds = require('./config');
-
+sgMail.setApiKey(creds.SENDGRID_API_KEY);
 exports.addContactusTODb = async (req, res, next) => { 
     const contact = new ContactUs({
         name: req.body.name,
@@ -44,36 +44,6 @@ exports.addContactusTODb = async (req, res, next) => {
         </div> 
     `;
 
-  // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport({
-    host: 'mail.setitandleaveit.com',
-    port: 587,
-    auth: {
-        user: creds.USER, // generated ethereal user
-        pass: creds.PASS  // generated ethereal password
-    },
-    tls:{
-      rejectUnauthorized:false
-    }
-  });
-
-  // setup email data with unicode symbols
-  let mailOptions = {
-      from: '"New Contact" <'+creds.USER+'>', // sender address
-      to: 'info@setitandleaveit.com', // list of receivers
-      subject: 'New Contact Request', // Subject line
-      html: output // html body
-  };
-
-  // send mail with defined transport object
-  transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-          return console.log(error);
-      }
-      console.log('Message sent: %s', info.messageId);   
-      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-  });
-
 
     try {
             let result = await contact.save();
@@ -84,25 +54,20 @@ exports.addContactusTODb = async (req, res, next) => {
                     message:'Thank you for your message. We will get back to you as soon as we can.'
                 });
 
+
+                
+
+    const Contactmsg = {
+        from: 'New Contact <'+creds.USER+'>', // sender address
+        to: creds.USERFROM, //creds.USER, // list of receivers
+        subject: 'New Contact Request', // Subject line
+        html: output // html body
+     };
+    sgMail.send(Contactmsg);
+    
              /*--- User activity log ---*/
 
              let userLogid = await Register.findOne({ _id: req.body.userid });
-            //  const userLog = new Activitylog({
-            //      userid: userLogid._id,
-            //      name: userLogid.name,
-            //      action: 'Contact',
-            //      datetime: new Date(),
-            //      activitydata: req.body.message
-            //  }); 
- 
-            //  let Logresult =  userLog.save();
-            //  if (Logresult) {
-            //      console.log('Activity Store');
-
-            //  }else{
-            //      console.log('No store');
-            //  }
-
              addToActivityLog(userLogid._id,userLogid.name,'Contact',req.body.message);
 
 

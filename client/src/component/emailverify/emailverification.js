@@ -65,7 +65,7 @@ console.log('dataaaaa:', this.state.presetdata.data);
                                               
                                             </div>
                                             <div className="col-lg-12 col-md-12 col-sm-12 contSet">
-                                                        <a href="/front/register" className="light-btn"  style={{background:'#7030a0', borderColor: '#7030a0',marginTop:'30px', marginBottom:'30px' }}>Continiue </a>
+                                                        <a href="/front/register" className="light-btn"  style={{background:'#7030a0', borderColor: '#7030a0',marginTop:'30px', marginBottom:'30px' }}>CONTINUE </a>
                                             </div>
                                     </div>
                                  </div>

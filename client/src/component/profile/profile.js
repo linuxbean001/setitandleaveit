@@ -266,7 +266,7 @@ class Profile extends Component {
     componentDidMount() {
         window.scrollTo(0, 0);
         this.getQuestionLists();
-
+        document.title = "ACCOUNT - SET IT AND LEAVE IT"
     }
 
     handleHide() {
@@ -435,6 +435,7 @@ class Profile extends Component {
             errors.Eage = "error_sell form-control";
             Errorindicator.push(4);
         }
+
         if (!this.state.married) {
             formIsValid = true;
             errors.Emarried = "error_sell form-control";
@@ -450,92 +451,208 @@ class Profile extends Component {
             errors.Egrandkid = "error_sell form-control";
             Errorindicator.push(4);
         }
-        if (!this.state.pets) {
-            formIsValid = true;
-            errors.Epets = "error_sell form-control";
-            Errorindicator.push(4);
-        }
+        // if (!this.state.pets) {
+        //     formIsValid = true;
+        //     errors.Epets = "error_sell form-control";
+        //     Errorindicator.push(4);
+        // }
+
         // if(!this.state.personalOtherDetails){
         //     formIsValid = true;
         //     errors.EpersonalOtherDetails = "error_sell form-control";
         //     Errorindicator.push(4);
         // }
 
+ //////// living ///////////////////
+ if(this.state.iWeRent) {
+     if(!this.state.monthlyRent) {
+         formIsValid = true;
+         errors.EmonthlyRent = "error_sell form-control";
+         Errorindicator.push(5);
+     }
+ }
+
+ if(this.state.homeBox) {
+     if(!this.state.homeValue){
+        formIsValid = true;
+        errors.EhomeValue = "error_sell form-control";
+        Errorindicator.push(5);
+     }
+ }
+
+ if(this.state.homeBox) {
+    if(!this.state.Mortgage){
+       formIsValid = true;
+       errors.EMortgage = "error_sell form-control";
+       Errorindicator.push(5);
+    }
+}
+
+        // if (!this.state.homeBox) {
+        //     if (!this.state.homeValue && !this.state.Mortgage) {
+        //         formIsValid = true;
+        //         errors.EhomeValue = "error_sell form-control";
+        //         errors.EMortgage = "error_sell form-control";
+        //         Errorindicator.push(5);
+        //     } else {
+        //         formIsValid = true;
+        //         errors.EhomeValue = "form-control";
+        //         errors.EMortgage = "form-control";
+        //         Errorindicator.push(5);
+        //     }
+
+        //     if (this.state.homeValue || this.state.Mortgage) {
+        //         if (!this.state.homeBox) {
+        //             formIsValid = true;
+        //             errors.EhomeBox = "checkfalse";
+        //             Errorindicator.push(5);
+        //         }
+        //     }
+
+        //     if (this.state.iWeRent) {
+        //         if (!this.state.monthlyRent) {
+        //             formIsValid = true;
+        //             errors.EmonthlyRent = "error_sell form-control";
+        //             Errorindicator.push(5);
+        //         }
+        //     }
+
+        //     if (this.state.monthlyRent) {
+        //         if (!this.state.iWeRent) {
+        //             formIsValid = true;
+        //             errors.EiWeRent = "error_sell form-control";
+        //             Errorindicator.push(5);
+        //         }
+        //     }
+        // }
+        // if (this.state.iWeRent) {
+        //     formIsValid = true;
+        //     errors.EhomeBox = "checktrue"
+        //     Errorindicator.push(5);
+        // }
+        // if (this.state.iWeRent) {
+        //     formIsValid = true;
+        //     errors.EiWeRent = "checktrue";
+        //     Errorindicator.push(5);
+        // } else {
+        //     errors.EhomeBox = "checkfalse";
+
+        //     formIsValid = true;
+        // }
+        // if (this.state.iWeRent) {
+        //     formIsValid = true;
+        //     errors.EiWeRent = "checktrue";
+        //     Errorindicator.push(5);
+        // }
+
+        // if (this.state.homeBox) {
+        //     formIsValid = true;
+        //     errors.EhomeBox = "checktrue";
+
+        //     Errorindicator.push(5);
+        // }
+
+        // if (!this.state.homeBox) {
+        //     formIsValid = true;
+        //     errors.EhomeBox = "checkfalse";
+        //     Errorindicator.push(5);
+        // } else {
+        //     formIsValid = true;
+        //     errors.EhomeBox = "checktrue";
+        // }
+
+        // if (this.state.monthlyRent) {
+        //     if (!this.state.iWeRent) {
+        //         formIsValid = true;
+        //         errors.EiWeRent = "checkfalse";
+        //         Errorindicator.push(5);
+        //     }
+        // }
+
+        /////////// living ///////////////////
+
+        // if (!this.state.homeBox && this.state.iWeRent) {
+        //     formIsValid = true;
+        //     errors.EhomeBox = "checkfalse";
+        //     errors.EiWeRent = "checkfalse";
+        //     Errorindicator.push(5);
+        // } else {
+        //     formIsValid = true;
+        //     errors.EhomeBox = "checktrue";
+        //     errors.EiWeRent = "checktrue";
+        // }
 
 
-        if (this.state.homeBox) {
-            if (!this.state.homeValue) {
-                formIsValid = true;
-                errors.EhomeValue = "error_sell form-control";
-                Errorindicator.push(5);
-            }
-            if (!this.state.Mortgage) {
-                formIsValid = true;
-                errors.EMortgage = "error_sell form-control";
-                Errorindicator.push(5);
-            }
-        }
-
-        if (this.state.homeValue || this.state.Mortgage) {
-            if (!this.state.homeBox) {
-                formIsValid = true;
-                errors.EhomeBox = "checkfalse";
-                Errorindicator.push(5);
-            }
-        }
-
-        if (this.state.iWeRent) {
-            if (!this.state.monthlyRent) {
-                formIsValid = true;
-                errors.EmonthlyRent = "error_sell form-control";
-                Errorindicator.push(5);
-            }
-        }
-        if (this.state.monthlyRent) {
-            if (!this.state.iWeRent) {
-                formIsValid = true;
-                errors.EiWeRent = "checkfalse";
-                Errorindicator.push(5);
-            }
-        }
+        // if (this.state.homeBox) {
+        //     if (!this.state.iWeRent) {
+        //         formIsValid = true;
+        //         errors.CiWeRent = "form-control";
+        //     }
+        // }
 
 
 
 
+        // if (!this.state.homeBanking) {
+        //     if (this.state.banking) {
+        //         formIsValid = true;
+        //         errors.Ebanking = "error_sell form-control";
+        //         Errorindicator.push(5);
+        //     }
+        // }
 
-        if (this.state.homeBanking) {
-            if (!this.state.banking) {
-                formIsValid = true;
-                errors.Ebanking = "error_sell form-control";
-                Errorindicator.push(5);
-            }
-        }
-
-        if (this.state.banking) {
-            if (!this.state.homeBanking) {
-                formIsValid = true;
-                errors.EhomeBanking = "checkfalse";
-                Errorindicator.push(5);
-            }
-        }
+        // if (this.state.banking) {
+        //     if (this.state.homeBanking) {
+        //         formIsValid = true;
+        //         errors.EhomeBanking = "checkfalse";
+        //         Errorindicator.push(5);
+        //     }
+        // }
 
         if (this.state.homeBrokerage) {
             if (!this.state.brokerage) {
                 formIsValid = true;
-                errors.Ebrokerage = "error_sell form-control";
-                Errorindicator.push(5);
+                errors.Ebrokerage = "checkfalse";
+                Errorindicator.push(6);
             }
         }
-
-
-        if (this.state.monthlyRent) {
-            if (!this.state.homeBanking) {
+        if (this.state.brokerage) {
+            if (!this.state.homeBrokerage) {
                 formIsValid = true;
-                errors.EhomeBanking = "checkfalse";
-                Errorindicator.push(5);
+                errors.EhomeBrokerage = "error_sell form-control";
+                Errorindicator.push(6);
+
+            }
+        }
+        if (!this.state.brokerage) {
+            if (this.state.homeBrokerage) {
+                formIsValid = true;
+                errors.Ebrokerage = "error_sell form-control"
+                Errorindicator.push(6);
             }
         }
 
+        // if (this.state.monthlyRent) {
+        //     if (!this.state.homeBanking && !this.state.homeBrokerage) {
+        //         formIsValid = true;
+        //         errors.EhomeBanking = "checkfalse";
+        //         errors.EhomeBrokerage = "checkfalse";
+        //         Errorindicator.push(5);
+        //     }
+        // }
+
+
+
+        // if (!this.state.homeBox && !this.state.iWeRent) {
+        //     formIsValid = true;
+        //     errors.EhomeBox = "checkfalse";
+        //     errors.EiWeRent = "checkfalse";
+        //     Errorindicator.push(5);
+        // } else {
+        //     formIsValid = true;
+        //     errors.EhomeBox = "checktrue";
+        //     errors.EiWeRent = "checktrue";
+        // }
         if (!this.state.homeBox && !this.state.iWeRent) {
             formIsValid = true;
             errors.EhomeBox = "checkfalse";
@@ -547,7 +664,6 @@ class Profile extends Component {
             errors.EiWeRent = "checktrue";
         }
 
-
         if (!this.state.homeBrokerage && !this.state.homeBanking && !this.state.homeOther && !this.state.homeRetirementAccount && !this.state.homeRothAccount) {
             formIsValid = true;
             errors.EhomeBrokerage = "checkfalse";
@@ -555,7 +671,7 @@ class Profile extends Component {
             errors.EhomeOther = "checkfalse";
             errors.EhomeRetirementAccount = "checkfalse";
             errors.EhomeRothAccount = "checkfalse";
-            Errorindicator.push(5);
+            Errorindicator.push(6);
         } else {
             formIsValid = true;
             errors.EhomeBrokerage = "checktrue";
@@ -566,26 +682,21 @@ class Profile extends Component {
         }
 
 
-        if (this.state.monthlyRent) {
-            if (!this.state.iWeRent) {
-                formIsValid = true;
-                errors.EiWeRent = "checkfalse";
-                Errorindicator.push(5);
-            }
-        }
+   
 
         if (this.state.homeRetirementAccount) {
             if (!this.state.retirementAccount) {
                 formIsValid = true;
                 errors.EretirementAccount = "error_sell form-control";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
+
         if (this.state.retirementAccount) {
             if (!this.state.homeRetirementAccount) {
                 formIsValid = true;
                 errors.EhomeRetirementAccount = "checkfalse";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
 
@@ -593,14 +704,14 @@ class Profile extends Component {
             if (!this.state.rothAccount) {
                 formIsValid = true;
                 errors.ErothAccount = "error_sell form-control";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
         if (this.state.rothAccount) {
             if (!this.state.homeRothAccount) {
                 formIsValid = true;
                 errors.EhomeRothAccount = "checkfalse";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
 
@@ -608,19 +719,19 @@ class Profile extends Component {
             if (!this.state.otherTypes) {
                 formIsValid = true;
                 errors.EotherTypes = "error_sell form-control";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
             if (!this.state.otherApproxValue) {
                 formIsValid = true;
                 errors.EotherApproxValue = "error_sell form-control";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
         if (this.state.otherTypes || this.state.otherApproxValue) {
             if (!this.state.homeOther) {
                 formIsValid = true;
                 errors.EhomeOther = "checkfalse";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
 
@@ -643,14 +754,14 @@ class Profile extends Component {
             if (!this.state.socailSecurity) {
                 formIsValid = true;
                 errors.EsocailSecurity = "error_sell form-control";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
         if (this.state.socailSecurity) {
             if (!this.state.homeSS) {
                 formIsValid = true;
                 errors.EhomeSS = "checkfalse";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
 
@@ -659,14 +770,14 @@ class Profile extends Component {
             if (!this.state.pension) {
                 formIsValid = true;
                 errors.Epension = "error_sell form-control";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
         if (this.state.pension) {
             if (!this.state.homePension) {
                 formIsValid = true;
                 errors.EhomePension = "checkfalse";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
 
@@ -725,8 +836,9 @@ class Profile extends Component {
         if (!this.state.essential) {
             formIsValid = true;
             errors.Eessential = "error_sell form-control";
-            Errorindicator.push(6);
+            Errorindicator.push(7);
         }
+
         // if(!this.state.discretionary){
         //     formIsValid = true;
         //     errors.Ediscretionary = "error_sell form-control";
@@ -740,14 +852,15 @@ class Profile extends Component {
 
 
 
-        if (!this.state.medicare && !this.state.supplementalHealth && !this.state.longtermcare && !this.state.noInsurance && !this.state.lifeInsurance) {
+        if (!this.state.medicare && !this.state.supplementalHealth && !this.state.longtermcare && !this.state.noInsurance && !this.state.lifeInsurance && !this.state.inotherbox) {
             formIsValid = true;
             errors.EnoInsurance = "checkfalse";
             errors.Emedicare = "checkfalse";
             errors.EsupplementalHealth = "checkfalse";
             errors.Elongtermcare = "checkfalse";
             errors.ElifeInsurance = "checkfalse";
-            Errorindicator.push(7);
+            errors.Einotherbox = "checkfalse";
+            Errorindicator.push(8);
         } else {
             formIsValid = true;
             errors.EnoInsurance = "checktrue";
@@ -755,25 +868,26 @@ class Profile extends Component {
             errors.EsupplementalHealth = "checktrue";
             errors.Elongtermcare = "checktrue";
             errors.ElifeInsurance = "checktrue";
+            errors.Einotherbox = "checktrue";
         }
 
         if (this.state.lifeInsurance) {
             if (!this.state.lifeInType) {
                 formIsValid = true;
                 errors.ElifeInType = "error_sell form-control";
-                Errorindicator.push(7);
+                Errorindicator.push(8);
             }
             if (!this.state.lifeamount) {
                 formIsValid = true;
                 errors.Elifeamount = "error_sell form-control";
-                Errorindicator.push(7);
+                Errorindicator.push(8);
             }
         }
         if (this.state.lifeInType || this.state.lifeamount) {
             if (!this.state.lifeInsurance) {
                 formIsValid = true;
                 errors.ElifeInsurance = "checkfalse";
-                Errorindicator.push(7);
+                Errorindicator.push(8);
             }
         }
 
@@ -781,7 +895,7 @@ class Profile extends Component {
             if (!this.state.inother) {
                 formIsValid = true;
                 errors.Einother = "error_sell form-control";
-                Errorindicator.push(7);
+                Errorindicator.push(8);
             }
         }
 
@@ -789,7 +903,7 @@ class Profile extends Component {
             if (!this.state.inotherbox) {
                 formIsValid = true;
                 errors.Einotherbox = "checkfalse";
-                Errorindicator.push(7);
+                Errorindicator.push(8);
             }
         }
 
@@ -798,18 +912,18 @@ class Profile extends Component {
         if (!this.state.currentAllocationStock) {
             formIsValid = true;
             errors.EcurrentAllocationStock = "error_sell form-control";
-            Errorindicator.push(8);
+            Errorindicator.push(9);
         }
 
         if (!this.state.experience_1_10) {
             formIsValid = true;
             errors.Eexperience_1_10 = "error_sell form-control";
-            Errorindicator.push(8);
+            Errorindicator.push(9);
         }
         if (!this.state.expectations) {
             formIsValid = true;
             errors.Eexpectations = "error_sell form-control";
-            Errorindicator.push(8);
+            Errorindicator.push(9);
         }
         // if(!this.state.experience_gb){
         //     formIsValid = true;
@@ -830,7 +944,7 @@ class Profile extends Component {
             errors.EinvestGrowth = "checkfalse";
             errors.EinvestGrowthIncome = "checkfalse";
             errors.EinvestAggressiveGrowth = "checkfalse";
-            Errorindicator.push(8);
+            Errorindicator.push(9);
         } else {
             formIsValid = true;
             errors.EcapitalPreservation = "checktrue";
@@ -845,22 +959,22 @@ class Profile extends Component {
         if (!this.state.portfolioDrawdown) {
             formIsValid = true;
             errors.EportfolioDrawdown = "error_sell form-control";
-            Errorindicator.push(9);
+            Errorindicator.push(10);
         }
         if (!this.state.riskPreservation) {
             formIsValid = true;
             errors.EriskPreservation = "error_sell form-control";
-            Errorindicator.push(9);
+            Errorindicator.push(10);
         }
         if (!this.state.riskIncome) {
             formIsValid = true;
             errors.EriskIncome = "error_sell form-control";
-            Errorindicator.push(9);
+            Errorindicator.push(10);
         }
         if (!this.state.riskGrowth) {
             formIsValid = true;
             errors.EriskGrowth = "error_sell form-control";
-            Errorindicator.push(9);
+            Errorindicator.push(10);
         }
         // if(!this.state.lastMarketDownturn){
         //     formIsValid = true;
@@ -875,7 +989,7 @@ class Profile extends Component {
             errors.EriskAggressive = "checkfalse";
             errors.EriskModerate = "checkfalse";
             errors.EriskConservative = "checkfalse";
-            Errorindicator.push(9);
+            Errorindicator.push(10);
         } else {
             formIsValid = true;
             errors.EriskAggressive = "checktrue";
@@ -890,7 +1004,7 @@ class Profile extends Component {
             errors.Eportfolio3 = "checkfalse";
             errors.Eportfolio4 = "checkfalse";
             errors.Eportfolio5 = "checkfalse";
-            Errorindicator.push(9);
+            Errorindicator.push(10);
         } else {
             formIsValid = true;
             errors.Eportfolio1 = "checktrue";
@@ -930,14 +1044,14 @@ class Profile extends Component {
             if (!this.state.referralContent) {
                 formIsValid = true;
                 errors.EreferralContent = "error_sell form-control";
-                Errorindicator.push(10);
+                Errorindicator.push(11);
             }
         }
         if (this.state.referralContent) {
             if (!this.state.referral) {
                 formIsValid = true;
                 errors.Ereferral = "checkfalse";
-                Errorindicator.push(10);
+                Errorindicator.push(11);
             }
         }
 
@@ -945,14 +1059,14 @@ class Profile extends Component {
             if (!this.state.otherOthersContent) {
                 formIsValid = true;
                 errors.EotherOthersContent = "error_sell form-control";
-                Errorindicator.push(10);
+                Errorindicator.push(11);
             }
         }
         if (this.state.otherOthersContent) {
             if (!this.state.otherOthers) {
                 formIsValid = true;
                 errors.EotherOthers = "checkfalse";
-                Errorindicator.push(10);
+                Errorindicator.push(11);
             }
         }
 
@@ -961,17 +1075,25 @@ class Profile extends Component {
             if (!this.state.homeBrokerage) {
                 formIsValid = true;
                 errors.EhomeBrokerage = "checkfalse";
-                Errorindicator.push(5);
+                Errorindicator.push(6);
             }
         }
 
-        if (this.state.banking) {
-            if (!this.state.homeBanking) {
-                formIsValid = true;
-                errors.EhomeBanking = "checkfalse";
-                Errorindicator.push(5);
-            }
-        }
+        // if (this.state.banking) {
+        //     if (!this.state.homeBanking) {
+        //         formIsValid = true;
+        //         errors.EhomeBanking = "checkfalse";
+        //         Errorindicator.push(6);
+        //     }
+        // }
+
+        // if (this.state.homeBanking) {
+        //     if (!this.state.banking) {
+        //         formIsValid = true;
+        //         errors.Ebanking = "checkfalse";
+        //         Errorindicator.push(6)
+        //     }
+        // }
 
 
 
@@ -1004,10 +1126,11 @@ class Profile extends Component {
             var elmnt = document.getElementById("profileDashboard");
             elmnt.scrollIntoView({ behavior: "smooth" });
             let currentStep = this.state.currentStep
-            currentStep = currentStep >= 10 ? 10 : currentStep + 1
+            currentStep = currentStep >= 11 ? 11 : currentStep + 1
             this.setState({
                 currentStep: currentStep
             })
+
         }
     }
 
@@ -1033,7 +1156,7 @@ class Profile extends Component {
         })
     }
 
-  
+
 
     handleChange(event) {
         const { name, value } = event.target
@@ -1149,6 +1272,7 @@ class Profile extends Component {
                 this.setState({ EMortgage: "error_sell form-control" })
             }
         }
+
         if (name == 'monthlyRent') {
             if (value) {
                 if (!this.state.iWeRent) {
@@ -1191,6 +1315,7 @@ class Profile extends Component {
                 this.setState({ brokerage: '', EhomeBrokerage: 'checktrue', Ebrokerage: "error_sell form-control" })
             }
         }
+
         if (name == 'rothAccount') {
             if (value) {
                 if (!this.state.homeRothAccount) {
@@ -1372,7 +1497,7 @@ class Profile extends Component {
                 this.setState({ ElastMarketDownturn: "error_sell form-control" })
             }
         }
-     
+
         if (name == 'referralContent') {
             if (value) {
                 if (!this.state.referral) {
@@ -1634,15 +1759,15 @@ class Profile extends Component {
                 console.log('clicknotvaluehere');
                 let t = '';
                 if (value) { t = ''; }
-                this.setState({ [name]: t, EhomeValue: "form-control"})
-                if(this.state.CiWeRent){
-                    this.setState({ EiWeRent:'checktrue' })
-                }else{
-                    this.setState({ EiWeRent:'checkfalse',EhomeBox:'checkfalse' })
+                this.setState({ [name]: t, EhomeValue: "form-control" })
+                if (this.state.CiWeRent) {
+                    this.setState({ EiWeRent: 'checktrue' })
+                } else {
+                    this.setState({ EiWeRent: 'checkfalse', EhomeBox: 'checkfalse' })
                 }
             } else {
                 console.log('clickvaluehere');
-                this.setState({ [name]: value,EiWeRent:'checktrue',EhomeBox:'checktrue' })
+                this.setState({ [name]: value, EiWeRent: 'checktrue', EhomeBox: 'checktrue' }) //here checktrue
             }
         }
 
@@ -1656,18 +1781,21 @@ class Profile extends Component {
                 let t = '';
                 if (value) { t = ''; }
                 this.setState({ [name]: t, EmonthlyRent: "form-control" })
-                console.log('this.state.ChomeBox',this.state.ChomeBox);
-                if(this.state.ChomeBox){
-                    this.setState({ EhomeBox:'checktrue' })
-                }else{
-                    this.setState({ EhomeBox:'checkfalse',EiWeRent:'checkfalse' })
+                console.log('this.state.ChomeBox', this.state.ChomeBox);
+                if (this.state.ChomeBox) {
+                    this.setState({ EhomeBox: 'checktrue' })
+                } else {
+                    this.setState({ EhomeBox: 'checkfalse', EiWeRent: 'checkfalse' })
                 }
             } else {
                 console.log('iWeRentvalue');
-                this.setState({ [name]: value,EhomeBox:'checktrue',EiWeRent:'checktrue'  })
+                this.setState({ [name]: value, EhomeBox: 'checktrue', EiWeRent: 'checktrue' })
             }
         }
+
         if (name == 'homeBanking') {
+            console.log('homeBanking12345');
+
             if (!this.state.banking) {
                 this.setState({ Ebanking: "error_sell form-control" })
             }
@@ -1697,6 +1825,7 @@ class Profile extends Component {
                 })
             }
         }
+
         if (name == 'homeBrokerage') {
             if (!this.state.brokerage) {
                 this.setState({ Ebrokerage: "error_sell form-control" })
@@ -1858,13 +1987,14 @@ class Profile extends Component {
                 if (value) { t = ''; }
                 this.setState({ [name]: t, })
 
-                if (!this.state.Cmedicare && !this.state.CsupplementalHealth && !this.state.Clongtermcare && this.state.CnoInsurance && !this.state.ClifeInsurance) {
+                if (!this.state.Cmedicare && !this.state.CsupplementalHealth && !this.state.Clongtermcare && this.state.CnoInsurance && !this.state.ClifeInsurance && !this.state.Cinotherbox) {
                     this.setState({
                         EnoInsurance: "checkfalse",
                         Emedicare: "checkfalse",
                         EsupplementalHealth: "checkfalse",
                         Elongtermcare: "checkfalse",
-                        ElifeInsurance:"checkfalse"
+                        ElifeInsurance: "checkfalse",
+                        Einotherbox: "checkfalse"
                     });
                 }
 
@@ -1875,7 +2005,8 @@ class Profile extends Component {
                     Emedicare: "checktrue",
                     EsupplementalHealth: "checktrue",
                     Elongtermcare: "checktrue",
-                    ElifeInsurance:"checktrue"
+                    ElifeInsurance: "checktrue",
+                    Einotherbox: "checktrue"
                 })
             }
         }
@@ -1886,13 +2017,15 @@ class Profile extends Component {
                 let t = '';
                 if (value) { t = ''; }
                 this.setState({ [name]: t, })
-                if (this.state.Cmedicare && !this.state.CsupplementalHealth && !this.state.Clongtermcare && !this.state.CnoInsurance && !this.state.ClifeInsurance) {
+                if (this.state.Cmedicare && !this.state.CsupplementalHealth && !this.state.Clongtermcare && !this.state.CnoInsurance && !this.state.ClifeInsurance && !this.state.Cinotherbox) {
                     this.setState({
                         EnoInsurance: "checkfalse",
                         Emedicare: "checkfalse",
                         EsupplementalHealth: "checkfalse",
                         Elongtermcare: "checkfalse",
-                        ElifeInsurance:"checkfalse"
+                        ElifeInsurance: "checkfalse",
+                        Einotherbox: "checkfalse"
+
                     });
                 }
             } else {
@@ -1902,7 +2035,8 @@ class Profile extends Component {
                     Emedicare: "checktrue",
                     EsupplementalHealth: "checktrue",
                     Elongtermcare: "checktrue",
-                    ElifeInsurance:"checktrue"
+                    ElifeInsurance: "checktrue",
+                    Einotherbox: "checktrue"
                 })
             }
         }
@@ -1913,13 +2047,14 @@ class Profile extends Component {
                 let t = '';
                 if (value) { t = ''; }
                 this.setState({ [name]: t, })
-                if (!this.state.Cmedicare && this.state.CsupplementalHealth && !this.state.Clongtermcare && !this.state.CnoInsurance && !this.state.ClifeInsurance) {
+                if (!this.state.Cmedicare && this.state.CsupplementalHealth && !this.state.Clongtermcare && !this.state.CnoInsurance && !this.state.ClifeInsurance && !this.state.Cinotherbox) {
                     this.setState({
                         EnoInsurance: "checkfalse",
                         Emedicare: "checkfalse",
                         EsupplementalHealth: "checkfalse",
                         Elongtermcare: "checkfalse",
-                        ElifeInsurance:"checkfalse"
+                        ElifeInsurance: "checkfalse",
+                        Einotherbox: "checkfalse"
                     });
                 }
             } else {
@@ -1929,7 +2064,8 @@ class Profile extends Component {
                     Emedicare: "checktrue",
                     EsupplementalHealth: "checktrue",
                     Elongtermcare: "checktrue",
-                    ElifeInsurance:"checktrue"
+                    ElifeInsurance: "checktrue",
+                    Einotherbox: "checktrue"
                 })
             }
         }
@@ -1940,13 +2076,14 @@ class Profile extends Component {
                 let t = '';
                 if (value) { t = ''; }
                 this.setState({ [name]: t, })
-                if (!this.state.Cmedicare && !this.state.CsupplementalHealth && this.state.Clongtermcare && !this.state.CnoInsurance && !this.state.ClifeInsurance) {
+                if (!this.state.Cmedicare && !this.state.CsupplementalHealth && this.state.Clongtermcare && !this.state.CnoInsurance && !this.state.ClifeInsurance && !this.state.Cinotherbox) {
                     this.setState({
                         EnoInsurance: "checkfalse",
                         Emedicare: "checkfalse",
                         EsupplementalHealth: "checkfalse",
                         Elongtermcare: "checkfalse",
-                        ElifeInsurance:"checkfalse"
+                        ElifeInsurance: "checkfalse",
+                        Einotherbox: "checkfalse"
                     });
                 }
             } else {
@@ -1956,7 +2093,8 @@ class Profile extends Component {
                     Emedicare: "checktrue",
                     EsupplementalHealth: "checktrue",
                     Elongtermcare: "checktrue",
-                    ElifeInsurance:"checktrue"
+                    ElifeInsurance: "checktrue",
+                    Einotherbox: "checktrue"
                 })
             }
         }
@@ -1974,13 +2112,14 @@ class Profile extends Component {
                 let t = '';
                 if (value) { t = ''; }
 
-                if (!this.state.Cmedicare && !this.state.CsupplementalHealth && !this.state.Clongtermcare && !this.state.CnoInsurance && this.state.ClifeInsurance) {
+                if (!this.state.Cmedicare && !this.state.CsupplementalHealth && !this.state.Clongtermcare && !this.state.CnoInsurance && this.state.ClifeInsurance && !this.state.Cinotherbox) {
                     this.setState({
                         EnoInsurance: "checkfalse",
                         Emedicare: "checkfalse",
                         EsupplementalHealth: "checkfalse",
-                        Elongtermcare: "checkfalse", 
-                        ElifeInsurance:"checkfalse"
+                        Elongtermcare: "checkfalse",
+                        ElifeInsurance: "checkfalse",
+                        Einotherbox: "checkfalse"
                     });
                 }
 
@@ -1992,11 +2131,26 @@ class Profile extends Component {
                     Emedicare: "checktrue",
                     EsupplementalHealth: "checktrue",
                     Elongtermcare: "checktrue",
-                    ElifeInsurance:"checktrue"
+                    ElifeInsurance: "checktrue",
+                    Einotherbox: "checktrue"
                 })
             }
         }
 
+
+        // if (name == 'inotherbox') {
+        //     if (!this.state.inother) {
+        //         this.setState({ Einother: "error_sell form-control" })
+        //     }
+        //     this.setState({ Cinotherbox: !this.state.Cinotherbox })
+        //     if (this.state.Cinotherbox) {
+        //         let t = '';
+        //         if (value) { t = ''; }
+        //         this.setState({ [name]: t, Einother: "form-control" })
+        //     } else {
+        //         this.setState({ [name]: value, })
+        //     }
+        // }
 
         if (name == 'inotherbox') {
             if (!this.state.inother) {
@@ -2006,11 +2160,32 @@ class Profile extends Component {
             if (this.state.Cinotherbox) {
                 let t = '';
                 if (value) { t = ''; }
-                this.setState({ [name]: t, Einother: "form-control" })
+
+                if (!this.state.Cmedicare && !this.state.CsupplementalHealth && !this.state.Clongtermcare && !this.state.CnoInsurance && this.state.ClifeInsurance && this.state.Cinotherbox) {
+                    this.setState({
+                        EnoInsurance: "checkfalse",
+                        Emedicare: "checkfalse",
+                        EsupplementalHealth: "checkfalse",
+                        Elongtermcare: "checkfalse",
+                        ElifeInsurance: "checkfalse",
+                        Einotherbox: "checkfalse"
+                    });
+                }
+
+                this.setState({ [name]: t, Einother: "form-control", Elifeamount: "form-control" })
             } else {
                 this.setState({ [name]: value, })
+                this.setState({
+                    EnoInsurance: "checktrue",
+                    Emedicare: "checktrue",
+                    EsupplementalHealth: "checktrue",
+                    Elongtermcare: "checktrue",
+                    ElifeInsurance: "checktrue",
+                    Einotherbox: "checktrue"
+                })
             }
         }
+
 
         if (name == 'analyticalInExperience') {
             this.setState({ CanalyticalInExperience: !this.state.CanalyticalInExperience })
@@ -2441,8 +2616,8 @@ class Profile extends Component {
         })
     }
 
-    handleClick =(queId) => {
-        console.log('xxxxxxxx',queId);
+    handleClick = (queId) => {
+        console.log('xxxxxxxx', queId);
         this.setState({
             showModal: true
         })
@@ -2553,6 +2728,9 @@ class Profile extends Component {
                 'data_id': event.currentTarget.dataset.id
             }
 
+            console.log('questionInfoVoquestionInfoVo', questionInfoVo);
+
+
             var queshowAlert = false;
 
             if (event.currentTarget.dataset.id == 1) {
@@ -2612,14 +2790,15 @@ class Profile extends Component {
 
     get nextButton() {
         let currentStep = this.state.currentStep
-        if (currentStep <= 10) {
+        if (currentStep <= 11) {
+
             return (
                 <div className="buttonGroups">
                     <button className={`btn btn-primary nextbtn float-right contQuebtn classnext${this.state.currentStep}`} type="button" onClick={this._next}>START QUESTIONNAIRE</button>
                     <button className={`btn btn-primary nextbtn  classnext${this.state.currentStep}`} type="button" onClick={this._next}>NEXT <i class="fa fa-angle-right" aria-hidden="true"></i></button>
 
                     <button onClick={this.handleSubmit} data-id="1" className={`btn btn-success saveexit class${this.state.currentStep}`}>SAVE & EXIT </button>
-                    <button hidden={this.state.currentStep == 10 ? false : true} onClick={this.handleSubmit} data-id="2" className={`btn btn-success submitexit class${this.state.currentStep}`}>SUBMIT</button>
+                    <button hidden={this.state.currentStep == 11 ? false : true} onClick={this.handleSubmit} data-id="2" className={`btn btn-success submitexit class${this.state.currentStep}`}>SUBMIT</button>
                 </div>
             )
         }
@@ -2908,7 +3087,6 @@ class Profile extends Component {
 
 
     updateMevalidationCheck() {
-        // console.log('222222222');
         let fields = this.state.fields;
         let errors = {};
         let formIsValid = true;
@@ -3038,8 +3216,8 @@ class Profile extends Component {
 
         }
 
-        if (this.state.banking || this.state.brokerage || this.state.retirementAccount ||  this.state.otherApproxValue) {
-            let banking = 0, brokerage = 0, retirementAccount = 0,  otherApproxValue=0;
+        if (this.state.banking || this.state.brokerage || this.state.retirementAccount || this.state.rothAccount  || this.state.otherApproxValue) {
+            let banking = 0, brokerage = 0, retirementAccount = 0, rothAccount = 0, otherApproxValue = 0;
             if (this.state.banking) {
                 banking = parseInt(this.state.banking.replace(/,/g, ""));
             } else {
@@ -3057,14 +3235,26 @@ class Profile extends Component {
             } else {
                 retirementAccount = 0;
             }
-            
-            if(this.state.otherApproxValue){
-                otherApproxValue = parseInt(this.state.otherApproxValue.replace(/,/g,""))
-            }else{
+
+            if (this.state.rothAccount) {
+                rothAccount = parseInt(this.state.rothAccount.replace(/,/g, ""));
+            } else {
+                rothAccount = 0;
+            }
+
+            // if (this.state.otherTypes) {
+            //     otherTypes = parseInt(this.state.otherTypes.replace(/,/g, ""))
+            // } else {
+            //     otherTypes = 0;
+            // }
+
+            if (this.state.otherApproxValue) {
+                otherApproxValue = parseInt(this.state.otherApproxValue.replace(/,/g, ""))
+            } else {
                 otherApproxValue = 0;
             }
 
-            AssetsApproxTotal = banking + brokerage + retirementAccount + otherApproxValue;
+            AssetsApproxTotal = banking + brokerage + retirementAccount + rothAccount + otherApproxValue;
             console.log('banking:', this.state.banking)
             console.log('brokerage:', this.state.brokerage)
             console.log('retirementAccount:', this.state.retirementAccount)
@@ -3076,15 +3266,26 @@ class Profile extends Component {
             dbAssetsApproxTotal = 0;
         }
 
+        // if (this.state.essential || this.state.discretionary) {
+
+        //     if (this.state.essential && !this.state.discretionary) {
+        //         AssetsApproxBudget = parseInt(this.state.essential.replace(/,/g, ""));
+        //     } else if (this.state.essential && this.state.discretionary) {
+        //         AssetsApproxBudget = parseInt(this.state.essential.replace(/,/g, "")) + parseInt(this.state.discretionary.replace(/,/g, ""));
+        //     }
+        // }
         if (this.state.essential || this.state.discretionary) {
 
             if (this.state.essential && !this.state.discretionary) {
                 AssetsApproxBudget = parseInt(this.state.essential.replace(/,/g, ""));
-            } else if (this.state.essential && this.state.discretionary) {
+            }
+            else if (this.state.essential && this.state.discretionary) {
                 AssetsApproxBudget = parseInt(this.state.essential.replace(/,/g, "")) + parseInt(this.state.discretionary.replace(/,/g, ""));
             }
+            else if (!this.state.essential && this.state.discretionary) {
+                AssetsApproxBudget = parseInt(this.state.discretionary.replace(/,/g, ""))
+            }
         }
-
 
         console.log('RenderErrorindicator:', this.state.Errorindicator)
 
@@ -3093,20 +3294,20 @@ class Profile extends Component {
 
 
         return (
-            <div className="profile-section">
+            <div className="profile-section procont">
                 <section id="dashboard-main">
                     <div className="container">
                         <h2 style={{ textAlign: 'center' }}>My Account</h2>
                         <div className="row">
                             <div className="col-lg-12 col-md-12 col-sm-12">
                                 <Tabs selectedIndex={this.state.selectedIndex} onSelect={this.handleSelect} id="noanim-tab-example">
-
-                                    <TabList>
-                                        <Tab>User information</Tab>
-                                        <Tab>Change password</Tab>
-                                        <Tab>Questionnaire</Tab>
-                                    </TabList>
-
+                                    <div className="protab">
+                                        <TabList >
+                                            <Tab>User information</Tab>
+                                            <Tab>Change password</Tab>
+                                            <Tab>Questionnaire</Tab>
+                                        </TabList>
+                                    </div>
                                     <TabPanel>
                                         <div className="col-lg-12 col-md-12 col-sm-12">
                                             <div className="dashboard-content">
@@ -3202,11 +3403,11 @@ class Profile extends Component {
                                         <div className="col-lg-12 col-md-12 col-sm-12">
                                             <div className="dashboard-content" id="profileDashboard">
 
-                                                {this.state.queshowAlert ? (<div className=" thankuContent">
+                                                {this.state.queshowAlert ? (<div className="thankuContent">
                                                     <h4>THANK YOU!</h4>
                                                     <br />
                                                     <p>Thank you for taking the time to answers these questions. We will get back to you shortly to coordinate a time for your free consultation.</p>
-
+                                                    <br />
                                                     <p>Feel free to email us at info@SETITANDLEAVEIT.com if you have any questions in the meantime.</p>
                                                     <br />
                                                     <p style={{ marginBottom: '0px' }}>Best regards,</p>
@@ -3233,12 +3434,13 @@ class Profile extends Component {
                                                                 <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="2" className={this.state.currentStep == 2 ? 'active' : ''}>Contact <i class={this.state.Errorindicator.includes(2) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
                                                                 <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="3" className={this.state.currentStep == 3 ? 'active' : ''}>Goals <i class={this.state.Errorindicator.includes(3) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
                                                                 <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="4" className={this.state.currentStep == 4 ? 'active' : ''}>Personal <i class={this.state.Errorindicator.includes(4) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
-                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="5" className={this.state.currentStep == 5 ? 'active' : ''}>ASSETS <i class={this.state.Errorindicator.includes(5) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
-                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="6" className={this.state.currentStep == 6 ? 'active' : ''}>BUDGET <i class={this.state.Errorindicator.includes(6) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
-                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="7" className={this.state.currentStep == 7 ? 'active' : ''}>INSURANCE <i class={this.state.Errorindicator.includes(7) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
-                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="8" className={this.state.currentStep == 8 ? 'active' : ''}>INVESTING <i class={this.state.Errorindicator.includes(8) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
-                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="9" className={this.state.currentStep == 9 ? 'active' : ''}>RISK <i class={this.state.Errorindicator.includes(9) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
-                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="10" className={this.state.currentStep == 10 ? 'active' : ''}>OTHER </span> </li>
+                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="5" className={this.state.currentStep == 5 ? 'active' : ''}>LIVING <i class={this.state.Errorindicator.includes(5) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
+                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="6" className={this.state.currentStep == 6 ? 'active' : ''}>ASSETS <i class={this.state.Errorindicator.includes(6) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
+                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="7" className={this.state.currentStep == 7 ? 'active' : ''}>BUDGET <i class={this.state.Errorindicator.includes(7) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
+                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="8" className={this.state.currentStep == 8 ? 'active' : ''}>INSURANCE <i class={this.state.Errorindicator.includes(8) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
+                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="9" className={this.state.currentStep == 9 ? 'active' : ''}>INVESTING <i class={this.state.Errorindicator.includes(9) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
+                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="10" className={this.state.currentStep == 10 ? 'active' : ''}>RISK <i class={this.state.Errorindicator.includes(10) == true ? 'fa fa-times-circle indicator allwrong' : 'fa fa-check-circle indicator allright'}></i></span> </li>
+                                                                <li>  <span onClick={this.sideButtonFuc.bind(this)} data-id="11" className={this.state.currentStep == 11 ? 'active' : ''}>OTHER </span> </li>
                                                             </ul>
                                                         </div>
 
@@ -3329,6 +3531,21 @@ class Profile extends Component {
                                                                     homeBox={this.state.homeBox}
                                                                     iWeRent={this.state.iWeRent}
                                                                     monthlyRent={this.state.monthlyRent}
+                                                                    canSubmit={this.state.canSubmit}
+
+                                                                    ChomeBox={this.state.ChomeBox}
+                                                                    CiWeRent={this.state.CiWeRent}
+
+                                                                    EhomeValue={this.state.EhomeValue}
+                                                                    EMortgage={this.state.EMortgage}
+                                                                    EhomeBox={this.state.EhomeBox}
+                                                                    EiWeRent={this.state.EiWeRent}
+                                                                    EmonthlyRent={this.state.EmonthlyRent}
+                                                                />
+
+                                                                <Step6
+                                                                    currentStep={this.state.currentStep}
+                                                                    handleChange={this.handleChange}
                                                                     homeBanking={this.state.homeBanking}
                                                                     homeBrokerage={this.state.homeBrokerage}
                                                                     homeRetirementAccount={this.state.homeRetirementAccount}
@@ -3349,8 +3566,7 @@ class Profile extends Component {
                                                                     others={this.state.others}
                                                                     canSubmit={this.state.canSubmit}
 
-                                                                    ChomeBox={this.state.ChomeBox}
-                                                                    CiWeRent={this.state.CiWeRent}
+
                                                                     ChomeBanking={this.state.ChomeBanking}
                                                                     ChomeBrokerage={this.state.ChomeBrokerage}
                                                                     ChomeRetirementAccount={this.state.ChomeRetirementAccount}
@@ -3359,11 +3575,7 @@ class Profile extends Component {
                                                                     ChomeSS={this.state.ChomeSS}
                                                                     ChomePension={this.state.ChomePension}
 
-                                                                    EhomeValue={this.state.EhomeValue}
-                                                                    EMortgage={this.state.EMortgage}
-                                                                    EhomeBox={this.state.EhomeBox}
-                                                                    EiWeRent={this.state.EiWeRent}
-                                                                    EmonthlyRent={this.state.EmonthlyRent}
+
                                                                     EhomeBanking={this.state.EhomeBanking}
                                                                     EhomeBrokerage={this.state.EhomeBrokerage}
                                                                     EhomeRetirementAccount={this.state.EhomeRetirementAccount}
@@ -3383,7 +3595,7 @@ class Profile extends Component {
 
                                                                 />
 
-                                                                <Step6
+                                                                <Step7
                                                                     currentStep={this.state.currentStep}
                                                                     handleChange={this.handleChange}
                                                                     essential={this.state.essential}
@@ -3398,7 +3610,7 @@ class Profile extends Component {
                                                                     canSubmit={this.state.canSubmit}
                                                                 />
 
-                                                                <Step7
+                                                                <Step8
                                                                     currentStep={this.state.currentStep}
                                                                     handleChange={this.handleChange}
                                                                     noInsurance={this.state.noInsurance}
@@ -3431,7 +3643,7 @@ class Profile extends Component {
 
                                                                 />
 
-                                                                <Step8
+                                                                <Step9
                                                                     currentStep={this.state.currentStep}
                                                                     handleChange={this.handleChange}
                                                                     analyticalInExperience={this.state.analyticalInExperience}
@@ -3467,7 +3679,7 @@ class Profile extends Component {
                                                                 />
 
 
-                                                                <Step9
+                                                                <Step10
                                                                     currentStep={this.state.currentStep}
                                                                     handleChange={this.handleChange}
                                                                     riskAggressive={this.state.riskAggressive}
@@ -3510,7 +3722,7 @@ class Profile extends Component {
 
                                                                 />
 
-                                                                <Step10
+                                                                <Step11
                                                                     currentStep={this.state.currentStep}
                                                                     handleChange={this.handleChange}
                                                                     aaii={this.state.aaii}
@@ -3548,6 +3760,7 @@ class Profile extends Component {
                                                                     {this.previousButton}
                                                                     {this.nextButton}
                                                                 </div>
+
                                                                 <input type="hidden" ref="id" className="form-control" name="id" value={this.state.fields._id} />
                                                                 <input type="hidden" ref="loginuser" className="form-control" name="loginuser" value={this.state.fields.username} />
 
@@ -3602,7 +3815,7 @@ class Profile extends Component {
 
                     </Modal>
 
-            
+
 
                 </section>
             </div>
@@ -3622,30 +3835,32 @@ class Step1 extends React.Component {
                 <h5 className="overHeading">QUESTIONNAIRE OVERVIEW</h5>
                 <div className="col-md-12 col-sm-12">
 
-                    <div className="questionNote not-sect nst">
+                    {/* <div className="questionNote not-sect nst">
                         <p><span>!</span><p><div className="notediv"><b>NOTE:</b> <p>
-                            If you just have a quick question or two, then please use our <Link target="_blank" to={"/front/contact"}>contact form</Link>.</p></div></p></p>
-                    </div>
+                            You may SAVE &amp; EXIT at any time if you would like to complete and SUBMIT later.
+                        </p></div></p></p>
+                    </div> */}
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <p> We are happy to offer you a free consultation. In order to make it as productive as possible,
+                            <p style={{ textAlign: "left" }}> We are happy to offer you a free consultation. In order to make it as productive as possible,
                                 please fill out the following questionnaire. Our goal is to obtain a solid grasp of your financial
                                 situation, risk profile, needs, and goals. Once you complete and submit the questionnaire,
                       we will get back to you as soon as possible to schedule your free consultation.</p>
                         </div>
                     </div>
                     <div className="form-group">
-                        <h6>Please note:</h6>
+                        <h6 style={{ textAlign: "left" }}>Please note:</h6>
                         <ul className="preface_list">
-                            <li>- This questionnaire has 9 sections and generally takes approximately 5-10 minutes to complete.</li>
-                            <li>- Exact numbers are not required and you do not have to answer every question (<span style={{ 'color': 'red' }}>red highlighting</span> indicates required/missing information).</li>
-                            <li>- We do not sell or share any of your data.</li>
+                            <li><div className="qicone"><i style={{ color: "black", textAlign: "left" }} class="fa fa-square"></i> </div><div className="qiconess">This questionnaire has 9 sections and generally takes approximately 5-10 minutes to complete.</div></li>
+                            <li><div className="qicone"><i style={{ color: "black", textAlign: "left" }} class="fa fa-square"></i> </div><div className="qiconess">Exact numbers are not required and you do not have to answer every question (<span style={{ 'color': 'red' }}>red highlighting</span> indicates required/missing information).</div></li>
+                            <li><div className="qicone"><i style={{ color: "black", textAlign: "left" }} class="fa fa-square"></i> </div><div className="qiconess">You may SAVE &amp; EXIT at any time if you would like to complete and SUBMIT later.</div></li>
+                            <li><div className="qicone"><i style={{ color: "black", textAlign: "left" }} class="fa fa-square"></i> </div><div className="qiconess">We do not sell or share any of your data.</div></li>
                         </ul>
                     </div>
                     <div className="footerContent">
-                        <p>Thank you for your interest,</p>
-                        <p><em style={{ color: 'purple' }}>SET IT AND LEAVE IT</em> team</p>
+                        <p style={{ textAlign: "left" }}>Thank you for your interest,</p>
+                        <p style={{ textAlign: "right" }}><em style={{ color: 'purple' }}>SET IT AND LEAVE IT</em> team</p>
                     </div>
                 </div>
 
@@ -3667,21 +3882,9 @@ class Step2 extends React.Component {
 
     handleClick1 = () => {
         this.setState({
-           showModal:true
-        })
-        console.log('clear state is handleChange1');
-    }
-
-    clr = () => {
-        this.setState({
             showModal: true
         })
-    }
-
-    closeModal1 = () => {
-        this.setState({
-            showModal: false
-        })
+        console.log('clear state is handleChange1');
     }
 
     render() {
@@ -3694,7 +3897,7 @@ class Step2 extends React.Component {
 
                 <div className="col-md-12 col-sm-12">
                     <div className="form-group">
-                        <label htmlFor="name">Name</label>
+                        <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px", fontSize: "18px" }}>Name</label>
                         <input
                             className={this.props.nameError ? this.props.nameError : 'form-control'}
                             id="name"
@@ -3709,7 +3912,7 @@ class Step2 extends React.Component {
 
                 <div className="col-md-12 col-sm-12">
                     <div className="form-group">
-                        <label htmlFor="address"> Address:</label>
+                        <label htmlFor="address" style={{ fontWeight: 700, fontSize: "18px" }}> Address</label>
                         <textarea
                             className={this.props.Eaddress ? this.props.Eaddress : 'form-control'}
                             id="address"
@@ -3721,7 +3924,7 @@ class Step2 extends React.Component {
 
                 <div className="col-md-12 col-sm-12">
                     <div className="form-group">
-                        <label htmlFor="phone">Phone</label>
+                        <label htmlFor="phone" style={{ fontWeight: 700, fontSize: "18px" }}>Phone</label>
                         <input
                             className={this.props.Ephone ? this.props.Ephone : 'form-control'}
                             id="phone"
@@ -3736,7 +3939,7 @@ class Step2 extends React.Component {
 
                 <div className="col-md-12 col-sm-12">
                     <div className="form-group">
-                        <label htmlFor="reasonGoalConsultation"> Best time(s) to schedule free consultation</label>
+                        <label htmlFor="reasonGoalConsultation" style={{ fontWeight: 700, fontSize: "18px" }}> Best time(s) to schedule free consultation</label>
                         <textarea
                             className={this.props.EreasonGoalConsultation ? this.props.EreasonGoalConsultation : 'form-control'}
                             id="reasonGoalConsultation"
@@ -3745,28 +3948,6 @@ class Step2 extends React.Component {
                             onChange={this.props.handleChange} />
                     </div>
                 </div>
-                <div>
-                    <Button type="button" variant="danger" onClick={this.handleClick1}>Clear</Button>
-                </div>
-                
-                <Modal className="static-modal-confirm" show={this.state.showModal} onHide={this.closeModal1}>
-                        <Modal.Header closeButton>
-                            <Modal.Title id="contained-modal-title">
-                                Confirmation
-                            </Modal.Title>
-                        </Modal.Header>
-
-                        <Modal.Body>
-                            Are you sure you want to clear data in this form?
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="success" size="sm" onClick={this.clr}>Yes</Button>
-                            <Button variant="success" size="sm" onClick={this.closeModal1} >No</Button>
-
-                        </Modal.Footer>
-                    </Modal>
-
-
             </React.Fragment>
         )
     }
@@ -3789,7 +3970,7 @@ class Step3 extends React.Component {
 
                         <div className="col-md-12 col-sm-12">
                             <div class="form-group goalServiceList">
-                                <label>Services you may be interested in </label>
+                                <label style={{ fontWeight: 700, fontSize: "18px" }}>Services you may be interested in </label>
 
 
                                 {/* <p className="checkboxContent"> 
@@ -3805,7 +3986,7 @@ class Step3 extends React.Component {
                                 <p className="checkboxContent">
                                     <span class="wpcf7-checkbox">
                                         <span class="wpcf7-list-item">
-                                            <input type="checkbox" className={this.props.EsetItAndLeaveItRetirement ? this.props.EsetItAndLeaveItRetirement : 'checktrue'} onChange={this.props.handleChange} defaultChecked={this.props.CsetItAndLeaveItRetirement ? 'checked' : ''} value="Set It and Leave It retirement (comprehensive planning)" for="" name="setItAndLeaveItRetirement" /> Set It and Leave It retirement (comprehensive planning)
+                                            <input type="checkbox" className={this.props.EsetItAndLeaveItRetirement ? this.props.EsetItAndLeaveItRetirement : 'checktrue'} onChange={this.props.handleChange} defaultChecked={this.props.CsetItAndLeaveItRetirement ? 'checked' : ''} value="Set It and Leave It retirement (comprehensive planning)" for="" name="setItAndLeaveItRetirement" /> Retirement planning (e.g., SET IT AND LEAVE IT)
                            </span>
                                     </span>
                                 </p>
@@ -3853,18 +4034,28 @@ class Step3 extends React.Component {
 
 
 
-                                <div className="sideFix">
+                                <div className="sideFix ">
                                     <p style={{ 'marginTop': '15px' }} className="checkboxContent sidefixbox">
                                         {/* <input type="checkbox" className={this.props.EotherGoalServicecheck ? this.props.EotherGoalServicecheck : 'checktrue'} defaultChecked={this.props.CotherGoalServicecheck ? 'checked' : ''} onChange={this.props.handleChange} vaule="other Goal Service" name="otherGoalServicecheck" /> Other  */}
-
-                                        <span class="wpcf7-checkbox">
-                                            <span class="wpcf7-list-item">
-                                                <input type="checkbox" className={this.props.EotherGoalServicecheck ? this.props.EotherGoalServicecheck : 'checktrue'} defaultChecked={this.props.CotherGoalServicecheck ? 'checked' : ''} onChange={this.props.handleChange} vaule="other Goal Service" name="otherGoalServicecheck" /> Other
-                            </span>
-                                        </span>
+                                        <div className="form-group">
+                                            <span class="wpcf7-checkbox">
+                                                <span class="wpcf7-list-item other">
+                                                    <input type="checkbox" style={{ marginTop: "20px" }} className={this.props.EotherGoalServicecheck ? this.props.EotherGoalServicecheck : 'checktrue'} defaultChecked={this.props.CotherGoalServicecheck ? 'checked' : ''} onChange={this.props.handleChange} vaule="other Goal Service" name="otherGoalServicecheck" /> Other
+                                            </span>
+                                            </span>
+                                        </div>
 
                                     </p>
-                                    <input
+                                    {/* <input
+                                        className="form-control"
+                                        style={{ width: "100%" }}
+                                        className={this.props.EotherGoalService ? this.props.EotherGoalService : 'form-control'}
+                                        id="otherGoalService"
+                                        name="otherGoalService"
+                                        value={this.props.otherGoalService}
+                                        placeholder="Other goals"
+                                        onChange={this.props.handleChange} /> */}
+                                    <textarea
                                         className="form-control"
                                         style={{ width: "100%" }}
                                         className={this.props.EotherGoalService ? this.props.EotherGoalService : 'form-control'}
@@ -3875,12 +4066,13 @@ class Step3 extends React.Component {
                                         onChange={this.props.handleChange} />
                                 </div>
 
+
                             </div>
                         </div>
 
                         <div className="col-md-12 col-sm-12">
                             <div className="form-group">
-                                <label htmlFor="goalComment"> Comments regarding your goals for this consultation</label>
+                                <label htmlFor="goalComment" style={{ fontWeight: 700, fontSize: "18px" }}> Comments regarding your goals for this consultation</label>
                                 <textarea
                                     className={this.props.EgoalComment ? this.props.EgoalComment : 'form-control'}
                                     id="goalComment"
@@ -3892,7 +4084,7 @@ class Step3 extends React.Component {
 
                         <div className="col-md-12 col-sm-12">
                             <div className="form-group">
-                                <label htmlFor="goalQuestion"> Specific questions/topics you would like to address</label>
+                                <label htmlFor="goalQuestion" style={{ fontWeight: 700, fontSize: "18px" }}> Specific questions/topics you would like to address</label>
                                 <textarea
                                     className={this.props.EgoalQuestion ? this.props.EgoalQuestion : 'form-control'}
                                     id="goalQuestion"
@@ -3938,7 +4130,7 @@ class Step4 extends React.Component {
                     <div className="row">
                         <div className="col-md-3 col-sm-12">
                             <div className="form-group">
-                                <label htmlFor="name">Age</label>
+                                <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Age</label>
                                 <select value={this.props.age} id="age" name="age" onChange={this.props.handleChange} className={this.props.Eage ? this.props.Eage : 'form-control'} >
                                     <option value=""> Select</option>
                                     {this.createAge()}
@@ -3948,7 +4140,7 @@ class Step4 extends React.Component {
 
                         <div className="col-md-3 col-sm-12">
                             <div className="form-group">
-                                <label htmlFor="name">Married</label>
+                                <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Married</label>
 
 
                                 <select value={this.props.married} id="married" name="married" onChange={this.props.handleChange} className={this.props.Emarried ? this.props.Emarried : 'form-control'} >
@@ -3961,8 +4153,9 @@ class Step4 extends React.Component {
 
                         <div className="col-md-3 col-sm-12">
                             <div className="form-group">
-                                <label htmlFor="name">Kids</label>
+                                <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Kids</label>
                                 <select value={this.props.Kids} id="Kids" name="Kids" onChange={this.props.handleChange} className={this.props.EKids ? this.props.EKids : 'form-control'} >
+                                    <option value="Select">Select</option>
                                     <option value="0">0</option>
                                     <option value="1">1</option>
                                     <option value="2"> 2 </option>
@@ -3976,8 +4169,9 @@ class Step4 extends React.Component {
 
                         <div className="col-md-3 col-sm-12">
                             <div className="form-group">
-                                <label htmlFor="name">Grandkids</label>
+                                <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Grandkids</label>
                                 <select value={this.props.grandkid} id="grandkid" name="grandkid" onChange={this.props.handleChange} className={this.props.Egrandkid ? this.props.Egrandkid : 'form-control'} >
+                                    <option value="Select">Select</option>
                                     <option value="0">0</option>
                                     <option value="1">1</option>
                                     <option value="2"> 2 </option>
@@ -3991,8 +4185,9 @@ class Step4 extends React.Component {
 
                         <div className="col-md-3 col-sm-12">
                             <div className="form-group">
-                                <label htmlFor="name">Pets</label>
+                                <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Pets</label>
                                 <select value={this.props.pets} id="pets" name="pets" onChange={this.props.handleChange} className={this.props.Epets ? this.props.Epets : 'form-control'} >
+                                    <option value="Select">Select</option>
                                     <option value="0">0</option>
                                     <option value="1">1</option>
                                     <option value="2"> 2 </option>
@@ -4007,7 +4202,7 @@ class Step4 extends React.Component {
 
                         <div className="col-md-12 col-sm-12">
                             <div className="form-group">
-                                <label htmlFor="personalOtherDetails"> Other relevant details</label>
+                                <label htmlFor="personalOtherDetails" style={{ fontWeight: 700, fontSize: "18px" }}> Other relevant details</label>
                                 <textarea
                                     className={this.props.EpersonalOtherDetails ? this.props.EpersonalOtherDetails : 'form-control'}
                                     id="personalOtherDetails"
@@ -4027,24 +4222,19 @@ class Step4 extends React.Component {
         )
     }
 }
-
 class Step5 extends React.Component {
-
     render() {
         if (this.props.currentStep !== 5) {
             return null
         }
-
         const formatter = new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
             minimumFractionDigits: 0
         });
-
         return (
             <React.Fragment>
-                <h5>ASSETS DETAILS</h5>
-
+                <h5>LIVING</h5>
                 <div className="col-md-12 col-sm-12">
                     <div className="row">
                         <div className="col-md-12 col-sm-12">
@@ -4064,7 +4254,7 @@ class Step5 extends React.Component {
                                             </td>
                                             <td>
                                                 <div className="form-group">
-                                                    <label htmlFor="name">Home value</label>
+                                                    <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Home value</label>
                                                     <NumberFormat
                                                         className={this.props.EhomeValue ? this.props.EhomeValue : 'form-control'}
                                                         id="homeValue"
@@ -4078,7 +4268,7 @@ class Step5 extends React.Component {
                                             </td>
                                             <td>
                                                 <div className="form-group">
-                                                    <label htmlFor="name">Mortgage</label>
+                                                    <label htmlFor="name" className="profile-value" style={{ fontWeight: 700, fontSize: "18px", lineHeight: 27 + 'px!important' }}>Mortgage</label>
                                                     <NumberFormat
                                                         className={this.props.EMortgage ? this.props.EMortgage : 'form-control'}
                                                         id="Mortgage"
@@ -4092,7 +4282,7 @@ class Step5 extends React.Component {
                                             </td>
                                             <td>
                                                 <div className="form-group">
-                                                    <label htmlFor="name">Approx. equity</label>
+                                                    <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Approx. equity</label>
                                                     <h6 className="approxEquityValue">{this.props.approxEquity ? formatter.format(this.props.approxEquity) : '$0,000'}</h6>
                                                 </div>
 
@@ -4124,7 +4314,7 @@ class Step5 extends React.Component {
                                             </td>
                                             <td>
                                                 <div className="form-group">
-                                                    <label htmlFor="name">Monthly rent</label>
+                                                    <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Monthly rent</label>
                                                     <NumberFormat
                                                         className={this.props.EmonthlyRent ? this.props.EmonthlyRent : 'form-control'}
                                                         id="monthlyRent"
@@ -4144,13 +4334,48 @@ class Step5 extends React.Component {
                         </div>
                     </div>
 
+                </div>
+            </React.Fragment>
+        )
+    }
+}
+
+class Step6 extends React.Component {
+
+    render() {
+        if (this.props.currentStep !== 6) {
+            return null
+        }
+
+        const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0
+        });
+
+        return (
+            <React.Fragment>
+                <h5>ASSETS DETAILS</h5>
+
+                <div className="col-md-12 col-sm-12">
+                    <div className="row">
+                        <div className="col-md-12 col-sm-12">
+                            <h6>Types of assets</h6>
+
+                        </div>
+
+                    </div>
+
+
+
+
 
                     <div className="row">
                         <div className="col-md-12 col-sm-12">
                             <table class="assestTable">
                                 <tr>
                                     <td> </td>
-                                    <td>Estimated value in accounts </td>
+                                    <td style={{ fontWeight: "bold", fontSize: "18px" }}> Estimated value in accounts </td>
                                 </tr>
 
                                 <tr>
@@ -4289,7 +4514,7 @@ class Step5 extends React.Component {
                                 </tr>
 
                                 <tr>
-                                    <td>Approx. asset total</td>
+                                    <td style={{ fontWeight: "bold", paddingLeft: "31px" }}>Approx. asset total</td>
                                     <td>
                                         <input
 
@@ -4317,7 +4542,7 @@ class Step5 extends React.Component {
                                     <table class="assestTable">
                                         <tr>
                                             <td> </td>
-                                            <td>Total annual income</td>
+                                            <td style={{ fontWeight: "bold", fontSize: "18px" }}>Total annual income</td>
                                         </tr>
 
                                         <tr>
@@ -4383,7 +4608,7 @@ class Step5 extends React.Component {
                     <div className="row">
                         <div className="col-md-12  col-sm-12">
                             <div className="form-group">
-                                <label htmlFor="name">Other</label>
+                                <label htmlFor="name" style={{ fontWeight: "bold" }}>Other</label>
                                 <textarea
                                     className={this.props.Eothers ? this.props.Eothers : 'form-control'}
                                     id="others"
@@ -4408,12 +4633,12 @@ class Step5 extends React.Component {
 
 
 
-class Step6 extends React.Component {
+class Step7 extends React.Component {
 
 
 
     render() {
-        if (this.props.currentStep !== 6) {
+        if (this.props.currentStep !== 7) {
             return null
         }
 
@@ -4431,7 +4656,7 @@ class Step6 extends React.Component {
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">Essential spending (bare minimum spending requirement)</label>
+                            <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Essential spending (bare minimum spending requirement)</label>
                             <NumberFormat
                                 className={this.props.Eessential ? this.props.Eessential : 'form-control'}
                                 id="essential"
@@ -4447,7 +4672,7 @@ class Step6 extends React.Component {
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">Discretionary</label>
+                            <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Discretionary</label>
                             <NumberFormat
                                 className={this.props.Ediscretionary ? this.props.Ediscretionary : 'form-control'}
                                 id="discretionary"
@@ -4463,15 +4688,58 @@ class Step6 extends React.Component {
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">Approx. total: &nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Approx. total: &nbsp;&nbsp;&nbsp;&nbsp;</label>
                             {this.props.AssetsApproxBudget ? formatter.format(this.props.AssetsApproxBudget) : '$0,000'}
+                            {/* <NumberFormat
+                                className={this.props.AssetsApproxBudget ? this.props.AssetsApproxBudget : 'form-control'}
+                                id="AssetsApproxBudget"
+                                name="AssetsApproxBudget"
+                                type="text"
+                                placeholder=""
+                                value={this.props.AssetsApproxBudget}
+                                onChange={this.props.handleChange}
+                                thousandSeparator={true}
+                            /> */}
                         </div>
                     </div>
+
+                    {/* <tr>
+                        <td>
+                            <p className="checkboxContent">
+                                <span class="wpcf7-checkbox">
+                                    <span class="wpcf7-list-item">
+                                        <input type="checkbox" class={this.props.EhomeOther ? this.props.EhomeOther : 'checktrue'} defaultChecked={this.props.ChomeOther ? 'checked' : ''} onChange={this.props.handleChange} for="" value="homeOther" name="homeOther" /> Other
+                                </span>
+                                </span>
+                            </p>
+                        </td>
+                        <td>
+                            <NumberFormat
+                                className={this.props.EotherApproxValue ? this.props.EotherApproxValue : 'form-control'}
+                                id="otherApproxValue"
+                                name="otherApproxValue"
+                                type="text"
+                                value={this.props.otherApproxValue}
+                                onChange={this.props.handleChange}
+                                placeholder="Approx. value"
+                                thousandSeparator={true}
+                            />
+                            <input
+                                className={this.props.EotherTypes ? this.props.EotherTypes : 'form-control'}
+                                id="otherTypes"
+                                name="otherTypes"
+                                type="text"
+                                value={this.props.otherTypes}
+                                onChange={this.props.handleChange}
+                                placeholder="Type(s)"
+                            />
+                        </td>
+                    </tr> */}
 
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">Expected trend for expenses & one-off expenses</label>
+                            <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Expected trend for expenses & one-off expenses</label>
                             <textarea
                                 className={this.props.EoneOffExpenses ? this.props.EoneOffExpenses : 'form-control'}
                                 id="oneOffExpenses"
@@ -4489,9 +4757,9 @@ class Step6 extends React.Component {
     }
 }
 
-class Step7 extends React.Component {
+class Step8 extends React.Component {
     render() {
-        if (this.props.currentStep !== 7) {
+        if (this.props.currentStep !== 8) {
             return null
         }
         return (
@@ -4508,9 +4776,7 @@ class Step7 extends React.Component {
                             {/* <p className="checkboxContent"> <input type="checkbox" className={this.props.EnoInsurance ? this.props.EnoInsurance : 'checktrue'}  defaultChecked={this.props.CnoInsurance ? 'checked' : ''}  onChange={this.props.handleChange}  value="I/we have no insurance" for="" name="noInsurance"/> I/we have no insurance</p>
  
                         <p className="checkboxContent"> <input type="checkbox" className={this.props.Emedicare ? this.props.Emedicare : 'checktrue'}  defaultChecked={this.props.Cmedicare ? 'checked' : ''}  onChange={this.props.handleChange}  value="Medicare" for="" name="medicare"/> Medicare</p>
-
                         <p className="checkboxContent"> <input type="checkbox" className={this.props.EsupplementalHealth ? this.props.EsupplementalHealth : 'checktrue'}  defaultChecked={this.props.CsupplementalHealth ? 'checked' : ''} onChange={this.props.handleChange} value="Supplemental health" for="" name="supplementalHealth"/> Supplemental health </p>
-
                         <p className="checkboxContent"> <input type="checkbox" className={this.props.Elongtermcare ? this.props.Elongtermcare : 'checktrue'} defaultChecked={this.props.Clongtermcare ? 'checked' : ''} onChange={this.props.handleChange} value="Long term care" for="" name="longtermcare"/> Long term care</p> */}
 
                             <p className="checkboxContent">
@@ -4565,7 +4831,7 @@ class Step7 extends React.Component {
                                     </p>
                                 </td>
                                 <td>
-                                    <label htmlFor="name">Type</label>
+                                    <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Type</label>
                                     <select value={this.props.lifeInType} id="lifeInType" name="lifeInType" onChange={this.props.handleChange} className={this.props.ElifeInType ? this.props.ElifeInType : 'form-control'}  >
                                         <option value=""> Select</option>
                                         <option value="Whole life">Whole life</option>
@@ -4574,7 +4840,7 @@ class Step7 extends React.Component {
                                 </td>
 
                                 <td>
-                                    <label htmlFor="name">Amount</label>
+                                    <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Amount</label>
                                     <NumberFormat
                                         className={this.props.Elifeamount ? this.props.Elifeamount : 'form-control'}
                                         id="lifeamount"
@@ -4591,13 +4857,10 @@ class Step7 extends React.Component {
                         </table>
                     </div>
 
-                    <div className="col-md-12 col-sm-12">
+                    {/* <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-
-
                             <div className="sideFix">
                                 <p className="checkboxContent sidefixbox">
-                                    {/* <input type="checkbox" class={this.props.Einotherbox ? this.props.Einotherbox : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.Cinotherbox ? 'checked' : ''} value="inotherbox" for="" name="inotherbox"/> Other  */}
                                     <span class="wpcf7-checkbox">
                                         <span class="wpcf7-list-item">
                                             <input type="checkbox" class={this.props.Einotherbox ? this.props.Einotherbox : 'checktrue'} onChange={this.props.handleChange} defaultChecked={this.props.Cinotherbox ? 'checked' : ''} value="inotherbox" for="" name="inotherbox" /> Other
@@ -4612,29 +4875,52 @@ class Step7 extends React.Component {
                                     onChange={this.props.handleChange}
                                     placeholder="E.g., medical condition"
                                 />
+                            </div>
+                        </div>
+                    </div> */}
 
+                    <div className="sideFix ">
+                        <p style={{ marginTop: "-52px" }} className="checkboxContent sidefixbox">
+                            {/* <input type="checkbox" className={this.props.EotherGoalServicecheck ? this.props.EotherGoalServicecheck : 'checktrue'} defaultChecked={this.props.CotherGoalServicecheck ? 'checked' : ''} onChange={this.props.handleChange} vaule="other Goal Service" name="otherGoalServicecheck" /> Other  */}
+                            <div className="form-group">
+                                <span class="wpcf7-checkbox">
+                                    <span class="wpcf7-list-item other12">
+                                        <input type="checkbox" style={{ marginTop: "20px" }} class={this.props.Einotherbox ? this.props.Einotherbox : 'checktrue'} onChange={this.props.handleChange} defaultChecked={this.props.Cinotherbox ? 'checked' : ''} value="inotherbox" for="" name="inotherbox" /> Other
+                                            </span>
+                                </span>
                             </div>
 
-
-                            {/* <label htmlFor="name">Other </label>
-                  <textarea 
-                    className={this.props.Einother ? this.props.Einother : 'form-control'}
-                      id="inother"
-                      name="inother" 
-                      value={this.props.inother} 
-                      onChange={this.props.handleChange} 
-                      placeholder="E.g., medical condition"
-                  /> */}
-                        </div>
+                        </p>
+                        {/* <input
+                                        className="form-control"
+                                        style={{ width: "100%" }}
+                                        className={this.props.EotherGoalService ? this.props.EotherGoalService : 'form-control'}
+                                        id="otherGoalService"
+                                        name="otherGoalService"
+                                        value={this.props.otherGoalService}
+                                        placeholder="Other goals"
+                                        onChange={this.props.handleChange} /> */}
+                        <textarea
+                            className="form-control"
+                            style={{ width: "94%", marginLeft: "-10%", marginBottom: "20px", marginTop: "26px" }}
+                            className={this.props.Einother ? this.props.Einother : 'form-control'}
+                            id="inother"
+                            name="inother"
+                            value={this.props.inother}
+                            placeholder="E.g., medical condition"
+                            onChange={this.props.handleChange} />
                     </div>
+
+
                 </div>
+
 
             </React.Fragment>
         )
     }
 }
 
-class Step8 extends React.Component {
+class Step9 extends React.Component {
 
     createInExp = () => {
         let InExp = []
@@ -4645,7 +4931,7 @@ class Step8 extends React.Component {
     }
 
     render() {
-        if (this.props.currentStep !== 8) {
+        if (this.props.currentStep !== 9) {
             return null
         }
         return (
@@ -4656,7 +4942,7 @@ class Step8 extends React.Component {
 
                     <div className="col-md-8 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">Investment experience (1= novice / 10 = expert)</label>
+                            <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Investment experience (1= novice / 10 = expert)</label>
                             <select value={this.props.experience_1_10} id="experience_1_10" name="experience_1_10" onChange={this.props.handleChange} className={this.props.Eexperience_1_10 ? this.props.Eexperience_1_10 : 'form-control'} >
                                 <option value=""> Select</option>
                                 {this.createInExp()}
@@ -4681,7 +4967,7 @@ class Step8 extends React.Component {
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">Performance expectations</label>
+                            <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Performance expectations</label>
                             <textarea
                                 className={this.props.Eexpectations ? this.props.Eexpectations : 'form-control'}
                                 id="expectations"
@@ -4696,7 +4982,7 @@ class Step8 extends React.Component {
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">Notable investment experiences (good and/or bad)</label>
+                            <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Notable investment experiences (good and/or bad)</label>
                             <textarea
                                 className={this.props.Eexperience_gb ? this.props.Eexperience_gb : 'form-control'}
                                 id="experience_gb"
@@ -4709,16 +4995,12 @@ class Step8 extends React.Component {
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <label>Investment performance goals (tick all that apply)</label>
+                            <label style={{ fontWeight: 700, fontSize: "18px" }}>Investment performance goals (tick all that apply)</label>
 
                             {/* <p className="checkboxContent"> <input type="checkbox" class={this.props.EcapitalPreservation ? this.props.EcapitalPreservation : 'checktrue'}   onChange={this.props.handleChange} defaultChecked={this.props.CcapitalPreservation ? 'checked' : ''}   value="Capital preservation (lower returns are OK if volatility is low)" for="" name="capitalPreservation"/> Capital preservation (lower returns are OK if volatility is low)</p>
-
                         <p className="checkboxContent"> <input type="checkbox" class={this.props.EinvestIncome ? this.props.EinvestIncome : 'checktrue'}    defaultChecked={this.props.CinvestIncome ? 'checked' : ''} onChange={this.props.handleChange} value="Income (income for retirement or other purposes is a top priority)" for="" name="investIncome"/> Income (income for retirement or other purposes is a top priority) </p>
-
                         <p className="checkboxContent"> <input type="checkbox" class={this.props.EinvestGrowth ? this.props.EinvestGrowth : 'checktrue'} defaultChecked={this.props.CinvestGrowth ? 'checked' : ''} onChange={this.props.handleChange} value="Growth (willing to accept higher volatility for higher returns)" for="" name="investGrowth"/> Growth (willing to accept higher volatility for higher returns)</p>
-
                         <p className="checkboxContent"> <input type="checkbox" class={this.props.EinvestGrowthIncome ? this.props.EinvestGrowthIncome : 'checktrue'} defaultChecked={this.props.CinvestGrowthIncome ? 'checked' : ''} onChange={this.props.handleChange} value="Growth + income (higher volatility acceptable if income is secure)" for="" name="investGrowthIncome"/> Growth + income (higher volatility acceptable if income is secure)</p>
-
                         <p className="checkboxContent"> <input type="checkbox" class={this.props.EinvestAggressiveGrowth ? this.props.EinvestAggressiveGrowth : 'checktrue'}  defaultChecked={this.props.CinvestAggressiveGrowth ? 'checked' : ''} onChange={this.props.handleChange} value="Aggressive growth (returns are top priority and significant volatility is acceptable)" for="" name="investAggressiveGrowth"/> Aggressive growth (returns are top priority and significant volatility is acceptable)</p> */}
 
                             <p className="checkboxContent">
@@ -4763,7 +5045,7 @@ class Step8 extends React.Component {
 
                     <div className="col-md-8 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">Current allocation to stocks and other risky assets</label>
+                            <label htmlFor="name" style={{ fontWeight: 500, fontSize: "18px", color: "black" }}>Current allocation to stocks and other risky assets</label>
                             <select value={this.props.currentAllocationStock} id="currentAllocationStock" name="currentAllocationStock" onChange={this.props.handleChange} className={this.props.EcurrentAllocationStock ? this.props.EcurrentAllocationStock : 'form-control'} >
                                 <option value=""> Select</option>
                                 <option value="0% - ultra conservative"> 0% - ultra conservative</option>
@@ -4785,7 +5067,7 @@ class Step8 extends React.Component {
 }
 
 
-class Step9 extends React.Component {
+class Step10 extends React.Component {
 
     createInExp = () => {
         let InExp = []
@@ -4796,7 +5078,7 @@ class Step9 extends React.Component {
     }
 
     render() {
-        if (this.props.currentStep !== 9) {
+        if (this.props.currentStep !== 10) {
             return null
         }
         return (
@@ -4807,11 +5089,9 @@ class Step9 extends React.Component {
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">How do you view your risk tolerance? </label>
+                            <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>How do you view your risk tolerance? </label>
                             {/* <p className="checkboxContent"> <input type="checkbox" class={this.props.EriskAggressive ? this.props.EriskAggressive : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.CriskAggressive ? 'checked' : ''} value="Aggressive (healthy appetite for risk)" for="" name="riskAggressive"/> Aggressive (healthy appetite for risk)</p>
-
                         <p className="checkboxContent"> <input type="checkbox" class={this.props.EriskModerate ? this.props.EriskModerate : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.CriskModerate ? 'checked' : ''} value="Moderate (seek more balanced risk)" for="" name="riskModerate"/> Moderate (seek more balanced risk)</p>
-
                         <p className="checkboxContent"> <input type="checkbox" class={this.props.EriskConservative ? this.props.EriskConservative : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.CriskConservative ? 'checked' : ''} value="Conservative (generally prefer less risk)" for="" name="riskConservative"/> Conservative (generally prefer less risk)</p> */}
 
                             <p className="checkboxContent">
@@ -4841,7 +5121,7 @@ class Step9 extends React.Component {
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">Assuming your financial security would not be compromised, what is the maximum portfolio drawdown (decrease) you could tolerate?</label>
+                            <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Assuming your financial security would not be compromised, what is the maximum portfolio drawdown (decrease) you could tolerate?</label>
                             <select value={this.props.portfolioDrawdown} id="portfolioDrawdown" name="portfolioDrawdown" onChange={this.props.handleChange} className={this.props.EportfolioDrawdown ? this.props.EportfolioDrawdown : 'form-control'} >
                                 <option value=""> Select</option>
                                 <option value="0% - ultra conservative"> 0% - ultra conservative  </option>
@@ -4856,11 +5136,11 @@ class Step9 extends React.Component {
 
 
                     <div className="col-md-12 col-sm-12">
-                        <label htmlFor="name">Please score the importance of each factor:</label>
+                        <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Please score the importance of each factor:</label>
                         <div className="row">
                             <div className="col-md-4 col-sm-12">
                                 <div className="form-group">
-                                    <label htmlFor="name">Preservation</label>
+                                    <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Preservation</label>
                                     <select value={this.props.riskPreservation} id="riskPreservation" name="riskPreservation" onChange={this.props.handleChange} className={this.props.EriskPreservation ? this.props.EriskPreservation : 'form-control'} >
                                         <option value=""> Select</option>
                                         {this.createInExp()}
@@ -4870,7 +5150,7 @@ class Step9 extends React.Component {
 
                             <div className="col-md-4 col-sm-12">
                                 <div className="form-group">
-                                    <label htmlFor="name">Income</label>
+                                    <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Income</label>
                                     <select value={this.props.riskIncome} id="riskIncome" name="riskIncome" onChange={this.props.handleChange} className={this.props.EriskIncome ? this.props.EriskIncome : 'form-control'} >
                                         <option value=""> Select</option>
                                         {this.createInExp()}
@@ -4880,7 +5160,7 @@ class Step9 extends React.Component {
 
                             <div className="col-md-4 col-sm-12">
                                 <div className="form-group">
-                                    <label htmlFor="name">Growth </label>
+                                    <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Growth </label>
                                     <select value={this.props.riskGrowth} id="riskGrowth" name="riskGrowth" onChange={this.props.handleChange} className={this.props.EriskGrowth ? this.props.EriskGrowth : 'form-control'} >
                                         <option value=""> Select</option>
                                         {this.createInExp()}
@@ -4893,7 +5173,7 @@ class Step9 extends React.Component {
 
                     <div className="col-md-12 col-sm-12">
                         <div className="form-group">
-                            <label htmlFor="name">How did you and your portfolio hold up during the last major market downturn (e.g., the credit crisis in 2008)?</label>
+                            <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>How did you and your portfolio hold up during the last major market downturn (e.g., the credit crisis in 2008)?</label>
                             <textarea
                                 className={this.props.ElastMarketDownturn ? this.props.ElastMarketDownturn : 'form-control'}
                                 id="lastMarketDownturn"
@@ -4905,17 +5185,14 @@ class Step9 extends React.Component {
                     </div>
 
                     <div className="col-md-12 col-sm-12">
-                        <label htmlFor="name">Please look at the example portfolios below and select the one with the most appealing risk-return profile over this hypothetical 10-year period.</label>
+                        <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>Please look at the example portfolios below and select the one with the most appealing risk-return profile over this hypothetical 10-year period.</label>
                         <div className="col-md-12 col-sm-12 riskportfolio">
                             <div className="form-group">
 
 
                                 {/* <p className="checkboxContent"> <input type="checkbox" class={this.props.Eportfolio1 ? this.props.Eportfolio1 : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.Cportfolio1 ? 'checked' : ''} value="Portfolio 1 (most conservative)" for="" name="portfolio1"/> Portfolio 1 (most conservative)</p>
-
                         <p className="checkboxContent"> <input type="checkbox" class={this.props.Eportfolio2 ? this.props.Eportfolio2 : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.Cportfolio2 ? 'checked' : ''} value="Portfolio 2" for="" name="portfolio2"/> Portfolio 2</p>
-
                         <p className="checkboxContent"> <input type="checkbox" class={this.props.Eportfolio3 ? this.props.Eportfolio3 : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.Cportfolio3 ? 'checked' : ''} value="Portfolio 3" for="" name="portfolio3"/> Portfolio 3</p>
-
                         <p className="checkboxContent"> <input type="checkbox" class={this.props.Eportfolio4 ? this.props.Eportfolio4 : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.Cportfolio4 ? 'checked' : ''} value="Portfolio 4" for="" name="portfolio4"/> Portfolio 4</p>
  
                         <p className="checkboxContent"> <input type="checkbox" class={this.props.Eportfolio5 ? this.props.Eportfolio5 : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.Cportfolio5 ? 'checked' : ''} value="Portfolio 5 (most aggressive)" for="" name="portfolio5"/> Portfolio 5 (most aggressive)</p> */}
@@ -4973,9 +5250,9 @@ class Step9 extends React.Component {
 }
 
 
-class Step10 extends React.Component {
+class Step11 extends React.Component {
     render() {
-        if (this.props.currentStep !== 10) {
+        if (this.props.currentStep !== 11) {
             return null
         }
         return (
@@ -4984,7 +5261,7 @@ class Step10 extends React.Component {
 
                 <div className="col-md-12 col-sm-12">
                     <div className="form-group">
-                        <label htmlFor="name">How did you discover SET IT AND LEAVE IT?</label>
+                        <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>How did you discover SET IT AND LEAVE IT?</label>
 
                         <p className="checkboxContent">
                             {/* <input type="checkbox" class={this.props.Eaaii ? this.props.Eaaii : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.Caaii ? 'checked' : ''} value="American Association of Individual Investors (AAII)" for="" name="aaii"/> American Association of Individual Investors (AAII) */}
@@ -5018,11 +5295,11 @@ class Step10 extends React.Component {
                         </p>
 
                         <div className="sideFix">
-                            <p style={{ 'marginTop': '15px' }} className="checkboxContent sidefixbox">
+                            <p style={{ 'marginTop': '15px', marginLeft: '10px' }} className="checkboxContent sidefixbox">
                                 {/* <input type="checkbox" class={this.props.Ereferral ? this.props.Ereferral : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.Creferral ? 'checked' : ''} value="Referral" for="" name="referral"/> Referral */}
 
                                 <span class="wpcf7-checkbox" >
-                                    <span class="wpcf7-list-item" style={{'margin': '-4px'}}>
+                                    <span class="wpcf7-list-item" style={{ margin: '-12px' }}>
                                         <input type="checkbox" class={this.props.Ereferral ? this.props.Ereferral : 'checktrue'} onChange={this.props.handleChange} defaultChecked={this.props.Creferral ? 'checked' : ''} value="Referral" for="" name="referral" /> Referral
                             </span>
                                 </span>
@@ -5030,7 +5307,7 @@ class Step10 extends React.Component {
 
                             </p>
                             <input
-                            style={{ 'width': '40%'}}
+                                style={{ 'width': '40%', marginLeft: "1%" }}
                                 className={this.props.EreferralContent ? this.props.EreferralContent : 'form-control sidefixbox'}
                                 id="referralContent"
                                 name="referralContent"
@@ -5040,8 +5317,8 @@ class Step10 extends React.Component {
                             />
                         </div>
 
-                        <div className="sideFix">
-                            <p style={{ 'marginTop': '15px'}} className="checkboxContent sidefixbox">
+                        <div className="sideFix" style={{ marginTop: "31px" }}>
+                            <p style={{ 'marginTop': '15px' }} className="checkboxContent sidefixbox">
                                 {/* <input type="checkbox" class={this.props.EotherOthers ? this.props.EotherOthers : 'checktrue'}  onChange={this.props.handleChange} defaultChecked={this.props.CotherOthers ? 'checked' : ''} value="Other" for="" name="otherOthers"/> Other  */}
 
                                 <span class="wpcf7-checkbox">
@@ -5053,7 +5330,7 @@ class Step10 extends React.Component {
 
                             </p>
                             <input
-                             style={{ 'width': '40%'}}
+                                style={{ 'width': '40%', marginLeft: "2%" }}
                                 className="form-control"
                                 className={this.props.EotherOthersContent ? this.props.EotherOthersContent : 'form-control'}
                                 id="otherOthersContent"
@@ -5070,7 +5347,7 @@ class Step10 extends React.Component {
 
                 <div className="col-md-12 col-sm-12">
                     <div className="form-group">
-                        <label htmlFor="name">What attracted you to SET IT AND LEAVE IT?</label>
+                        <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>What attracted you to SET IT AND LEAVE IT?</label>
                         <textarea
                             className={this.props.EwhatAttracted ? this.props.EwhatAttracted : 'form-control'}
                             id="whatAttracted"
@@ -5084,7 +5361,7 @@ class Step10 extends React.Component {
 
                 <div className="col-md-12 col-sm-12">
                     <div className="form-group">
-                        <label htmlFor="name">We welcome suggestions to help us improve this questionnaire:</label>
+                        <label htmlFor="name" style={{ fontWeight: 700, fontSize: "18px" }}>We welcome suggestions to help us improve this questionnaire:</label>
                         <textarea
                             className={this.props.EimproveQuestionnaire ? this.props.EimproveQuestionnaire : 'form-control'}
                             id="improveQuestionnaire"

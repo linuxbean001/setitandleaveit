@@ -433,6 +433,8 @@ handleClick=()=>{
 
 
    render(){
+      
+       
     return(
         <div className="sidebar-section">
             <div class="dashboard-sidebar">
@@ -445,7 +447,7 @@ handleClick=()=>{
         <li class="metismenu-item">
             <a class="metismenu-link"  onClick={this.logout.bind(this)} href="javascript:void(0)"><i class="metismenu-icon fa fa-metismenu-icon fa fa-sign-out"></i>Logout</a>
         </li>
-</nav>
+           </nav>
              {/* <nav class="woocommerce-MyAccount-navigation left_panel">
                 <div className="menuhead"> Main Menu</div>
                 {/* <MetisMenu content={Menucontent} activeLinkFromLocation /> */}

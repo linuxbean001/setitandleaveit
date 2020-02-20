@@ -9,7 +9,7 @@ const LivesecretKey = '6LeJGb0UAAAAAG_8c6aBDY3RtkztMXyQlnl7dNTL';
 class Signup extends Component{
     constructor(props){
         super(props);
-        this.props.onHeaderHover(true);
+        this.props.onHeaderHover(true); 
         this.state ={
             open:false,
             signinform:false,
@@ -38,6 +38,7 @@ class Signup extends Component{
 
 componentDidMount(){
     window.scrollTo(0, 0);
+    document.title = "ACCOUNT – SET IT AND LEAVE IT"
 }
 
 onSubmit = () => {
@@ -104,7 +105,7 @@ LoginMe(e){
            if( result.data.role == 0){
                 this.props.history.replace('/admin/dashboard');
            }else{
-                this.props.history.replace('/front/tool');
+                this.props.history.replace('/front/index');
            }
         }else{
                 this.setState({
@@ -123,7 +124,7 @@ LoginMe(e){
 
 registerMevalidationCheck(){
     let fields = this.state.fields;
-    let errors = {};
+    let errors = {}; 
     let formIsValid = true;
 
     console.log('fieldsfields:',fields);
@@ -341,6 +342,38 @@ registerSubscribe(){
    }
 }
 
+onKeyPress = (e) => {
+    if(e.key === 'Enter'){
+        this.LoginMe()
+    }
+    // this.key()
+}
+
+onKeyUp = () => {
+    
+    var x = document.getElementById("test");
+    x.value = x.value.toLowerCase()
+    
+    // let loginfields = this.state.loginfields;
+    let fields = this.state.fields;
+    fields['email'] = x.value;    
+    this.setState({ fields });
+}
+
+key = () => {
+    
+    var y = document.getElementById("sd")
+    y.value = y.value.toLowerCase()
+
+    let loginfields = this.state.loginfields;
+   
+    loginfields['loginemail'] = y.value;    
+    this.setState({ loginfields });
+     
+        
+  
+   
+}
 
 registerMehandleChange(field, e) { 
     console.log(this.state);
@@ -464,7 +497,7 @@ recaptchaCheck=()=>{
 }
 
 render(){
-
+    console.log('xxxxxx login email',this.state.loginfields.loginemail);
     //console.log('Helloref:',this.refs.name.value);
          return(
                     <div className="signup-section">
@@ -511,7 +544,7 @@ render(){
                                                     </div>
 
                                                     <div className="form-group">
-                                                        <input name="email"   value={this.state.fields["email"] ? this.state.fields["email"] : ''} onChange={this.registerMehandleChange.bind(this, "email")} type="email" className={this.state.errors["email"] ? this.state.errors["email"] : 'form-control'}    placeholder="Email"/>
+                                                        <input name="email" id="test" onKeyUp={this.onKeyUp} value={this.state.fields["email"] ? this.state.fields["email"] : ''}  onChange={this.registerMehandleChange.bind(this, "email")} type="email" className={this.state.errors["email"] ? this.state.errors["email"] : 'form-control'} placeholder="Email"/>
                                                        
                                                     </div>
                                                     
@@ -570,7 +603,7 @@ render(){
                                                     <div className="form-group">
                                                         <input ref="other" name="other" defaultChecked={this.state.isCheckedOther ? 'checked' : ''}   value="other" onChange={this.registerMehandleChange.bind(this, "other")} type="checkbox" id="other"/>
                                                         <label className={this.state.errors["other"] ? this.state.errors["other"] : ''} for="other">Other: </label>
-                                                        <input ref="tell_us_more" name="tell_us_more"   value={this.state.fields["tell_us_more"] ? this.state.fields["tell_us_more"] : ''} onChange={this.registerMehandleChange.bind(this, "tell_us_more")} type="text" className={this.state.errors["tell_us_more"] ? this.state.errors["tell_us_more"] : 'form-control other-input'}    placeholder="Tell us more"/>
+                                                        <input ref="tell_us_more" name="tell_us_more"   value={this.state.fields["tell_us_more"] ? this.state.fields["tell_us_more"] : ''} onChange={this.registerMehandleChange.bind(this, "tell_us_more")} type="text" className={this.state.errors["tell_us_more"] ? this.state.errors["tell_us_more"] : 'form-control other-input'}    placeholder=" Please tell us more"/>
                                                     </div>
                                                     
                                                     <div className="form-group terms">
@@ -596,7 +629,7 @@ render(){
                                     { this.state.showAlert	? (<div style={{background:this.state.color}} className="Idmessage">{this.state.message}</div>) : '' }
                                         
                                     <input id="page2" type="radio" name="screens"/>
-                                    <div className={`screen  ${this.state.signinform ? 'show' : 'hide'}`} >
+                                    <div className={`screen  ${this.state.signinform ? 'show' : 'hide'}`}>
                                         <div className="account-form-heading">
                                             <h2>Sign-In</h2>
                                             <p>Not registered yet? &nbsp;
@@ -609,14 +642,15 @@ render(){
                                             <div className="account-form-content-top">
                                                 <form>
                                                     <div className="form-group">
-                                                        <input type="email"  value={this.state.loginfields["loginemail"]} onChange={this.loginMehandleChange.bind(this, "loginemail")} type="text" className={this.state.errors["loginemail"] ? this.state.errors["loginemail"] : 'form-control'}   placeholder="Email"/>
+                                                        <input name="email" id="sd" value={this.state.loginfields["loginemail"]}  onChange={this.loginMehandleChange.bind(this, "loginemail")} type="text" className={this.state.errors["loginemail"] ? this.state.errors["loginemail"] : 'form-control'} onKeyUp={this.key} onKeyPress={this.onKeyPress} placeholder="Email"/>
                                                     </div>
 
                                                     <div className="form-group">
-                                                        <input type="password" value={ this.state.loginfields["loginpassword"] } onChange={this.loginMehandleChange.bind(this, "loginpassword")} className={this.state.errors["loginpassword"] ? this.state.errors["loginpassword"] : 'form-control'}    placeholder="Password"/>
+                                                        <input type="password" value={ this.state.loginfields["loginpassword"] } onChange={this.loginMehandleChange.bind(this, "loginpassword")} className={this.state.errors["loginpassword"] ? this.state.errors["loginpassword"] : 'form-control'}  onKeyPress={this.onKeyPress} placeholder="Password"/>
                                                     </div>
-
+                                                   
                                                     <button type="button" onClick={this.LoginMe} className="btn">GO</button>
+                                                  <div style={{marginTop: "14px"}}><Link to="/front/sendresetlink"><label className="label-link mydata" for="page1">Forgot password or login?</label></Link></div>
                                                 </form>
                                             </div>
                                         </div>

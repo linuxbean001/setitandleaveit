@@ -1,33 +1,83 @@
 import React, { Component } from 'react';
-import AnchorLink from 'react-anchor-link-smooth-scroll'
-import { Link, BrowserRouter as Router } from 'react-router-dom'
+import { Link,NavLink, BrowserRouter as Router } from 'react-router-dom'
 import about_banner from '../../assets/img/RESEARCH-hero-banner.jpg';
 import serviceFlow_bg from '../../assets/img/RESEARCH-bg.png';
 import AdminService from '../../admin/Aservice/adminservice';
-import pdfIcon from '../../assets/img/pdf-png.png'; 
-import { MDBDataTable  } from 'mdbreact';
-let ResearchRow=[];
-let ResourceRow=[];
+import pdfIcon from '../../assets/img/pdf-png.png';
+// import about_bg from '../../assets/img/about-flower-bg.png';
+import about_bg from '../../assets/img/img1/RESEARCH.png'; 
+import { MDBDataTable } from 'mdbreact';
+import $ from "jquery";
+let ResearchRow = [];
+let ResourceRow = [];
 
 const AdminAPI = new AdminService();
-class Research extends Component{
-    constructor(props){
+class Research extends Component {
+    constructor(props) {
         super(props);
         this.props.onHeaderHover(true);
-        this.state ={
-            isHide:false,
-            activeClass:'',
-            position:false,
-            top:false,
-            OverviewData:[],
-            ResearchData:[],
-            ResourceData:[]
+        this.state = {
+            isHide: false,
+            activeClass: '',
+            position: false,
+            top: false,
+            OverviewData: [],
+            ResearchData: [],
+            ResourceData: []
         }
         this.getResearch = this.getResearch.bind(this);
     }
 
 
-    componentDidMount(){
+    componentDidMount() {
+        
+        // Cache selectors
+var lastId,
+topMenu = $("#testing"),
+topMenuHeight = topMenu.outerHeight()+1,
+// All list items
+menuItems = topMenu.find(".scrolly"),
+// Anchors corresponding to menu items
+scrollItems = menuItems.map(function(){
+  var item = $($(this).attr("data-to"));
+   if (item.length) { return item; }
+});
+
+// Bind click handler to menu items
+// so we can get a fancy scroll animation
+menuItems.click(function(e){
+   
+ var href = $(this).attr("data-to"),
+     offsetTop = href === "#" ? 0 : $(href).offset().top-topMenuHeight+1;
+ $('html, body').stop().animate({ 
+     scrollTop: offsetTop
+ }, 850);
+ e.preventDefault();
+});
+
+// Bind to scroll
+$(window).scroll(function(){
+  // Get container scroll position
+  var fromTop = $(this).scrollTop()+topMenuHeight;
+  
+  // Get id of current scroll item
+  var cur = scrollItems.map(function(){
+    if ($(this).offset().top < fromTop)
+      return this;
+  });
+  // Get the id of the current element
+  cur = cur[cur.length-1];
+  var id = cur && cur.length ? cur[0].id : "";
+  
+  if (lastId !== id) {
+      lastId = id;
+      // Set/remove active class
+      menuItems
+        .parent().removeClass("active")
+        .end().filter("[data-to='#"+id+"']").parent().addClass("active");
+  }                   
+});
+
         window.scrollTo(0, 0);
         this.getResearchOverview();
         this.getResearch();
@@ -36,59 +86,30 @@ class Research extends Component{
             let activeClass = 'normal';
             let position = false;
             let top = false;
-            let li1 = '';
-            let li2 = '';
-            let li3 = '';
-            let li4 = '';
 
-            if(window.scrollY >= 1340 ){
+            if (window.scrollY >= 1340) {
                 activeClass = 'is-sticky';
                 position = true;
                 top = true;
-                li1 = 'active';
-                li2 = '';
-                li3 = '';
-                li4 = '';
             }
-            if(window.scrollY >= 1740 ){  
-                li1 = '';              
-                li2 = 'active';
-                li3 = '';
-                li4 = '';
-            }
-            if(window.scrollY >= 5000 ){                
-                li1 = '';              
-                li2 = '';
-                li3 = 'active';
-                li4 = '';
-            }
-            if(window.scrollY >= 7400 ){                
-                li1 = '';              
-                li2 = '';
-                li3 = '';
-                li4 = 'active';
-            }
-            this.setState({ 
-                activeClass:activeClass,
-                position:position,
-                top:top,
-                li1:li1,
-                li2:li2,
-                li3:li3,
-                li4:li4
-             });
-         });
+            this.setState({
+                activeClass: activeClass,
+                position: position,
+                top: top
+            });
+        });
+        document.title = "RESEARCH - SET IT AND LEAVE IT"
     }
 
     getResearchOverview() {
         AdminAPI.GetResearchOverview()
-                .then(res => {
-                   this.setState({ 
-                       OverviewData: res.data.data[0]
-                   });
-                }).catch(err => {
-                    console.log('xxxxxxx xxxx ', err);
+            .then(res => {
+                this.setState({
+                    OverviewData: res.data.data[0]
                 });
+            }).catch(err => {
+                console.log('xxxxxxx xxxx ', err);
+            });
     }
 
     getResearch() {
@@ -96,12 +117,12 @@ class Research extends Component{
                 .then(res => {
                     ResearchRow=[];
                     for(let i=0; i<res.data.data.length; i++){
-                        var stripedHtmlLinks = <p dangerouslySetInnerHTML={{ __html: res.data.data[i].links.replace(/<[^>]+>/g, '') }}  />;
+                        var stripedHtmlLinks = <p dangerouslySetInnerHTML={{ __html: res.data.data[i].links}}  />;
                         var uploads = <img style={{height:50,width:'auto'}} src={pdfIcon} />;
                         ResearchRow.push({
                             title:res.data.data[i].title,
                             description:<p dangerouslySetInnerHTML={{ __html: res.data.data[i].description }}  /> ,
-                            links:<div class="uploads"><p>{res.data.data[i].files?<a href={process.env.PUBLIC_URL + '/upload-file/'+res.data.data[i].files}>{uploads}</a>:''}</p><p>{stripedHtmlLinks}</p></div>
+                            links:<div class="uploads"><p>{res.data.data[i].files?<a download href={process.env.PUBLIC_URL + '/upload-file/'+res.data.data[i].files}>{uploads}</a>:''}</p><p>{stripedHtmlLinks}</p></div>
                         }) 
                       }
                      // console.log('ContacutServicArray:', res);
@@ -118,12 +139,12 @@ class Research extends Component{
                     ResourceRow=[];
                     for(let i=0; i<res.data.data.length; i++){
 
-                        var stripedHtmlLinks = res.data.data[i].links.replace(/<[^>]+>/g, '');
+                        var stripedHtmlLinks = <p dangerouslySetInnerHTML={{ __html: res.data.data[i].links}}  />;
                         var uploads = <img style={{height:50,width:'auto'}} src={pdfIcon} />;
                         ResourceRow.push({
                             title:res.data.data[i].title,
-                            description:res.data.data[i].description,
-                            links:<div class="uploads"><p>{res.data.data[i].files?<a href={process.env.PUBLIC_URL + '/upload-file/'+res.data.data[i].files}>{uploads}</a>:''}</p><p>{stripedHtmlLinks}</p></div>
+                            description:<p dangerouslySetInnerHTML={{ __html: res.data.data[i].description }}  /> ,
+                            links:<div class="uploads"><p>{res.data.data[i].files?<a download href={process.env.PUBLIC_URL + '/upload-file/'+res.data.data[i].files}>{uploads}</a>:''}</p><p>{stripedHtmlLinks}</p></div>
                         }) 
                       }
                      // console.log('ContacutServicArray:', res);
@@ -133,132 +154,148 @@ class Research extends Component{
                 });
     }
 
-render(){
+    pagescroll=(e)=> {
+        if (e.currentTarget.dataset.to) {
+            document.querySelectorAll('#getFixed ul li').forEach(element => {
+                if(element.classList.contains('active')){
+                    element.classList.remove('active')
+                }
+            });
+            document.querySelector(e.currentTarget.dataset.to).scrollIntoView({ behavior: 'smooth' });
+            document.querySelector(e.currentTarget.dataset.to+'1').classList.add('active');
+        }
+    }
 
-    console.log('data:',this.state.ResearchData);
+    render() {
 
-
-
-    const dataResearch = {
-        columns: [
-          {
-            label: 'Title',
-            field: 'title',
-            sort: 'asc',
-            width: 150
-          },
-          {
-              label: 'Description',
-              field: 'description',
-              sort: 'asc',
-              width: 150
-          },
-          {
-              label: 'Links',
-              field: 'links',
-              sort: 'asc',
-              width: 150
-          }
-        ],
-        rows: ResearchRow
-      }
-
-      const dataResource = {
-        columns: [
-          {
-            label: 'Source',
-            field: 'title',
-            sort: 'asc',
-            width: 150
-          },
-          {
-              label: 'Description',
-              field: 'description',
-              sort: 'asc',
-              width: 150
-          },
-          {
-              label: 'Links',
-              field: 'links',
-              sort: 'asc',
-              width: 150
-          }
-        ],
-        rows: ResourceRow
-      }
+        console.log('data:', this.state.ResearchData);
 
 
-         return(
-<div className="traditional-section">
 
-<section id="inner-page-banner">
-        <div className="container-fluid">
-            <div className="row">
-                <div className="inner-page-banner-heading hdng">
-                    <h2>{this.state.OverviewData.title} </h2>
-                </div>
+        const dataResearch = {
+            columns: [
+                {
+                    label: 'Title',
+                    field: 'title',
+                    sort: 'asc',
+                    width: 150
+                },
+                {
+                    label: 'Description',
+                    field: 'description',
+                    sort: 'asc',
+                    width: 150
+                },
+                {
+                    label: 'Links',
+                    field: 'links',
+                    sort: 'asc',
+                    width: 150
+                },
 
-                <div className="inner-page-banner-image" style={ { backgroundImage: "url("+about_banner+")" } }>
-                    {/* <img src={about_banner}/> */}
+            ],
+            rows: ResearchRow
+        }
 
-                    <div class="overlay-texts"> <p> <em>“Science is simply common sense at its best, that is, rigidly accurate in observation, and merciless to fallacy in logic.”</em>      –Thomas Henry Huxley       </p> </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        const dataResource = {
+            columns: [
+                {
+                    label: 'Source',
+                    field: 'title',
+                    sort: 'asc',
+                    width: 150
+                },
+                {
+                    label: 'Description',
+                    field: 'description',
+                    sort: 'asc',
+                    width: 150
+                },
+                {
+                    label: 'Links',
+                    field: 'links',
+                    sort: 'asc',
+                    width: 150
+                }
+            ],
+            rows: ResourceRow
+        }
 
-    <div className="container">
-        <div className="not-sect">
-            <p> <span> !</span> <b> NOTE: </b> In addition to our research, we have created short <Link to={"/front/videos"}>videos</Link>  summarizing many of the same topics. </p>
-        </div>
-    </div>
 
-    <section id="blouq-content">
-        <div className="container">
-            <div className="blouq-content-inner research-overview">
-                <h3> OVERVIEW </h3>
-                <p dangerouslySetInnerHTML={{ __html: this.state.OverviewData.content }}  />
-                
-                {/* <h5> <i>Rules of thumb</i> may be helpful at times, but we advocate an evidence-based approach to planning and investing. Set It and Leave It is based on our proprietary research and analysis – much of which we share below. We hope you enjoy reading and find it useful, but feedback is always welcome. </h5> */}
-            </div>
-        </div>
-    </section>
-    <div id="getFixed-sticky-wrapper" className={`sticky-wrapper ${this.state.activeClass}`}>
-        <section className="tradnitional-section" id="getFixed" style={{ position: this.state.position ? 'fixed' : '', top: this.state.top ? '0' : '' }}>
-            <div className="container">
-                <div className="row">
-                    <div className="trad-box-inner">      
-                        <nav className="navbar" style={{marginBottom: '0'}}>
-                            <div className="container-fluid">
-                                <ul className="nav">
-                                    <li className={`${this.state.li1}`} style={{width:'50%'}}> <AnchorLink href="#ourresearch" className="scrolly"> OUR RESEARCH </AnchorLink> </li>
-                                    <li className={`${this.state.li2}`} style={{width:'50%'}}> <AnchorLink href="#otherresources" className="scrolly"> OTHER RESOURCES </AnchorLink> </li>
-                                </ul>
+        return (
+            <div className="traditional-section research-page">
+
+                <section id="inner-page-banner">
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div className="inner-page-banner-heading hdng">
+                                <h2>{this.state.OverviewData.title} </h2>
                             </div>
-                        </nav>
+
+                            <div className="inner-page-banner-image" style={{ backgroundImage: "url(" + about_banner + ")" }}>
+                                {/* <img src={about_banner}/> */}
+                               
+                                
+                            </div>
+                            <div className="science"> <p className="sc1"> <em>“Science is simply common sense at its best, that is, rigidly accurate in observation, and merciless to fallacy in logic.”</em>      –Thomas Henry Huxley       </p> </div>   
+                        </div>
+                    </div>
+                </section>
+                
+
+                <div className="container">
+                    <div className="not-sect">
+                        <p> <span> !</span> <div className="notediv notediv-research"><b> NOTE: </b> <p>In addition to our research, we have created short <Link to={"/front/videos"}>videos</Link>  summarizing many of the same topics. </p></div></p>
                     </div>
                 </div>
-            </div>
-        </section>
-    </div>
+     
+                <section id="blouq-content">
+                    <div className="container">
+                        <div className="blouq-content-inner research-overview">
+                            <h3> OVERVIEW </h3>
+                            <p dangerouslySetInnerHTML={{ __html: this.state.OverviewData.content }} />
 
-    <div id="ourresearch">
-        <section id="parallax-main" className="overlay-white" style={ { backgroundImage: "url("+serviceFlow_bg+")" } }>
-            <div className="container haddng">
-                <h2>OUR RESEARCH</h2>
-                {/* <h2> {this.state.BackgroundData.title} </h2> */}
-            </div>
-        </section>
+                            {/* <h5> <i>Rules of thumb</i> may be helpful at times, but we advocate an evidence-based approach to planning and investing. Set It and Leave It is based on our proprietary research and analysis – much of which we share below. We hope you enjoy reading and find it useful, but feedback is always welcome. </h5> */}
+                        </div>
+                    </div>
+                </section>
+                <div id="getFixed-sticky-wrapper" className={`sticky-wrapper ${this.state.activeClass}`}>
+                    <section className="tradnitional-section" id="getFixed" style={{ position: this.state.position ? 'fixed' : '', top: this.state.top ? '0' : '' }}>
+                        <div className="container">
+                            <div className="row">
+                                <div className="trad-box-inner">
+                                    <nav className="navbar navbar-tab">
+                                        <div className="container-fluid">
+                                            <ul id="testing" className="nav">
+                                                <li id="ourresearch1" style={{ width: '50%' }}> <NavLink onClick={this.pagescroll} data-to="#ourresearch" className="scrolly"> OUR ARTICLES </NavLink> </li>
+                                                <li id="otherresources1" style={{ width: '50%' }}> <NavLink onClick={this.pagescroll} data-to="#otherresources" className="scrolly"> OTHER RESOURCES </NavLink> </li>
+                                            </ul>
+                                        </div>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
 
-        <section className="b1">
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-12">
-                        <div className="inner-content-bg">
-                            <MDBDataTable  data={dataResearch} id="researchTable"  />
-                            {/* <p dangerouslySetInnerHTML={{ __html: this.state.SummaryData.content }}  /> */}
-                            {/* <br/><h3>Side-by-side Comparison</h3><br/> */}
-                            {/* <table className="table">
+                <div id="ourresearch">
+                    {/* <section id="parallax-main" className="overlay-white" style={{ backgroundImage: "url(" + serviceFlow_bg + ")", backgroundSize:"contain" }}> */}
+                    <section id="parallax-main" class="overlay-white" style={ { backgroundImage: "url("+about_bg+")" }} >
+                        <div className="container haddng">
+                            <h2>OUR ARTICLES</h2>
+                            {/* <h2> {this.state.BackgroundData.title} </h2> */}
+                        </div>
+                    </section>
+
+                    <section className="b1">
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <div className="inner-content-bg research-table">
+                                        <MDBDataTable data={dataResearch} id="researchTable" />
+                                        {/* <p dangerouslySetInnerHTML={{ __html: this.state.SummaryData.content }}  /> */}
+                                        {/* <br/><h3>Side-by-side Comparison</h3><br/> */}
+                                        {/* <table className="table">
                                 <thead>
                                     <th> Title</th>
                                     <th> Description </th>
@@ -283,32 +320,32 @@ render(){
 
                             </table> */}
 
-                           <center><h2>More research to come – <Link to={"/front/register"}>sign up</Link> to stay informed!</h2></center>
+                                        <center><h2>More research to come – <Link to={"/front/register"}>sign up</Link> to stay informed!</h2></center>
 
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </section>
                 </div>
-            </div>
-        </section>
-    </div>
 
-    <div id="otherresources">
-        <section id="parallax-main" className="overlay-white" style={ { backgroundImage: "url("+serviceFlow_bg+")" } }>
-            <div className="container haddng">
-                <h2>OTHER RESOURCES</h2>
-                {/* <h2> {this.state.WithdrawalData.title} </h2> */}
-            </div>
-        </section>
+                <div id="otherresources">
+                    <section id="parallax-main" className="overlay-white" style={{ backgroundImage: "url(" + serviceFlow_bg + ")" }}>
+                        <div className="container haddng">
+                            <h2>OTHER RESOURCES</h2>
+                            {/* <h2> {this.state.WithdrawalData.title} </h2> */}
+                        </div>
+                    </section>
 
-        <section className="b1">
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-12">
-                        <div className="inner-content-bg">
-                             {/* <p dangerouslySetInnerHTML={{ __html: this.state.SummaryData.content }}  /> */}
-                            {/* <br/><h3>Other Resource</h3><br/> */}
-                            <MDBDataTable  data={dataResource} id="resourceTable" />
-                            {/* <table className="table">
+                    <section className="b1">
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <div className="inner-content-bg research-table">
+                                        {/* <p dangerouslySetInnerHTML={{ __html: this.state.SummaryData.content }}  /> */}
+                                        {/* <br/><h3>Other Resource</h3><br/> */}
+                                        <MDBDataTable data={dataResource} id="resourceTable" />
+                                        {/* <table className="table">
                                 <thead>
                                     <th> Source</th>
                                     <th> Description </th>
@@ -356,18 +393,18 @@ render(){
 
                             </table>                           */}
 
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </section>
                 </div>
+
+
+
+
             </div>
-        </section>
-    </div>
-
-
-
-
-                     </div>
-            );
-        }
-      }
-    export default Research;
+        );
+    }
+}
+export default Research;

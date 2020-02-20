@@ -1,11 +1,9 @@
 const Register = require('../models/registerModel');
 const Activitylog = require('../models/useractivityModel');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 const sgMail = require('@sendgrid/mail');
 const creds = require('./config');
 sgMail.setApiKey(creds.SENDGRID_API_KEY);
-//sgMail.setApiKey('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');
 exports.addRegisterTODb = async (req, res, next) => { 
     const reg = new Register({
         name: req.body.name,
@@ -24,7 +22,7 @@ exports.addRegisterTODb = async (req, res, next) => {
         last_uses_date:new Date()    
     });    
     try {
-            let user = await Register.findOne({ email: req.body.email});
+            let user = await Register.findOne({ email: req.body.email});  
             console.log('user:', user);
             if(user){
 
@@ -39,7 +37,7 @@ exports.addRegisterTODb = async (req, res, next) => {
                         res.status(201).json({
                             data: result, 
                             success:true, 
-                            message:'Congratulations, you are now registered!'
+                            message:'Thank you for signing up! We are sending you an email verification link. Please check your spam folder if you do not see the verification email.'
                         });
 
 
@@ -74,7 +72,7 @@ exports.addRegisterTODb = async (req, res, next) => {
                          
                           <p style="margin:0;font-size:14px">Best regards,</p>
                           <p style="margin:0;font-size:16px"><em style="color:#9464B8">SET IT <span style="font-size:10px;">AND</span> LEAVE IT</em> Team</p><br><br/><br/>
-                          <a style="text-decoration:none;"  href="${creds.domain}/front"> <img class="logo" style="width:200px;height:auto" src="http://ec2-18-221-255-18.us-east-2.compute.amazonaws.com/static/media/logo1.8cbebd0f.png"  alt="My_Logo"></a>
+                          <a style="text-decoration:none;"  href="${creds.domain}/front"><img class="logo" style="width:200px;height:auto" src="https://firebasestorage.googleapis.com/v0/b/test-85de8.appspot.com/o/logo1.096101be.png?alt=media&token=c8c17d4d-ac1d-46a6-ae59-8afb7dba94da"  alt="My_Logo"></a>
                           <br><br/><br/><p style="margin:0;font-size:16px"><b>Phone:</b> <a href="tel:18669005050">1-866-900-5050</a> | <b>Email:</b> <a href="mailto:info@setitandleaveit.com">info@SetItandLeaveIt.com</a> | <b>Web:</b> <a href="www.setitandleaveit.com">www.SetItandLeaveIt.com</a></p>
                       </div>
                   `;
@@ -90,10 +88,9 @@ exports.addRegisterTODb = async (req, res, next) => {
 
 
                   const Usermsg = {
+                    from: 'SET IT AND LEAVE IT <'+creds.USERFROM+'>',
                     to: req.body.email,
-                    from: ''+req.body.name+' to SET IT AND LEAVE IT <'+creds.USERFROM+'>',
                     subject:  'Please verify your email with SET IT AND LEAVE IT',
-                    text: 'and easy to do anywhere, even with Node.js',
                     html: emailForUser,
                   };
                   sgMail.send(Usermsg);
@@ -124,12 +121,12 @@ exports.addRegisterTODb = async (req, res, next) => {
 
 
 exports.getUserLoginTODb = async (req, res, next) => {
-    console.log('xxxxxxxxxx xxxxx', req.body.email);
+    console.log('xxxxxxxxxx xxxxx11111', req.body.email);
     
     Register.findOne({ email: req.body.email.email, password: req.body.email.password })
     .then(data => {
 
-        console.log('logindata:', data);
+        console.log('logindata:',req.body.email);
         if (data) {
             if(data.signup_status == true){
 
@@ -162,7 +159,7 @@ exports.getUserLoginTODb = async (req, res, next) => {
 
             }else{
                 res.status(201).json({
-                    message: "Your verification not done please verify your email.",
+                    message: "Your email has not yet been verified.Please check your spam folder if you do not see the verifiaction email.",
                     success: false 
                 });
             }
@@ -209,37 +206,14 @@ exports.getUserLoginTODb = async (req, res, next) => {
             </div>                        
           `;
 
-          // create reusable transporter object using the default SMTP transport
-          let transporter = nodemailer.createTransport({
-            host: 'mail.setitandleaveit.com',
-            port: 587,
-            auth: {
-                user: creds.USER, // generated ethereal user
-                pass: creds.PASS  // generated ethereal password
-            },
-            tls:{
-              rejectUnauthorized:false
-            }
-          });
-        
-          // setup email data with unicode symbols
-          let mailOptionsAdmin = {
-              from: '"New User" <'+creds.USER+'>', // sender address
-              to: 'admin@SetItandLeaveIt.com', //creds.USER, // list of receivers
-              subject: 'Activity updates', // Subject line
-              html: emailForAdmin // html body
+
+          const Adminmsg = {
+            from: '"New User" <'+creds.USER+'>', // sender address
+            to: creds.USER, //creds.USER, // list of receivers
+            subject: 'Activity updates', // Subject line
+            html: emailForAdmin // html body
           };
-
-        
-          // send mail with defined transport object
-          transporter.sendMail(mailOptionsAdmin, (error, info) => {
-              if (error) {
-                  return console.log(error);
-              }
-              console.log('Message sent: %s', info.messageId);   
-              console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-          });
-
+            sgMail.send(Adminmsg);
 
         }else{
             console.log('No store');
@@ -269,36 +243,15 @@ exports.getUserLoginTODb = async (req, res, next) => {
             </div>                        
           `;
 
-          // create reusable transporter object using the default SMTP transport
-          let transporter = nodemailer.createTransport({
-            host: 'mail.setitandleaveit.com',
-            port: 587,
-            auth: {
-                user: creds.USER, // generated ethereal user
-                pass: creds.PASS  // generated ethereal password
-            },
-            tls:{
-              rejectUnauthorized:false
-            }
-          });
-        
-          // setup email data with unicode symbols
-          let mailOptionsAdmin = {
-              from: '"New User" <'+creds.USER+'>', // sender address
-              to: 'admin@SetItandLeaveIt.com', //creds.USER, // list of receivers
-              subject: 'Activity updates', // Subject line
-              html: emailForAdmin // html body
-          };
 
-        
-          // send mail with defined transport object
-          transporter.sendMail(mailOptionsAdmin, (error, info) => {
-              if (error) {
-                  return console.log(error);
-              }
-              console.log('Message sent: %s', info.messageId);   
-              console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-          });
+          
+          const Adminmsg = {
+            from: '"New User" <'+creds.USER+'>', // sender address
+            to: creds.USER, //creds.USER, // list of receivers
+            subject: 'Activity updates', // Subject line
+            html: emailForAdmin // html body
+          };
+            sgMail.send(Adminmsg);
 
         }else{
             console.log('Updation failed');

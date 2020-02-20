@@ -3,10 +3,9 @@ const Activitylog = require('../models/useractivityModel');
 const userQusetion = require('../models/questionModel');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 const creds = require('./config');
-//const domain = 'http://localhost:3000';
-const domain = 'http://ec2-18-221-255-18.us-east-2.compute.amazonaws.com';
-
+sgMail.setApiKey(creds.SENDGRID_API_KEY);
 var pdfcrowd = require("pdfcrowd");
 // create the API client instance
 var client = new pdfcrowd.HtmlToPdfClient("set123", "0b2dd715e7356f8ccfec32665d353774");
@@ -119,39 +118,17 @@ exports.emailresetpasswordTODb = async (req, res, next) => {
             <p>Hello ${user.name},</p>                  
             <p style="margin:0;">Need to reset password? No problem! just click the button below 
             and you'll be on your way. if you did not make this request, please ignore this email. </p>
-            <a href="${domain}/front/resetpassword?user=${user.email}">Reset your password</a>
+            <a href="${creds.domain}/front/resetpassword?user=${user.email}">Reset your password</a>
             </div>`;
 
-            // create reusable transporter object using the default SMTP transport
-            let transporter = nodemailer.createTransport({
-            host: 'mail.setitandleaveit.com',
-            port: 587,
-            auth: {
-                user: creds.USER, // generated ethereal user
-                pass: creds.PASS  // generated ethereal password
-            },
-            tls:{
-                rejectUnauthorized:false
-            }
-            });
-        
-            // setup email data with unicode symbols
-            let mailOptionsAdmin = {
+            const UpdateProfilemsg = {
                 from: '"Reset your password" <'+creds.USER+'>', // sender address
-                //to: creds.USER, // list of receivers
-                to: user.email, // list of receivers
+                to: user.email, //creds.USER, // list of receivers
                 subject: 'Reset your password.', // Subject line
                 html: emailForAdmin // html body
-            };
+             };
+            sgMail.send(UpdateProfilemsg);
 
-              // send mail with defined transport object
-            transporter.sendMail(mailOptionsAdmin, (error, info) => {
-                if (error) {
-                    return console.log(error);
-                }
-                console.log('Message sent: %s', info.messageId);   
-                console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-            });
 
             const result = await updateProfile.findByIdAndUpdate({ _id: req.body.id, }, {
                 presetemail:new Date(),
@@ -311,49 +288,57 @@ exports.emailstatusTODb = async (req, res, next) => {
                 <br/>
                 <p style="margin:0;font-size:16px">You may now sign in with email  ${userdata.email} and password  ${userdata.password} .</p>
                 <br/> 
-                <p style="margin:0;font-size:16px">We hope you find the resources on the <em style="color:#9464B8">SET IT <span style="font-size:10px;">AND</span> LEAVE IT</em> website useful. Please <a href="${domain}/front/contact">let us know</a> if you have any questions or feedback.</p>
+                <p style="margin:0;font-size:16px">We hope you find the resources on the <em style="color:#9464B8">SET IT <span style="font-size:10px;">AND</span> LEAVE IT</em> website useful. Please <a href="${creds.domain}/front/contact">let us know</a> if you have any questions or feedback.</p>
                 <br/>
                 <br/>
                 <p style="margin:0;font-size:14px">Best regards,</p>
                 <p style="margin-bottom:10px;font-size:16px"><em style="color:#9464B8">SET IT <span style="font-size:10px;">AND</span> LEAVE IT</em> Team</p><br/><br/>
-                <a style="text-decoration:none;"  href="${domain}/front"><img class="logo" style="width:200px;height:auto" src="http://ec2-18-221-255-18.us-east-2.compute.amazonaws.com/static/media/logo1.8cbebd0f.png"  alt="My_Logo"></a>
+                <a style="text-decoration:none;"  href="${creds.domain}/front"><img class="logo" style="width:200px;height:auto" src="http://ec2-18-221-255-18.us-east-2.compute.amazonaws.com/static/media/logo1.8cbebd0f.png"  alt="My_Logo"></a>
                 <br/><br/> <p style="margin-top:10px;font-size:16px"><b>Phone:</b> <a href="tel:18669005050">1-866-900-5050</a> | <b>Email:</b> <a href="mailto:info@setitandleaveit.com">info@SetItandLeaveIt.com</a> | <b>Web:</b> <a href="www.setitandleaveit.com">www.SetItandLeaveIt.com</a></p>
             </div>
         `;
 
         const emailsubject = `Thank you for registering with SET IT AND LEAVE IT!`;
 
-             // create reusable transporter object using the default SMTP transport
-             let transporter = nodemailer.createTransport({
-                host: 'mail.setitandleaveit.com',
-                port: 587,
-                auth: {
-                    user: creds.USER, // generated ethereal user
-                    pass: creds.PASS  // generated ethereal password
-                },
-                tls:{
-                  rejectUnauthorized:false
-                }
-              });
+        const UpdateEmailmsg = {
+            from: 'SET IT AND LEAVE IT <'+creds.USERFROM+'>',//'"Signing Up" <'+creds.USER+'>', // sender address
+            to: userdata.email, //creds.USER, // list of receivers
+            subject: emailsubject, // Subject line
+            html: emailForUser // html body
+         };
+        sgMail.send(UpdateEmailmsg);
 
-                // setup email data with unicode symbols
-                let mailOptionsUser = { 
-                    from: `${userdata.name} to SET IT AND LEAVE IT <'${creds.USERFROM}'>`,//'"Signing Up" <'+creds.USER+'>', // sender address
-                    to: userdata.email, // list of receivers
-                    subject: emailsubject, // Subject line
-                    html: emailForUser // html body
-                };
+            //  // create reusable transporter object using the default SMTP transport
+            //  let transporter = nodemailer.createTransport({
+            //     host: 'mail.setitandleaveit.com',
+            //     port: 587,
+            //     auth: {
+            //         user: creds.USER, // generated ethereal user
+            //         pass: creds.PASS  // generated ethereal password
+            //     },
+            //     tls:{
+            //       rejectUnauthorized:false
+            //     }
+            //   });
+
+            //     // setup email data with unicode symbols
+            //     let mailOptionsUser = { 
+            //         from: `${userdata.name} to SET IT AND LEAVE IT <'${creds.USERFROM}'>`,//'"Signing Up" <'+creds.USER+'>', // sender address
+            //         to: userdata.email, // list of receivers
+            //         subject: emailsubject, // Subject line
+            //         html: emailForUser // html body
+            //     };
 
               
                 
-                  // send mail with defined transport object
-                  transporter.sendMail(mailOptionsUser, (error, info) => {
-                      if (error) {
-                          return console.log(error);
-                      }
-                      console.log('Message sent: %s', info.messageId);   
-                      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-                  });
+            //       // send mail with defined transport object
+            //       transporter.sendMail(mailOptionsUser, (error, info) => {
+            //           if (error) {
+            //               return console.log(error);
+            //           }
+            //           console.log('Message sent: %s', info.messageId);   
+            //           console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+            //       });
 
                 
                 res.status(201).json({
@@ -619,7 +604,7 @@ exports.userQuestionTODb = async (req, res, next) => {
                 <br/><br/>   
                 <p style="margin:0;font-size:14px">Best regards,</p>
                  <p style="margin-bottom:10px;font-size:16px"><em style="color:#9464B8">SET IT <span style="font-size:10px;">AND</span> LEAVE IT</em> Team</p><br/><br/>
-                <a style="text-decoration:none;"  href="${domain}/front"><img class="logo" style="width:200px;height:auto" src="http://ec2-18-221-255-18.us-east-2.compute.amazonaws.com/static/media/logo1.8cbebd0f.png"  alt="My_Logo"></a>
+                <a style="text-decoration:none;"  href="${creds.domain}/front"><img class="logo" style="width:200px;height:auto" src="http://ec2-18-221-255-18.us-east-2.compute.amazonaws.com/static/media/logo1.8cbebd0f.png"  alt="My_Logo"></a>
                 <br/><br/> <p style="margin-top:10px;font-size:16px"><b>Phone:</b> <a href="tel:18669005050">1-866-900-5050</a> | <b>Email:</b> <a href="mailto:info@setitandleaveit.com">info@SetItandLeaveIt.com</a> | <b>Web:</b> <a href="www.setitandleaveit.com">www.SetItandLeaveIt.com</a></p>
 
             </div>`;    
@@ -650,62 +635,28 @@ exports.userQuestionTODb = async (req, res, next) => {
                 <br/><br/>   
                 <p style="margin:0;font-size:14px">Best regards,</p>
                  <p style="margin-bottom:10px;font-size:16px"><em style="color:#9464B8">SET IT <span style="font-size:10px;">AND</span> LEAVE IT</em> Team</p><br/><br/>
-                <a style="text-decoration:none;"  href="${domain}/front"><img class="logo" style="width:200px;height:auto" src="http://ec2-18-221-255-18.us-east-2.compute.amazonaws.com/static/media/logo1.8cbebd0f.png"  alt="My_Logo"></a>
+                <a style="text-decoration:none;"  href="${creds.domain}/front"><img class="logo" style="width:200px;height:auto" src="http://ec2-18-221-255-18.us-east-2.compute.amazonaws.com/static/media/logo1.8cbebd0f.png"  alt="My_Logo"></a>
                 <br/><br/> <p style="margin-top:10px;font-size:16px"><b>Phone:</b> <a href="tel:18669005050">1-866-900-5050</a> | <b>Email:</b> <a href="mailto:info@setitandleaveit.com">info@SetItandLeaveIt.com</a> | <b>Web:</b> <a href="www.setitandleaveit.com">www.SetItandLeaveIt.com</a></p>
 
             </div>`;    
 
         }
-                // create reusable transporter object using the default SMTP transport
-                let transporter = nodemailer.createTransport({
-                host: 'mail.setitandleaveit.com',
-                port: 587,
+        const QuestionAdminmsg = {
+            from: '"Questionnaire form alert" <'+creds.USER+'>', // sender address
+            to: creds.USER, // list of receivers
+            subject: mailSubject, // Subject line
+            html: emailForAdmin // html body
+         };
+        sgMail.send(QuestionAdminmsg);
+
+        const QuestionUsermsg = {
+            from: 'SET IT AND LEAVE IT <'+creds.USERFROM+'>',   //'"Questionnaire form alert" <'+creds.USER+'>', // sender address
+            to:userdetailsresult[0].email, // list of receivers
+            subject: 'Thank you!', // Subject line
+            html: emailForUser // html body
+         };
+        sgMail.send(QuestionUsermsg);
                
-                auth: {
-                    user: creds.USER, // generated ethereal user
-                    pass: creds.PASS  // generated ethereal password
-                },
-                tls:{
-                    rejectUnauthorized:false
-                }
-                });
-            
-                // setup email data with unicode symbols
-                let mailOptionsAdmin = {
-                    from: '"Questionnaire form alert" <'+creds.USER+'>', // sender address
-                    // to: creds.USER, // list of receivers
-                    to: creds.USER, // list of receivers
-                    subject: mailSubject, // Subject line
-                    html: emailForAdmin // html body
-                };
-
-                   // setup email data with unicode symbols
-                let mailOptionsUser = { 
-                    from: `${userdetailsresult[0].name}  to SET IT AND LEAVE IT <'${creds.USERFROM}'>`,   //'"Questionnaire form alert" <'+creds.USER+'>', // sender address
-                    to:userdetailsresult[0].email, // list of receivers
-                    subject: 'Thank you!', // Subject line
-                    html: emailForUser // html body
-                };
-
-
-                  // send mail with defined transport object
-                transporter.sendMail(mailOptionsAdmin, (error, info) => {
-                    if (error) {
-                        return console.log(error);
-                    }
-                    console.log('Message sent: %s', info.messageId);   
-                    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-                });
-
-                //send mail with defined transport object
-                transporter.sendMail(mailOptionsUser, (error, info) => {
-                    if (error) {
-                        return console.log(error);
-                    }
-                    console.log('Message sent: %s', info.messageId);   
-                    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-                 });
-
 
              res.status(201).json({
                  data: result,
@@ -784,5 +735,31 @@ exports.convertpdfDeleteTODb  = (req, res, next) => {
             });
     }
 
+
+}
+
+exports.deleteUserQue = async (req, res, next) => {
+    //console.log('vivekreq:',req)
+    try {
+        userQusetion.deleteOne({_id:req.params.id}).then(result => {
+
+            if (result) {
+                res.status(201).json({
+                    data: result,
+                    success:true,
+                    message: ' question deleted successfully.'
+                });
+    
+            }
+        })
+        
+    } catch (err) {
+        res.status(401).json({
+            data: err,
+            success: false,
+            message: 'Something going wrong please check.'
+        });
+        console.log('eeeeeeeeeeeee eeeeeeeeeee ', err)
+    }
 
 }

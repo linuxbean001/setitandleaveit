@@ -23,8 +23,11 @@ router.post('/updateProfile', profileUpdateCon.updateProfileTODb);
 router.post('/resetpassword', profileUpdateCon.resetpasswordTODb);
 router.post('/emailresetpassword', profileUpdateCon.emailresetpasswordTODb);
 router.post('/useremailresetpassword', profileUpdateCon.useremailresetpasswordTODb);
+router.post('/useremailsendresetlink',profileUpdateCon.useremailsendresetlinkTODb);
 router.post('/passwordlinkstatus', profileUpdateCon.passwordlinkstatusTODb);
 router.post('/emailstatus', profileUpdateCon.emailstatusTODb);
+
+router.post('/getemailbytoken', profileUpdateCon.getemailbytokenToDb)
 
 router.post('/toolenablestatus', profileUpdateCon.toolenablestatusTODb);
 router.post('/toolsInputs', toolsInputsCon.toolsInputsTODb);
@@ -47,6 +50,7 @@ router.post('/WhocanUseitInfo', adminCMSCon.WhocanuseitTODb);
 router.get('/Getwhocanuseit', adminCMSCon.Getwhocanuseit);
 router.post('/PeaceofmindInfo', adminCMSCon.PeaceofmindTODb);
 router.get('/getpeaceofmind', adminCMSCon.Getpeaceofmind);
+
 router.post('/EasytouseInfo', adminCMSCon.EasytouseTODb);
 router.get('/geteasytouse', adminCMSCon.Geteasytouse);
 router.post('/addFAQ', adminCMSCon.addFAQTODb);

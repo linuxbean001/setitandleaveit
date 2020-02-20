@@ -4,6 +4,9 @@ import {Link} from 'react-router-dom';
 
 
 function AlertModalBox(props) {
+
+
+
     return (
       <Modal
         {...props}
@@ -20,7 +23,7 @@ function AlertModalBox(props) {
           <h5 style={{textAlign:'center',padding:10}}>You must be signed in to use the Set It and Leave It tool.</h5>
           <div style={{paddingTop:20,textAlign:'center'}}>
             <Link className='btn btn-primary' style={{backgroundColor:'#7030a0',fontWeight:700}} to={'/front/register'}>SIGN IN</Link><br/>
-            <br/><p>No thanks. <Link to={'/front/home'}>Go back</Link></p>
+            <br/><p>No thanks. <Link>Go back</Link></p>
           </div>          
         </Modal.Body>
    

@@ -19,6 +19,9 @@ import ResetPassword from './resetpassword/resetpassword';
 import TnC from './tnc/tnc';
 import Research from './research/research';
 import EmailVerification from './emailverify/emailverification';
+import LoginIndex from './loginIndex/loginIndex';
+import GetStarted from './getStarted/getStarted';
+import PasswordReset from './passwordReset/passwordReset';
 class Frontendrouters extends Component{
    constructor(props){
        super(props);
@@ -30,10 +33,16 @@ class Frontendrouters extends Component{
    }
 
    handlerLoginHover(stricy){
+       if(localStorage.getItem('current-page')){
+          localStorage.setItem('last-page', localStorage.getItem('current-page'));
+          localStorage.setItem('current-page', this.props.location.pathname);
+       }else{
+          localStorage.setItem('current-page', this.props.location.pathname);
+       }
+      
        this.setState({
         stricy:stricy
        })
-       console.log('sticky',stricy)
    }
 
     render(){
@@ -113,7 +122,7 @@ class Frontendrouters extends Component{
                                      return <UserManualPdf onHeaderHover={this.handlerLoginHover.bind(this)} />
                                  }}  />
 
-                                <Route exact path="/front/resetpassword" render={() => {
+                                <Route exact path="/front/resetpassword/:token" render={() => {
                                      return <ResetPassword onHeaderHover={this.handlerLoginHover.bind(this)} />
                                  }}  />
 
@@ -124,6 +133,18 @@ class Frontendrouters extends Component{
                                 <Route exact path="/front/emailverification" render={() => {
                                      return <EmailVerification onHeaderHover={this.handlerLoginHover.bind(this)} />
                                  }}  />
+
+                                <Route exact path="/front/index" render={() => {
+                                        return <LoginIndex onHeaderHover={this.handlerLoginHover.bind(this)} />
+                                }}  />
+
+                                <Route exact path="/front/getstarted" render={() => {
+                                    return <GetStarted onHeaderHover={this.handlerLoginHover.bind(this)} />
+                                }} />
+
+                                <Route exact path="/front/sendresetlink" render={() => {
+                                    return <PasswordReset onHeaderHover={this.handlerLoginHover.bind(this)} />
+                                }} />
 
                             </Switch> 
                             </div>

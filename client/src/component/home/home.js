@@ -34,6 +34,7 @@ class Home extends Component{
       this.getWhocanuseit();
       this.getPeaceofmind();
       this.getEasyToUse();
+      document.title = "HOME - SET IT AND LEAVE IT"
   } 
 
   getAllSliderLists() {
@@ -104,7 +105,7 @@ class Home extends Component{
                                 alt="First slide"
                                 />
                                 <Carousel.Caption>
-                                <h3>{slider.slidertitle}</h3>
+                                <h3><Link to={"/front/videos"}>{slider.slidertitle}</Link></h3>
                                 </Carousel.Caption>
                             </Carousel.Item>
                          ))} 
@@ -113,7 +114,7 @@ class Home extends Component{
 
                            
     <section id="services-main">
-        <div className="container">
+        <div className="container serve">
             <div className="row">
 
             {this.state.EICData.map((eic, index) => (  

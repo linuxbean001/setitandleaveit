@@ -36,6 +36,7 @@ class FAQ extends Component{
          this.getFAQheaders();
          this.getAllFAQLists();
         this.refs.search.focus();
+        document.title = "FAQ - SET IT AND LEAVE IT"
       }
     
       handleChange() {

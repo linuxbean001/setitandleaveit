@@ -19,6 +19,7 @@ class Contactus extends Component{
     
 componentDidMount(){
     window.scrollTo(0, 0);
+    document.title = "CONTACT - SET IT AND LEAVE IT"
 }
 
 resetForm(){
@@ -162,7 +163,7 @@ render(){
                                             <input type="hidden" ref="id" class="form-control" name="id" onChange={this.contactushandleChange.bind(this, "id")} defaultValue={API.loggedIn() ? API.getProfile().data._id : '0'}/>
 
                                              <div class="submit-btn">
-                                                <button onClick={this.ContactusMe} type="button" class="btn"> Go </button>
+                                                <button onClick={this.ContactusMe} type="button" class="btn"> SEND </button>
                                             </div>
                                              
                                         </form>
